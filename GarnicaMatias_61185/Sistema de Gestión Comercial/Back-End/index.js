@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
-const { connection } = require('./config/db.js');
+const {connection} = require('./config/db.js');
+const detalles_venta = require('./routes/detalles_venta.routes.js');
 const metricasRoutes = require('./routes/metricas.routes.js');
 const productosRoutes = require('./routes/productos.routes.js');
 const usuariosRoutes = require('./routes/usuarios.routes.js');
@@ -19,6 +20,7 @@ app.use('/api/productos', productosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/ventas', ventasRoutes);
 app.use('/api/proveedores', proveedoresRoutes);
+app.use('/api/detalles-venta', detalles_venta);
 
 // Ruta principal
 app.get('/', (req, res) => {
@@ -29,7 +31,8 @@ app.get('/', (req, res) => {
             productos: '/api/productos', 
             usuarios: '/api/usuarios',
             ventas: '/api/ventas',
-            proveedores: '/api/proveedores'
+            proveedores: '/api/proveedores',
+            detalles_venta: '/api/detalles-venta'
         }
     });
 });

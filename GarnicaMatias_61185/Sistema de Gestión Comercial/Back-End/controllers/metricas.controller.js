@@ -1,4 +1,6 @@
-const {connection}= require ('../config/db.js')
+const { connection } = require('../config/db.js');
+
+
 
 const metricasController = {
     // GET Ventas totales

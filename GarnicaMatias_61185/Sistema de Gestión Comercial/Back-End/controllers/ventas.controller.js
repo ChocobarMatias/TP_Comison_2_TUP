@@ -1,4 +1,4 @@
-const {conection} = require ('../config/db.js');
+
 
 
 const ventasController = {
