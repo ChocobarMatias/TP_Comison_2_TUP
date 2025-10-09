@@ -1,0 +1,39 @@
+{
+  "name": "lautaronavarro_61649",
+  "version": "1.0.0",
+  "type": "module",
+  "description": " Trabajos Prácticos – Programación Back-End con Node.js y MySQL",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "npx nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/launavarroo/LautaroNavarro_61649.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "mysql",
+    "backend"
+  ],
+  "author": "Lautaro Navarro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/launavarroo/LautaroNavarro_61649/issues"
+  },
+  "homepage": "https://github.com/launavarroo/LautaroNavarro_61649#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "mysql2": "^3.11.3"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.7"
+  }
+}
+
