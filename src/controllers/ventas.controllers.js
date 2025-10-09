@@ -1,5 +1,5 @@
 import pool from "../config/db.js";
-
+//controlador para crear una venta con sus detalles
 
 
 export const crearUnaVenta = async (req, res) => {
