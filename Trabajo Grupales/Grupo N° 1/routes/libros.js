@@ -1,26 +1,11 @@
-const express = require('express');
+const express = require("express");
+const ctrl = require("../controllers/libros.controller");
 const router = express.Router();
-const db = require('../db');
 
-// GET todos los libros
-router.get('/', (req, res) => {
-    db.query('SELECT * FROM libros', (err, results) => {
-        if (err) return res.status(500).json(err);
-        res.json(results);
-    });
-});
-
-// POST agregar libro
-router.post('/', (req, res) => {
-    const { titulo, autor, categoria, ejemplares_disponibles } = req.body;
-    db.query(
-        'INSERT INTO libros (titulo, autor, categoria, ejemplares_disponibles) VALUES (?, ?, ?, ?)',
-        [titulo, autor, categoria, ejemplares_disponibles],
-        (err, results) => {
-            if (err) return res.status(500).json(err);
-            res.json({ message: 'Libro agregado', id: results.insertId });
-        }
-    );
-});
+router.get("/", ctrl.getAll);
+router.get("/:id", ctrl.getById);
+router.post("/", ctrl.create);
+router.put("/:id", ctrl.update);
+router.delete("/:id", ctrl.remove);
 
 module.exports = router;
