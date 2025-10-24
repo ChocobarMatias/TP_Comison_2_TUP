@@ -1,19 +1,10 @@
 import { Router } from "express";
+import { cancelarTurno, solicitarTurno, traerTurnosPorFecha } from "../controllers/turnos.controller.js"; 
 
-// aqui iran las rutas importadas
-import { cancelarTurno, solicitarTurno , traerTurnosPorFecha} from "../controllers/turnos.controller.js";
 const router = Router();
 
-
-// Rutas
-//POST - Solicitar turno
-router.post("/solicitarTurno", solicitarTurno);
-
-// GET - listar turnos por fecha 
-
-router.get("/ListarTurnos/:FechaRequeridaTurno", traerTurnosPorFecha);
-
-//cancelar turno
-router.put("/cancelarTurno/:idTurno", cancelarTurno);
+router.post('/', solicitarTurno); 
+router.get('/fecha', traerTurnosPorFecha);
+router.put('/:idTurno/cancelar', cancelarTurno);
 
 export default router;
