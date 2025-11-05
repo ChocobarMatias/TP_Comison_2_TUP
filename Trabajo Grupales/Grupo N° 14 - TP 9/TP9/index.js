@@ -5,12 +5,12 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
-// Routers
-const sociosRoutes = require("./routes/socios.routes");
-const deportesRoutes = require("./routes/deportes.routes");
-const asignacionesRoutes = require("./routes/asignaciones.routes");
-const pagosRoutes = require("./routes/pagos.routes");
-const authRoutes = require("./routes/auth.routes");
+// Routers (routes are located under src/routes)
+const sociosRoutes = require("./src/routes/socios.routes");
+const deportesRoutes = require("./src/routes/deportes.routes");
+const asignacionesRoutes = require("./src/routes/asignaciones.routes");
+const pagosRoutes = require("./src/routes/pagos.routes");
+const authRoutes = require("./src/routes/auth.routes");
 
 const app = express();
 

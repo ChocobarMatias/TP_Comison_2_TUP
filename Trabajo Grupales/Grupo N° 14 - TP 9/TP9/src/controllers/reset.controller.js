@@ -1,8 +1,7 @@
 // controllers/reset.controller.js
 const crypto = require("crypto");
-const bcrypt = require("bcrypt");
-const poolCb = require("../config/DB"); // pool callback-based
-const pool = poolCb.promise ? poolCb.promise() : poolCb; // wrapper promesa
+const bcrypt = require("bcryptjs");
+const prisma = require("../config/prisma");
 const { sendMail } = require("../services/email.service");
 
 const EXP_MIN = Number(process.env.RESET_TOKEN_EXP_MIN || 60);
@@ -14,27 +13,37 @@ function addMinutes(date, minutes) {
 
 async function findUserByEmail(email) {
   // Buscamos primero socio y luego usuario staff
-  const [socios] = await pool.query(
-    "SELECT id AS user_id, email FROM socios WHERE email = ?",
-    [email]
-  );
-  if (socios.length)
+  const socio = await prisma.socios.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      email: true,
+    },
+  });
+
+  if (socio) {
     return {
       user_type: "socio",
-      user_id: socios[0].user_id,
-      email: socios[0].email,
+      user_id: socio.id,
+      email: socio.email,
     };
+  }
 
-  const [usuarios] = await pool.query(
-    "SELECT usuario_id AS user_id, correo AS email FROM usuarios WHERE correo = ?",
-    [email]
-  );
-  if (usuarios.length)
+  const usuario = await prisma.usuarios.findFirst({
+    where: { correo: email },
+    select: {
+      usuario_id: true,
+      correo: true,
+    },
+  });
+
+  if (usuario) {
     return {
       user_type: "usuario",
-      user_id: usuarios[0].user_id,
-      email: usuarios[0].email,
+      user_id: usuario.usuario_id,
+      email: usuario.correo,
     };
+  }
 
   return null;
 }
@@ -57,11 +66,15 @@ exports.requestReset = async (req, res) => {
     const token = crypto.randomBytes(32).toString("hex");
     const expiresAt = addMinutes(new Date(), EXP_MIN);
 
-    await pool.query(
-      `INSERT INTO password_resets (user_type, user_id, email, token, expires_at)
-       VALUES (?, ?, ?, ?, ?)`,
-      [user.user_type, user.user_id, user.email, token, expiresAt]
-    );
+    await prisma.password_resets.create({
+      data: {
+        user_type: user.user_type,
+        user_id: user.user_id,
+        email: user.email,
+        token,
+        expires_at: expiresAt,
+      },
+    });
 
     const resetLink = `${FRONTEND_URL}/reset-password?token=${token}&type=${user.user_type}`;
 
@@ -101,41 +114,53 @@ exports.confirmReset = async (req, res) => {
         .json({ ok: false, msg: "token y newPassword son requeridos" });
     }
 
-    const [rows] = await pool.query(
-      `SELECT id, user_type, user_id, email, expires_at, used_at
-       FROM password_resets
-       WHERE token = ?`,
-      [token]
-    );
-    if (!rows.length)
-      return res.status(400).json({ ok: false, msg: "Token inválido" });
+    const pr = await prisma.password_resets.findFirst({
+      where: { token },
+      select: {
+        id: true,
+        user_type: true,
+        user_id: true,
+        email: true,
+        expires_at: true,
+        used_at: true,
+      },
+    });
 
-    const pr = rows[0];
-    if (pr.used_at)
+    if (!pr) {
+      return res.status(400).json({ ok: false, msg: "Token inválido" });
+    }
+
+    if (pr.used_at) {
       return res.status(400).json({ ok: false, msg: "Token ya utilizado" });
-    if (new Date(pr.expires_at) < new Date())
+    }
+
+    if (new Date(pr.expires_at) < new Date()) {
       return res.status(400).json({ ok: false, msg: "Token expirado" });
+    }
 
     const saltRounds = 10;
     const hash = await bcrypt.hash(newPassword, saltRounds);
 
     if (pr.user_type === "socio") {
-      await pool.query("UPDATE socios SET password = ? WHERE id = ?", [
-        hash,
-        pr.user_id,
-      ]);
+      await prisma.socios.update({
+        where: { id: pr.user_id },
+        data: { password: hash },
+      });
     } else {
       // Para usuarios staff, si ya migraste a bcrypt, usar password_hash y dejar contrasena en desuso
-      await pool.query(
-        'UPDATE usuarios SET password_hash = ?, contrasena = "" WHERE usuario_id = ?',
-        [hash, pr.user_id]
-      );
+      await prisma.usuarios.update({
+        where: { usuario_id: pr.user_id },
+        data: {
+          password_hash: hash,
+          contrasena: "",
+        },
+      });
     }
 
-    await pool.query(
-      "UPDATE password_resets SET used_at = NOW() WHERE id = ?",
-      [pr.id]
-    );
+    await prisma.password_resets.update({
+      where: { id: pr.id },
+      data: { used_at: new Date() },
+    });
 
     res.json({ ok: true, msg: "Contraseña actualizada correctamente" });
   } catch (err) {

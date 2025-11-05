@@ -1,8 +1,7 @@
 // controllers/auth.controller.js
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const poolCb = require("../config/DB"); // pool callback
-const pool = poolCb.promise ? poolCb.promise() : poolCb;
+const bcrypt = require("bcryptjs");
+const prisma = require("../config/prisma");
 
 function signToken(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET || "dev-secret", {
@@ -20,17 +19,22 @@ exports.authLogin = async (req, res) => {
     }
 
     // 1) Intentar como socio (bcrypt obligado)
-    const [socios] = await pool.query(
-      "SELECT id, email, password FROM socios WHERE email = ?",
-      [email]
-    );
-    if (socios.length) {
-      const socio = socios[0];
+    const socio = await prisma.socios.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+      },
+    });
+
+    if (socio) {
       const ok = await bcrypt.compare(password, socio.password);
-      if (!ok)
+      if (!ok) {
         return res
           .status(401)
           .json({ ok: false, msg: "Credenciales inválidas" });
+      }
 
       const token = signToken({
         user_type: "socio",
@@ -45,39 +49,46 @@ exports.authLogin = async (req, res) => {
     }
 
     // 2) Intentar como usuario staff (admin/operador)
-    const [usuarios] = await pool.query(
-      "SELECT usuario_id, correo, contrasena, password_hash, rol FROM usuarios WHERE correo = ?",
-      [email]
-    );
-    if (!usuarios.length) {
+    const usuario = await prisma.usuarios.findFirst({
+      where: { correo: email },
+      select: {
+        usuario_id: true,
+        correo: true,
+        contrasena: true,
+        password_hash: true,
+        rol: true,
+      },
+    });
+
+    if (!usuario) {
       return res.status(401).json({ ok: false, msg: "Credenciales inválidas" });
     }
 
-    const u = usuarios[0];
     let valid = false;
 
-    if (u.password_hash && u.password_hash.length > 0) {
+    if (usuario.password_hash && usuario.password_hash.length > 0) {
       // Ya migrado a bcrypt
-      valid = await bcrypt.compare(password, u.password_hash);
+      valid = await bcrypt.compare(password, usuario.password_hash);
     } else {
       // Aún en texto plano (compatibilidad)
-      valid = password === u.contrasena;
+      valid = password === usuario.contrasena;
     }
 
-    if (!valid)
+    if (!valid) {
       return res.status(401).json({ ok: false, msg: "Credenciales inválidas" });
+    }
 
     const token = signToken({
       user_type: "usuario",
-      id: u.usuario_id,
-      email: u.correo,
-      rol: u.rol || "admin",
+      id: usuario.usuario_id,
+      email: usuario.correo,
+      rol: usuario.rol || "admin",
     });
 
     res.json({
       ok: true,
       user_type: "usuario",
-      rol: u.rol || "admin",
+      rol: usuario.rol || "admin",
       token,
     });
   } catch (err) {

@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model accesorios {
+  idAccesorio Int     @id @default(autoincrement())
+  nombre      String  @db.VarChar(50)
+  marca       String  @db.VarChar(100)
+  descripcion String? @db.VarChar(100)
+  precio      Float
+  stock       Int
+}
+
+model consultas {
+  idConsulta Int    @id @default(autoincrement())
+  nombre     String @db.VarChar(50)
+  email      String @db.VarChar(100)
+  telefono   String @db.VarChar(15)
+  asunto     String @db.VarChar(50)
+  mensaje    String @db.VarChar(300)
+}
+
+model repuestos {
+  idRepuesto  Int     @id @default(autoincrement())
+  nombre      String  @db.VarChar(50)
+  marca       String  @db.VarChar(100)
+  numeroParte Int
+  descripcion String? @db.VarChar(100)
+  precio      Float
+  stock       Int
+}
+
+model roles {
+  idRol    Int        @id @default(autoincrement())
+  nombre   String     @db.VarChar(10)
+  usuarios usuarios[]
+}
+
+model usuarios {
+  idUsuario Int     @id @default(autoincrement())
+  nombre    String  @db.VarChar(50)
+  pass      String? @db.VarChar(100)
+  idRol     Int?
+  roles     roles?  @relation(fields: [idRol], references: [idRol], onDelete: NoAction, onUpdate: NoAction, map: "usuarios_ibfk_1")
+
+  @@index([idRol], map: "idRol")
+}
