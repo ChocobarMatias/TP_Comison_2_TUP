@@ -1,13 +1,11 @@
 // src/controllers/clientes.controller.js
-import { query } from '../config/dataBase.js';
+import { prisma } from '../config/prismo.js';
 
 // ------------------------------------------------------------------
 // 1. CREAR CLIENTE (POST /api/clientes)
 // ------------------------------------------------------------------
 export const createCliente = async (req, res) => {
-    // El ID del empleado logueado viene del middleware verifyToken (JWT)
-    const user_id = req.user.id; 
-    
+    const user_id = req.user.id;
     const { nombre, apellido, telefono } = req.body;
 
     if (!nombre || !apellido) {
@@ -15,14 +13,18 @@ export const createCliente = async (req, res) => {
     }
 
     try {
-        const result = await query(
-            'INSERT INTO Clientes (user_id, nombre, apellido, telefono) VALUES (?, ?, ?, ?)',
-            [user_id, nombre, apellido, telefono]
-        );
+        const result = await prisma.clientes.create({
+            data: {
+                user_id,
+                nombre,
+                apellido,
+                telefono
+            }
+        });
         
         res.status(201).json({ 
             message: 'Cliente creado exitosamente.', 
-            id: result.insertId,
+            id: result.id,
             creadoPor: user_id
         });
 
@@ -36,11 +38,20 @@ export const createCliente = async (req, res) => {
 // 2. LISTAR TODOS LOS CLIENTES DEL EMPLEADO LOGUEADO (GET /api/clientes)
 // ------------------------------------------------------------------
 export const getClientes = async (req, res) => {
-    const user_id = req.user.id; // ID del empleado logueado
+    const user_id = req.user.id;
 
     try {
-        // Traer solo los clientes que pertenecen al user_id actual
-        const clientes = await query('SELECT id, nombre, apellido, telefono FROM Clientes WHERE user_id = ?', [user_id]);
+        const clientes = await prisma.clientes.findMany({
+            where: {
+                user_id
+            },
+            select: {
+                id: true,
+                nombre: true,
+                apellido: true,
+                telefono: true
+            }
+        });
         
         res.status(200).json(clientes);
     } catch (error) {
@@ -54,18 +65,27 @@ export const getClientes = async (req, res) => {
 // ------------------------------------------------------------------
 export const getClienteById = async (req, res) => {
     const { id } = req.params;
-    const user_id = req.user.id; // ID del empleado logueado
+    const user_id = req.user.id;
 
     try {
-        // CRÍTICO: Buscar el cliente por su ID Y que pertenezca al user_id logueado
-        const clientes = await query('SELECT id, nombre, apellido, telefono FROM Clientes WHERE id = ? AND user_id = ?', [id, user_id]);
+        const cliente = await prisma.clientes.findFirst({
+            where: {
+                id: parseInt(id),
+                user_id
+            },
+            select: {
+                id: true,
+                nombre: true,
+                apellido: true,
+                telefono: true
+            }
+        });
         
-        if (clientes.length === 0) {
-            // Error 404 si no existe O si no pertenece a este usuario
+        if (!cliente) {
             return res.status(404).json({ message: 'Cliente no encontrado o no autorizado.' });
         }
 
-        res.status(200).json(clientes[0]);
+        res.status(200).json(cliente);
     } catch (error) {
         console.error("Error al obtener cliente:", error);
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -77,7 +97,7 @@ export const getClienteById = async (req, res) => {
 // ------------------------------------------------------------------
 export const updateCliente = async (req, res) => {
     const { id } = req.params;
-    const user_id = req.user.id; // ID del empleado logueado
+    const user_id = req.user.id;
     const { nombre, apellido, telefono } = req.body;
 
     if (!nombre || !apellido) {
@@ -85,13 +105,19 @@ export const updateCliente = async (req, res) => {
     }
 
     try {
-        // CRÍTICO: Actualizar solo si el cliente pertenece al user_id logueado
-        const result = await query(
-            'UPDATE Clientes SET nombre = ?, apellido = ?, telefono = ? WHERE id = ? AND user_id = ?',
-            [nombre, apellido, telefono, id, user_id]
-        );
+        const cliente = await prisma.clientes.updateMany({
+            where: {
+                id: parseInt(id),
+                user_id
+            },
+            data: {
+                nombre,
+                apellido,
+                telefono
+            }
+        });
         
-        if (result.affectedRows === 0) {
+        if (cliente.count === 0) {
             return res.status(404).json({ message: 'Cliente no encontrado o no autorizado para actualizar.' });
         }
 
@@ -108,13 +134,17 @@ export const updateCliente = async (req, res) => {
 // ------------------------------------------------------------------
 export const deleteCliente = async (req, res) => {
     const { id } = req.params;
-    const user_id = req.user.id; // ID del empleado logueado
+    const user_id = req.user.id;
 
     try {
-        // CRÍTICO: Eliminar solo si el cliente pertenece al user_id logueado
-        const result = await query('DELETE FROM Clientes WHERE id = ? AND user_id = ?', [id, user_id]);
+        const cliente = await prisma.clientes.deleteMany({
+            where: {
+                id: parseInt(id),
+                user_id
+            }
+        });
 
-        if (result.affectedRows === 0) {
+        if (cliente.count === 0) {
             return res.status(404).json({ message: 'Cliente no encontrado o no autorizado para eliminar.' });
         }
 

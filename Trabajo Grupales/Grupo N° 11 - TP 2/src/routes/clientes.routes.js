@@ -1,6 +1,6 @@
-const express = require('express');
-const { verifyToken } = require('../middlewares/auth.middleware.js');
-const clientes = require('../controllers/clientes.js');
+import express from 'express';
+import { verifyToken } from '../middlewares/auth.middleware.js';
+import * as clientes from '../controllers/clientes.js';
 
 const router = express.Router();
 
@@ -23,4 +23,4 @@ router.put('/:id', verifyToken, clientes.updateCliente);
 // DELETE /api/clientes/:id: Eliminar un cliente
 router.delete('/:id', verifyToken, clientes.deleteCliente);
 
-module.exports = router;
+export default router;

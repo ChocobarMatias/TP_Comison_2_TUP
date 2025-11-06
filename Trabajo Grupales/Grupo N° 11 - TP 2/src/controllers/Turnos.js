@@ -1,63 +1,90 @@
-const { pool } = require('../config/dataBase.js');
+import { prisma } from '../config/prismo.js';
 
-const getTurnos = async (req, res) => {
+export const getTurnos = async (req, res) => {
   try {
-    const [rows] = await pool.query(`
-      SELECT 
-        t.id,
-        c.nombre AS cliente,
-        s.nombre AS servicio,
-        s.precio,
-        t.fecha,
-        t.hora
-      FROM turnos t
-      JOIN clientes c ON t.idCliente = c.id
-      JOIN servicios s ON t.idServicio = s.id
-      ORDER BY t.fecha, t.hora
-    `);
-    res.json(rows);
+    const rows = await prisma.turnos.findMany({
+      include: {
+        clientes: {
+          select: {
+            nombre: true
+          }
+        },
+        servicios: {
+          select: {
+            nombre: true,
+            precio: true
+          }
+        }
+      },
+      orderBy: [
+        { fecha: 'asc' },
+        { hora: 'asc' }
+      ]
+    });
+    
+    const formattedRows = rows.map(t => ({
+      id: t.id,
+      cliente: t.clientes.nombre,
+      servicio: t.servicios.nombre,
+      precio: t.servicios.precio,
+      fecha: t.fecha,
+      hora: t.hora
+    }));
+    
+    res.json(formattedRows);
   } catch (error) {
     console.error('Error al obtener turnos:', error);
     res.status(500).json({ message: 'Error al obtener turnos' });
   }
 };
 
-const getTurnoID = async (req, res) => {
+export const getTurnoID = async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await pool.query('SELECT * FROM turnos WHERE id = ?', [id]);
-    res.json(rows[0] || null);
+    const turno = await prisma.turnos.findUnique({
+      where: { id: parseInt(id) }
+    });
+    res.json(turno || null);
   } catch (error) {
     console.error('Error al obtener turno:', error);
     res.status(500).json({ message: 'Error al obtener turno' });
   }
 };
 
-const createTurno = async (req, res) => {
+export const createTurno = async (req, res) => {
   try {
     const { idCliente, idServicio, fecha, hora } = req.body;
-    const [result] = await pool.query(
-      'INSERT INTO turnos (idCliente, idServicio, fecha, hora) VALUES (?, ?, ?, ?)',
-      [idCliente, idServicio, fecha, hora]
-    );
-    res.status(201).json({ id: result.insertId, idCliente, idServicio, fecha, hora });
+    const result = await prisma.turnos.create({
+      data: {
+        idCliente: parseInt(idCliente),
+        idServicio: parseInt(idServicio),
+        fecha: new Date(fecha),
+        hora
+      }
+    });
+    res.status(201).json({ id: result.id, idCliente, idServicio, fecha, hora });
   } catch (error) {
     console.error('Error al crear turno:', error);
     res.status(500).json({ message: 'Error al crear turno' });
   }
 };
 
-const updateTurno = async (req, res) => {
+export const updateTurno = async (req, res) => {
   try {
     const { id } = req.params;
     const { idCliente, idServicio, fecha, hora } = req.body;
 
-    const [result] = await pool.query(
-      'UPDATE turnos SET idCliente = ?, idServicio = ?, fecha = ?, hora = ? WHERE id = ?',
-      [idCliente, idServicio, fecha, hora, id]
-    );
+    const result = await prisma.turnos.updateMany({
+      where: { id: parseInt(id) },
+      data: {
+        idCliente: parseInt(idCliente),
+        idServicio: parseInt(idServicio),
+        fecha: new Date(fecha),
+        hora
+      }
+    });
 
-    if (result.affectedRows === 0) {
+    if (result.count === 0) {
       return res.status(404).json({ message: 'Turno no encontrado' });
     }
 
@@ -68,12 +95,14 @@ const updateTurno = async (req, res) => {
   }
 };
 
-const deleteTurno = async (req, res) => {
+export const deleteTurno = async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await pool.query('DELETE FROM turnos WHERE id = ?', [id]);
+    const result = await prisma.turnos.deleteMany({
+      where: { id: parseInt(id) }
+    });
 
-    if (result.affectedRows === 0) {
+    if (result.count === 0) {
       return res.status(404).json({ message: 'Turno no encontrado' });
     }
 
@@ -82,12 +111,4 @@ const deleteTurno = async (req, res) => {
     console.error('Error al eliminar turno:', error);
     res.status(500).json({ message: 'Error al eliminar turno' });
   }
-};
-
-module.exports = {
-  getTurnos,
-  getTurnoID,
-  createTurno,
-  updateTurno,
-  deleteTurno
 };

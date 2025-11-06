@@ -1,10 +1,10 @@
 // controllers/serviciosController.js
-const { pool } = require('../config/dataBase.js');
+import { prisma } from '../config/prismo.js';
 
 // GET /servicios
-const getservicios = async (req, res) => {
+export const getservicios = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM servicios');
+    const rows = await prisma.servicios.findMany();
     res.json(rows);
   } catch (error) {
     console.error('Error al obtener servicios:', error);
@@ -13,14 +13,17 @@ const getservicios = async (req, res) => {
 };
 
 // GET /servicios/:id
-const getserviciosID = async (req, res) => {
+export const getserviciosID = async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await pool.query('SELECT * FROM servicios WHERE id = ?', [id]);
-    if (rows.length === 0) {
+    const servicio = await prisma.servicios.findUnique({
+      where: { id: parseInt(id) }
+    });
+    
+    if (!servicio) {
       return res.status(404).json({ message: 'Servicio no encontrado' });
     }
-    res.json(rows[0]);
+    res.json(servicio);
   } catch (error) {
     console.error('Error al obtener servicio:', error);
     res.status(500).json({ message: 'Error al obtener servicio' });
@@ -28,7 +31,7 @@ const getserviciosID = async (req, res) => {
 };
 
 // POST /servicios/crear
-const createservicios = async (req, res) => {
+export const createservicios = async (req, res) => {
   try {
     const { nombre, precio } = req.body;
 
@@ -39,12 +42,14 @@ const createservicios = async (req, res) => {
       return res.status(400).json({ message: 'Precio debe ser numérico' });
     }
 
-    const [result] = await pool.query(
-      'INSERT INTO servicios (nombre, precio) VALUES (?, ?)',
-      [nombre, precio]
-    );
+    const result = await prisma.servicios.create({
+      data: {
+        nombre,
+        precio: parseFloat(precio)
+      }
+    });
 
-    res.status(201).json({ id: result.insertId, nombre, precio });
+    res.status(201).json({ id: result.id, nombre, precio });
   } catch (error) {
     console.error('Error al crear servicio:', error);
     res.status(500).json({ message: 'Error al crear servicio' });
@@ -52,7 +57,7 @@ const createservicios = async (req, res) => {
 };
 
 // PUT /servicios/editar/:id
-const updateservicios = async (req, res) => {
+export const updateservicios = async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, precio } = req.body;
@@ -61,12 +66,15 @@ const updateservicios = async (req, res) => {
       return res.status(400).json({ message: 'Precio debe ser numérico' });
     }
 
-    const [result] = await pool.query(
-      'UPDATE servicios SET nombre = ?, precio = ? WHERE id = ?',
-      [nombre, precio, id]
-    );
+    const result = await prisma.servicios.updateMany({
+      where: { id: parseInt(id) },
+      data: {
+        nombre,
+        precio: parseFloat(precio)
+      }
+    });
 
-    if (result.affectedRows === 0) {
+    if (result.count === 0) {
       return res.status(404).json({ message: 'Servicio no encontrado' });
     }
 
@@ -78,12 +86,14 @@ const updateservicios = async (req, res) => {
 };
 
 // DELETE /servicios/eliminar/:id
-const deleteservicios = async (req, res) => {
+export const deleteservicios = async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await pool.query('DELETE FROM servicios WHERE id = ?', [id]);
+    const result = await prisma.servicios.deleteMany({
+      where: { id: parseInt(id) }
+    });
 
-    if (result.affectedRows === 0) {
+    if (result.count === 0) {
       return res.status(404).json({ message: 'Servicio no encontrado' });
     }
 
@@ -92,12 +102,4 @@ const deleteservicios = async (req, res) => {
     console.error('Error al eliminar servicio:', error);
     res.status(500).json({ message: 'Error al eliminar servicio' });
   }
-};
-
-module.exports = {
-  getservicios,
-  getserviciosID,
-  createservicios,
-  updateservicios,
-  deleteservicios,
 };

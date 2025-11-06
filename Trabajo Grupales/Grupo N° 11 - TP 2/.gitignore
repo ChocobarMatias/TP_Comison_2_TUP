@@ -23,3 +23,4 @@ Thumbs.db
 # Archivos de Bases de Datos
 *.sqlite
 *.db
+/src/generated/prisma

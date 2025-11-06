@@ -3,8 +3,8 @@
 
 import { hashPassword, comparePassword } from '../utils/hash.utils.js';
 import { generateAccessToken } from '../utils/jwt.utils.js';
-import { query } from '../config/dataBase.js';
-import { sendEmail } from '../services/email.service.js';
+import { prisma } from '../config/prismo.js';
+import { sendEmail } from '../service/email.service.js';
 import jwt from 'jsonwebtoken'; 
 
 
@@ -12,16 +12,21 @@ export const register = async (req, res) => {
     const { name, email, password } = req.body;
     if (!name || !email || !password) return res.status(400).json({ message: 'Faltan campos.' });
     try {
-        const existingUser = await query('SELECT id FROM Users WHERE email = ?', [email]);
-        if (existingUser.length > 0) return res.status(400).json({ message: 'El correo ya está registrado.' });
+        const existingUser = await prisma.users.findUnique({
+            where: { email }
+        });
+        if (existingUser) return res.status(400).json({ message: 'El correo ya está registrado.' });
         
         // 1. HASHEAR (Bcrypt)
         const hashedPassword = await hashPassword(password);
-        const result = await query(
-            'INSERT INTO Users (name, email, password) VALUES (?, ?, ?)',
-            [name, email, hashedPassword]
-        );
-        const userId = result.insertId;
+        const result = await prisma.users.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword
+            }
+        });
+        const userId = result.id;
 
         // 2. Generar JWT
         const token = generateAccessToken({ id: userId });
@@ -36,8 +41,10 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Debe ingresar email y contraseña.' });
     try {
-        const users = await query('SELECT id, password FROM Users WHERE email = ?', [email]);
-        const user = users[0];
+        const user = await prisma.users.findUnique({
+            where: { email },
+            select: { id: true, password: true }
+        });
         if (!user) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         // 1. COMPARAR (Bcrypt)
@@ -63,8 +70,10 @@ const EXPIRATION_TIME = '1h';
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
     try {
-        const users = await query('SELECT id, name FROM Users WHERE email = ?', [email]);
-        const user = users[0];
+        const user = await prisma.users.findUnique({
+            where: { email },
+            select: { id: true, name: true }
+        });
         if (!user) return res.status(200).json({ message: 'Si el correo existe, recibirá un enlace.' });
 
         // 1. Generar JWT de reseteo
@@ -72,7 +81,13 @@ export const forgotPassword = async (req, res) => {
         const expires = new Date(Date.now() + 60 * 60 * 1000); 
         
         // 2. Guardar token y expiración en DB
-        await query('UPDATE Users SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE id = ?', [resetToken, expires, user.id]);
+        await prisma.users.update({
+            where: { id: user.id },
+            data: {
+                resetPasswordToken: resetToken,
+                resetPasswordExpires: expires
+            }
+        });
 
         // 3. Enviar correo
         const resetURL = `http://localhost:3000/api/auth/reset-password-form?token=${resetToken}`; 
@@ -96,21 +111,30 @@ export const resetPassword = async (req, res) => {
         const userId = decoded.id;
 
         // 2. Validar que el token existe en la DB y NO ha expirado
-        const users = await query(
-            'SELECT id FROM Users WHERE id = ? AND resetPasswordToken = ? AND resetPasswordExpires > NOW()',
-            [userId, token]
-        );
+        const user = await prisma.users.findFirst({
+            where: {
+                id: userId,
+                resetPasswordToken: token,
+                resetPasswordExpires: {
+                    gt: new Date()
+                }
+            }
+        });
         
-        if (users.length === 0) return res.status(400).json({ message: 'Token inválido o expirado.' });
+        if (!user) return res.status(400).json({ message: 'Token inválido o expirado.' });
 
         // 3. Hashear la NUEVA contraseña
         const hashedPassword = await hashPassword(newPassword);
 
         // 4. Actualizar contraseña y LIMPIAR campos de reseteo
-        await query(
-            'UPDATE Users SET password = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE id = ?',
-            [hashedPassword, userId]
-        );
+        await prisma.users.update({
+            where: { id: userId },
+            data: {
+                password: hashedPassword,
+                resetPasswordToken: null,
+                resetPasswordExpires: null
+            }
+        });
         res.status(200).json({ message: 'Contraseña restablecida con éxito.' });
     } catch (error) {
         if (error.name === 'TokenExpiredError' || error.name === 'JsonWebTokenError') {

@@ -1,20 +1,19 @@
-const Router=require('express')
-const router = Router()
+import { Router } from 'express';
 
-const {
+const router = Router();
+
+import {
   getserviciosID,
-getservicios,
-createservicios,
-updateservicios,
-deleteservicios
-} = require('../controllers/serviciosController')
+  getservicios,
+  createservicios,
+  updateservicios,
+  deleteservicios
+} from '../controllers/serviciosController.js';
 
+router.get('/', getservicios);
+router.get('/:id', getserviciosID);
+router.post('/crear', createservicios);
+router.put('/editar/:id', updateservicios);
+router.delete('/eliminar/:id', deleteservicios);
 
-
-router.get('/', getservicios)
-router.get('/:id', getserviciosID)
-router.post('/crear', createservicios)
-router.put('/editar/:id', updateservicios)
-router.delete('/eliminar/:id', deleteservicios)
-
-module.exports = router
+export default router;
