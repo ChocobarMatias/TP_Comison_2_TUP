@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken")
 
-const auth = async (req, res, next) => {
+const verifyToken = async (req, res, next) => {
     try {
-        const token = req.header("auth")?.replace("Bearer ", "")
+        const token = req.header("authorization")?.replace("Bearer ", "")
         if(!token){
            return res.status(400).json({msg:"Token ausente"})
             
@@ -18,4 +18,4 @@ const auth = async (req, res, next) => {
     }
 } 
 
-module.exports= {auth}
+module.exports= verifyToken

@@ -8,6 +8,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Importar rutas de artistas
+const artistasRoutes = require('./routes/artistas.routes');
+
+// Usar rutas de artistas bajo /api/artistas
+app.use('/artistas', artistasRoutes);
+
 // Probar conexión a la DB
 connection.connect((err) => {
   if (err) {
