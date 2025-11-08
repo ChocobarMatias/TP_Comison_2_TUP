@@ -1,41 +1,10 @@
-const express = require('express');
-const {connection} = require("./config/DB")
-const routesUsuario = require("./routes/usuarios.routes")
-const routesCategorias = require("./routes/categorias.routes")
-const routesLibros = require("./routes/libros.routes")
-const routesPrestamos = require("./routes/prestamos.routes")
-const morgan = require('morgan')
-const cors = require('cors')
-const helmet = require('helmet')
+// Aqui se encarga de iniciar el servido
+const app = require("./src/app");
 
+//Defino el puerto
+const PORT = process.env.PORT || 3000;
 
-const app = express();
-
-app.use(express.json())
-app.use(cors())
-app.use(morgan('dev'))
-app.use(helmet())
-app.use("/", routesUsuario);
-app.use("/", routesCategorias);
-app.use("/", routesLibros);
-app.use("/", routesPrestamos);
-
-app.get("/",(req,res)=>{
-    res.send(" Backend Biblioteca funcionando")
-})
-
-
-
-const PORT = process.env.PORT || 8000
-
-app.listen(PORT,(err)=>{
-    if(err) throw err
-    console.log("escuchando en el puerto "+PORT)
-})
-
-
-
-connection.connect((err)=>{
-    if(err) throw err
-    console.log("conectado a mi DB")
-})
+//Levanto el servidor en el puerto del .env
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
