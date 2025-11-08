@@ -12,11 +12,13 @@ app.use(express.json());
 const artistasRoutes = require("./routes/artistas.routes");
 const authRoutes = require("./routes/auth.routes");
 const eventosRoutes = require("./routes/eventos.routes");
+const lugaresRoutes = require("./routes/lugares.routes");
 
 // Usar rutas de artistas bajo /api/artistas
 app.use("/artistas", artistasRoutes);
 app.use("/auth", authRoutes);
 app.use("/eventos", eventosRoutes);
+app.use("/lugares", lugaresRoutes);
 
 // Probar conexión a la DB
 connection.connect((err) => {

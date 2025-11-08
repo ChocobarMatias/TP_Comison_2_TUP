@@ -1,65 +1,145 @@
-const connection = require('../config/bd');
+// controllers/lugaresController.js
+const connection = require("../config/db");
 
-//obtener todos los lugares
-const getAllLugares = (req, res)=>{
-    const consulta = "SELECT * FROM lugares where ACTIVO = true";
+// Obtener todos los lugares activos
+const obtenerTodos = async (req, res) => {
+  try {
+    const [rows] = await connection.query(
+      `SELECT * FROM lugares WHERE estado_lugar = 1`
+    );
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error obtener todos los lugares:", error);
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+};
 
-    connection.query(consulta, (err,results)=>{
-        if(err) return res.status(500).json({error: err.message});
-        res.json(results);
-    })
-}
+// Obtener un lugar por id_lugar
+const obtenerUno = async (req, res) => {
+  try {
+    const { id_lugar } = req.params;
+    const [rows] = await connection.query(
+      `SELECT * FROM lugares WHERE id_lugar = ? AND estado_lugar = 1 LIMIT 1`,
+      [id_lugar]
+    );
 
-//obtener lugar por tipo
-const getLugarPorTipo = (req,res)=>{
-    const {tipo} = req.params;
-    const consulta = "SELECT * FROM lugares WHERE tipo = ? and activo = true";
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Lugar no encontrado" });
+    }
 
-    connection.query(consulta, [tipo], (err,results)=>{
-        if(err) return res.status(500).json({error: err.message});
-        if(results.length === 0) return res.status(404).json({error: 'Lugar no encontrado'});
-        res.json(results);
-    })
+    return res.json(rows[0]);
+  } catch (error) {
+    console.error("Error obtener lugar:", error);
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+};
 
-}
+// Crear un nuevo lugar
+const crear = async (req, res) => {
+  try {
+    const {
+      nombre_lugar,
+      tipo_lugar,
+      direccion_lugar,
+      contacto_nombre_lugar,
+      contacto_telefono_lugar,
+      contacto_email_lugar,
+      equipamiento_lugar,
+      capacidad_maxima_lugar,
+    } = req.body;
 
-//crear lugar
-const crearLugar = (req,res)=>{
-    const {nombre, tipo, direccion, capacidad_maxima, contacto_nombre, contacto_telefono, contacto_email} = req.body;
+    const [result] = await connection.query(
+      `INSERT INTO lugares 
+        (nombre_lugar, tipo_lugar, direccion_lugar, contacto_nombre_lugar, contacto_telefono_lugar, contacto_email_lugar, equipamiento_lugar, capacidad_maxima_lugar)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        nombre_lugar,
+        tipo_lugar || null,
+        direccion_lugar || null,
+        contacto_nombre_lugar || null,
+        contacto_telefono_lugar || null,
+        contacto_email_lugar || null,
+        equipamiento_lugar || null,
+        capacidad_maxima_lugar != null ? capacidad_maxima_lugar : null,
+      ]
+    );
 
-    const consulta = "INSERT INTO lugares (nombre, tipo, direccion, capacidad_maxima, contacto_nombre, contacto_telefono, contacto_email) values (?,?,?,?,?,?,?)";
+    return res
+      .status(201)
+      .json({ message: "Lugar creado", id_lugar: result.insertId });
+  } catch (error) {
+    console.error("Error crear lugar:", error);
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+};
 
-    connection.query(consulta, [nombre, tipo, direccion, capacidad_maxima, contacto_nombre, contacto_telefono, contacto_email], (err, results)=>{
-        if(err) return res.status(500).json({error: err.message});
-        res.status(201).json({message: 'Lugar creado'});
+// Actualizar lugar (solo si está activo)
+const actualizar = async (req, res) => {
+  try {
+    const { id_lugar } = req.params;
+    const {
+      nombre_lugar,
+      tipo_lugar,
+      direccion_lugar,
+      contacto_nombre_lugar,
+      contacto_telefono_lugar,
+      contacto_email_lugar,
+      equipamiento_lugar,
+      capacidad_maxima_lugar,
+    } = req.body;
 
-    })
-}
+    const [result] = await connection.query(
+      `UPDATE lugares
+       SET nombre_lugar = ?, tipo_lugar = ?, direccion_lugar = ?, contacto_nombre_lugar = ?, contacto_telefono_lugar = ?, contacto_email_lugar = ?, equipamiento_lugar = ?, capacidad_maxima_lugar = ?
+       WHERE id_lugar = ? AND estado_lugar = 1`,
+      [
+        nombre_lugar,
+        tipo_lugar || null,
+        direccion_lugar || null,
+        contacto_nombre_lugar || null,
+        contacto_telefono_lugar || null,
+        contacto_email_lugar || null,
+        equipamiento_lugar || null,
+        capacidad_maxima_lugar != null ? capacidad_maxima_lugar : null,
+        id_lugar,
+      ]
+    );
 
-//editar lugar
-const editLugar = (req,res)=>{
-    const {id} = req.params;
-    const {nombre, tipo, direccion, capacidad_maxima, contacto_nombre, contacto_telefono, contacto_email, equipamiento} = req.body;
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Lugar no encontrado o inactivo" });
+    }
 
-    const consulta = "UPDATE lugares set nombre=?, tipo=?, direccion=?, capacidad_maxima=?, contacto_nombre=?, contacto_telefono=?, contacto_email=?, equipamiento=? where id=?";
+    return res.json({ message: "Lugar actualizado" });
+  } catch (error) {
+    console.error("Error actualizar lugar:", error);
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+};
 
-    connection.query(consulta, [nombre, tipo, direccion, capacidad_maxima, contacto_nombre, contacto_telefono, contacto_email,equipamiento, id], (err, results)=>{
-        if(err) return res.status(500).json({error: err.message});
-        res.json({message: 'Lugar actualizado'});
-    })
-    
+// Borrado lógico de lugar
+const eliminar = async (req, res) => {
+  try {
+    const { id_lugar } = req.params;
+    const [result] = await connection.query(
+      `UPDATE lugares SET estado_lugar = 0 WHERE id_lugar = ?`,
+      [id_lugar]
+    );
 
-}
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Lugar no encontrado" });
+    }
 
-//eliminar lugar baja logica
-const deleteLugar = (req,res)=>{
-    const {id} = req.params;
-    const consulta = "UPDATE lugares set activo=false where id=?";
+    return res.json({ message: "Lugar eliminado (borrado lógico)" });
+  } catch (error) {
+    console.error("Error eliminar lugar:", error);
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+};
 
-    connection.query(consulta,[id],(err,results)=>{
-        if(err) return res.status(500).json({error: err.message});
-        res.json({message: 'Lugar eliminado'});
-    })
-}
-
-module.exports = {getAllLugares, getLugarPorTipo, crearLugar, editLugar, deleteLugar}
+module.exports = {
+  obtenerTodos,
+  obtenerUno,
+  crear,
+  actualizar,
+  eliminar,
+};
