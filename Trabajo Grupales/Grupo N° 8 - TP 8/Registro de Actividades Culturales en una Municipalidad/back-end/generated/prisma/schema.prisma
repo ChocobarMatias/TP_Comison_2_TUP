@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model artistas {
+  id_artista             Int                @id @default(autoincrement())
+  nombre_artista         String             @db.VarChar(100)
+  tipo_arte_artista      String?            @db.VarChar(50)
+  biografia_artista      String?            @db.Text
+  email_artista          String?            @unique(map: "email_artista") @db.VarChar(100)
+  contra_artista         String?            @db.VarChar(255)
+  telefono_artista       String?            @db.VarChar(20)
+  estado_artista         Int?               @default(1) @db.TinyInt
+  fecha_creacion_artista DateTime?          @default(now()) @db.DateTime(0)
+  artistas_eventos       artistas_eventos[]
+}
+
+model artistas_eventos {
+  id_artista_evento             Int       @id @default(autoincrement())
+  id_evento                     Int
+  id_artista                    Int
+  rol_artista_evento            String?   @db.VarChar(50)
+  estado_artista_evento         Int?      @default(1) @db.TinyInt
+  fecha_creacion_artista_evento DateTime? @default(now()) @db.DateTime(0)
+  eventos                       eventos   @relation(fields: [id_evento], references: [id_evento], onDelete: NoAction, onUpdate: NoAction, map: "artistas_eventos_ibfk_1")
+  artistas                      artistas  @relation(fields: [id_artista], references: [id_artista], onDelete: NoAction, onUpdate: NoAction, map: "artistas_eventos_ibfk_2")
+
+  @@index([id_artista], map: "id_artista")
+  @@index([id_evento], map: "id_evento")
+}
+
+model eventos {
+  id_evento                Int                @id @default(autoincrement())
+  nombre_evento            String             @db.VarChar(100)
+  fecha_inicio_evento      DateTime           @db.DateTime(0)
+  fecha_fin_evento         DateTime           @db.DateTime(0)
+  precio_entrada_evento    Decimal?           @db.Decimal(10, 2)
+  entradas_vendidas_evento Int?               @default(0)
+  id_lugar                 Int?
+  estado_evento            Int?               @default(1) @db.TinyInt
+  fecha_creacion_evento    DateTime?          @default(now()) @db.DateTime(0)
+  artistas_eventos         artistas_eventos[]
+  lugares                  lugares?           @relation(fields: [id_lugar], references: [id_lugar], onDelete: NoAction, onUpdate: NoAction, map: "eventos_ibfk_1")
+  ventas_boletos           ventas_boletos[]
+
+  @@index([id_lugar], map: "id_lugar")
+}
+
+model lugares {
+  id_lugar                Int       @id @default(autoincrement())
+  nombre_lugar            String    @db.VarChar(100)
+  tipo_lugar              String?   @db.VarChar(50)
+  direccion_lugar         String?   @db.VarChar(255)
+  contacto_nombre_lugar   String?   @db.VarChar(100)
+  contacto_telefono_lugar String?   @db.VarChar(20)
+  contacto_email_lugar    String?   @db.VarChar(100)
+  equipamiento_lugar      String?   @db.Text
+  capacidad_maxima_lugar  Int?
+  estado_lugar            Int?      @default(1) @db.TinyInt
+  fecha_creacion_lugar    DateTime? @default(now()) @db.DateTime(0)
+  eventos                 eventos[]
+}
+
+model usuarios {
+  id_usuario             Int                  @id @default(autoincrement())
+  nombre_usuario         String               @db.VarChar(100)
+  email_usuario          String               @unique(map: "email_usuario") @db.VarChar(100)
+  password_usuario       String               @db.VarChar(255)
+  rol_usuario            usuarios_rol_usuario
+  estado_usuario         Int?                 @default(1) @db.TinyInt
+  fecha_creacion_usuario DateTime?            @default(now()) @db.DateTime(0)
+  ventas_boletos         ventas_boletos[]
+}
+
+model ventas_boletos {
+  id_venta_boleto             Int       @id @default(autoincrement())
+  id_evento                   Int
+  id_usuario                  Int
+  cantidad_boletos            Int
+  total_venta                 Decimal   @db.Decimal(10, 2)
+  metodo_pago                 String?   @db.VarChar(50)
+  estado_venta_boleto         Int?      @default(1) @db.TinyInt
+  fecha_creacion_venta_boleto DateTime? @default(now()) @db.DateTime(0)
+  eventos                     eventos   @relation(fields: [id_evento], references: [id_evento], onDelete: NoAction, onUpdate: NoAction, map: "ventas_boletos_ibfk_1")
+  usuarios                    usuarios  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "ventas_boletos_ibfk_2")
+
+  @@index([id_evento], map: "id_evento")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+enum usuarios_rol_usuario {
+  empleado
+  asistente
+  admin
+}
