@@ -1,32 +1,33 @@
-const nodemailer = require("nodemailer")
-const dotenv = require ("dotenv")
+const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
 
-dotenv.config()
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: 587 || 465,
-    secure:false,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    }
-})
+  host: process.env.SMTP_HOST,
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
-const enviarReuperacionPassword = async (email,link) =>{
-    const htmlTemplate = `<div>
-    <h2>Recuperacion contrasenia</h2>
-    <p>hemos recibido una solicitud para restablecer tu contrasenia. haz clic en el siguiente enlace</p>
-    <a> href="${link}"</a>
-    </div>`
+const enviarReuperacionPassword = async (email, link) => {
+  const htmlTemplate = `
+    <div>
+      <h2>Recuperación de contraseña</h2>
+      <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+      <a href="${link}">${link}</a>
+    </div>
+  `;
 
-    return transporter.sendMail({
-        from: `Soporte <${process.env.SMTP_USER}>`, 
-        to: email,
-        subject: "Recuperacion contrasenia",
-        html: htmlTemplate
-    })
-}
+  return transporter.sendMail({
+    from: `Soporte <${process.env.SMTP_USER}>`,
+    to: email,
+    subject: "Recuperación de contraseña",
+    html: htmlTemplate,
+  });
+};
 
-module.exports(enviarReuperacionPassword)
-
+module.exports = enviarReuperacionPassword;

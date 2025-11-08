@@ -14,8 +14,10 @@ const authRoutes = require("./routes/auth.routes");
 const eventosRoutes = require("./routes/eventos.routes");
 const lugaresRoutes = require("./routes/ventas_boletos.routes");
 const ventasRoutes = require("./routes/ventas_boletos.routes");
+const authPasswordRoutes = require("./routes/password.routes");
 
 // Usar rutas de artistas bajo /api/artistas
+app.use("/auth", authPasswordRoutes);
 app.use("/artistas", artistasRoutes);
 app.use("/auth", authRoutes);
 app.use("/eventos", eventosRoutes);
