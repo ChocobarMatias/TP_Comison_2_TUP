@@ -27,6 +27,7 @@ Describir brevemente lo encontrado al abrir el proyecto:
 * Falta la modulacion del router.
 
 - Problemas de estructura, naming, uso de git o dependencias
+* No tiene la estructura con la carpeta src, ni sql.
 * Falta app.js para guardar las rutas y levantar la db.
 * Levanta la db en config/bd y no en app.
 * En routes/auth.roues.j no define router como express.Router().

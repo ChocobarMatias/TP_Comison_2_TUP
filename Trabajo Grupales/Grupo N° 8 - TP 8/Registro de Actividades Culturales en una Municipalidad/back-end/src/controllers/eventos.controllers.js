@@ -76,7 +76,7 @@ const venderBoletos = (req, res) => {
     const { eventoId } = req.params;
     const { cantidad } = req.body;
     const consulta = `
-        SELECT capacidad_maxima, entradas_vendidas 
+        SELECT l.capacidad_maxima, e.entradas_vendidas 
         FROM eventos e 
         JOIN lugares l ON e.lugar_id = l.id 
         WHERE e.id = ?
