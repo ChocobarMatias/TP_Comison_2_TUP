@@ -9,13 +9,14 @@ app.use(cors());
 app.use(express.json());
 
 // Importar rutas de artistas
-const artistasRoutes = require('./routes/artistas.routes');
-const authRoutes = require('./routes/auth.routes');
-
+const artistasRoutes = require("./routes/artistas.routes");
+const authRoutes = require("./routes/auth.routes");
+const eventosRoutes = require("./routes/eventos.routes");
 
 // Usar rutas de artistas bajo /api/artistas
-app.use('/artistas', artistasRoutes);
-app.use('/api/auth', authRoutes);
+app.use("/artistas", artistasRoutes);
+app.use("/auth", authRoutes);
+app.use("/eventos", eventosRoutes);
 
 // Probar conexión a la DB
 connection.connect((err) => {
