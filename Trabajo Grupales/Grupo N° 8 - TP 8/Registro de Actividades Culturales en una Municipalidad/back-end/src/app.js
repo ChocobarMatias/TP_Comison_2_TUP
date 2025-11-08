@@ -10,9 +10,12 @@ app.use(express.json());
 
 // Importar rutas de artistas
 const artistasRoutes = require('./routes/artistas.routes');
+const authRoutes = require('./routes/auth.routes');
+
 
 // Usar rutas de artistas bajo /api/artistas
 app.use('/artistas', artistasRoutes);
+app.use('/api/auth', authRoutes);
 
 // Probar conexión a la DB
 connection.connect((err) => {
