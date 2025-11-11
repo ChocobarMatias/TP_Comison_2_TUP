@@ -1,5 +1,5 @@
 const db = require("../config/DB");
-
+//prueba
 // Obtener todos los alumnos
 const getAll = (req, res) => {
   const consulta = "SELECT * FROM alumnos";
