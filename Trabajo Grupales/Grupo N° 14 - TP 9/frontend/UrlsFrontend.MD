@@ -82,15 +82,15 @@ Header obligatorio en todas las rutas protegidas:
 
 - Obtener todos los deportes
 
-  GET - /api/deportes
+  GET - http://localhost:3000/api/deportes
 
 - Obtener deporte por id
 
-  GET - /api/deportes/:id
+  GET - http://localhost:3000/api/deportes/:id
 
 - Crear deporte
 
-  POST - /api/deportes
+  POST - http://localhost:3000/api/deportes
 
   Body (JSON):
 
@@ -105,7 +105,7 @@ Header obligatorio en todas las rutas protegidas:
 
 - Eliminar deporte
 
-  DELETE - /api/deportes/:id
+  DELETE - http://localhost:3000/api/deportes/:id
 
 ### Asignaciones (Socio <-> Deporte)
 
