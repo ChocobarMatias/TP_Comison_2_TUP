@@ -50,11 +50,11 @@ Header obligatorio en todas las rutas protegidas:
 
 - Obtener todos los socios
 
-  GET - /api/socios
+  GET - http://localhost:3000/api/socios
 
 - Obtener socio por id
 
-  GET - /api/socios/:id
+  GET - http://localhost:3000/api/socios/:id
 
 - Crear socio
 
