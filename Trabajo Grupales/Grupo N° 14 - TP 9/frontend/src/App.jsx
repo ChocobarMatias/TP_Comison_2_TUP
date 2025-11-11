@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import ProtectedRoute from "./proteccionRutas/ProtectedRoutes.jsx";
+import Asignaciones from "./pages/Asignaciones.jsx";
 import Deportes from "./pages/Deportes.jsx";
 import Socios from "./pages/Socios.jsx";
 
@@ -22,6 +23,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route 
+            path="/asignaciones"
+            element={
+              <ProtectedRoute>
+                <Asignaciones />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
           <Route
             path="/deportes"
             element={
