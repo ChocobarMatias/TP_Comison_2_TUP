@@ -1,13 +1,10 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import "../styles/HomePage.css";
 
 const HomePage = () => {
-  const navigate = useNavigate();
 
-  const handleNavigate = () => {
-    navigate("/contacto");
-  };
+
 
   return (
     <div className="homepage-container">
@@ -33,9 +30,6 @@ const HomePage = () => {
             fútbol, básquet, natación y muchas más disciplinas. Nuestra misión
             es formar deportistas y personas íntegras.
           </p>
-          <button className="contact-button" onClick={handleNavigate}>
-            Contáctanos
-          </button>
         </section>
       </main>
     </div>
