@@ -14,8 +14,8 @@ const HomePage = () => {
       <header className="homepage-header">
         <h1>Club Deportivo Los Halcones</h1>
         <p>
-          Bienvenido a nuestra comunidad deportiva. Promovemos el trabajo en equipo,
-          el esfuerzo y la pasión por el deporte.
+          Bienvenido a nuestra comunidad deportiva. Promovemos el trabajo en
+          equipo, el esfuerzo y la pasión por el deporte.
         </p>
       </header>
 
@@ -29,9 +29,9 @@ const HomePage = () => {
         <section className="intro-section">
           <h2>Un lugar para crecer juntos</h2>
           <p>
-            En el Club Deportivo Los Halcones encontrarás entrenamientos de fútbol, 
-            básquet, natación y muchas más disciplinas. 
-            Nuestra misión es formar deportistas y personas íntegras.
+            En el Club Deportivo Los Halcones encontrarás entrenamientos de
+            fútbol, básquet, natación y muchas más disciplinas. Nuestra misión
+            es formar deportistas y personas íntegras.
           </p>
           <button className="contact-button" onClick={handleNavigate}>
             Contáctanos

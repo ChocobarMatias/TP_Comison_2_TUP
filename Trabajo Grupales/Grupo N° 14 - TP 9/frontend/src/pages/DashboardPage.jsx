@@ -83,7 +83,8 @@ function DashboardPage() {
             <code>{token}</code>
           </div>
           <p className="token-hint">
-            Este token se incluye automáticamente en todas las peticiones a la API.
+            Este token se incluye automáticamente en todas las peticiones a la
+            API.
           </p>
         </div>
       </div>
