@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/HomePage.css";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -19,14 +20,8 @@ const HomePage = () => {
       </header>
 
       <nav className="homepage-nav">
-        <Link to="/actividades" className="nav-link">
-          Actividades
-        </Link>
-        <Link to="/equipo" className="nav-link">
-          Nuestro Equipo
-        </Link>
-        <Link to="/noticias" className="nav-link">
-          Noticias
+        <Link to="/login" className="nav-link login-link">
+          🔐 Iniciar Sesión
         </Link>
       </nav>
 

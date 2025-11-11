@@ -101,7 +101,7 @@ Header obligatorio en todas las rutas protegidas:
 
 - Actualizar deporte
 
-  PUT - /api/deportes/:id
+  PUT - http://localhost:3000/api/deportes/:id
 
 - Eliminar deporte
 

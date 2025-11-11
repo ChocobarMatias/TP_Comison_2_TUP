@@ -48,6 +48,107 @@
 
 .welcome-card,
 .token-card,
+.info-card,
+.modules-section {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modules-section {
+  grid-column: 1 / -1;
+}
+
+.modules-section h2 {
+  margin: 0 0 25px 0;
+  color: #333;
+  font-size: 24px;
+  text-align: center;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.module-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  gap: 10px;
+}
+
+.module-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.module-button.socios {
+  border-color: #667eea;
+}
+
+.module-button.socios:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+.module-button.deportes {
+  border-color: #f093fb;
+}
+
+.module-button.deportes:hover {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border-color: #f093fb;
+}
+
+.module-button.pagos {
+  border-color: #4facfe;
+}
+
+.module-button.pagos:hover {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  border-color: #4facfe;
+}
+
+.module-button.asignaciones {
+  border-color: #43e97b;
+}
+
+.module-button.asignaciones:hover {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+  border-color: #43e97b;
+}
+
+.module-icon {
+  font-size: 48px;
+}
+
+.module-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.module-desc {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.welcome-card,
+.token-card,
 .info-card {
   background: white;
   border-radius: 12px;
