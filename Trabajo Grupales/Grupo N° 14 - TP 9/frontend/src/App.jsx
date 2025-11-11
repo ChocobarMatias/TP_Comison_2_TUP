@@ -22,6 +22,22 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/deportes"
+            element={
+              <ProtectedRoute>
+                <Deportes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/socios"
+            element={
+              <ProtectedRoute>
+                <Socios />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
