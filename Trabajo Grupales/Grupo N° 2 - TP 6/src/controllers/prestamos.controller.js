@@ -1,121 +1,106 @@
-const db = require("../config/DB");
 
-// Obtener todos los préstamos
-const getAll = (req, res) => {
-  const consulta = "SELECT * FROM prestamos";
+const prisma = require("../config/prisma");
 
-  db.query(consulta, (err, rows) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-
-    return res.json(rows);
-  });
+//  Obtener todos los préstamos
+const getAll = async (req, res) => {
+  try {
+    const prestamos = await prisma.prestamos.findMany({
+      orderBy: { prestamo_id: 'asc' },
+     
+    });
+    return res.json(prestamos);
+  } catch (err) {
+    return res.status(500).json({ message: "Error al obtener préstamos", error: String(err) });
+  }
 };
 
 // Obtener un préstamo por ID
-const getById = (req, res) => {
-  const { id } = req.params;
+const getById = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ error: "ID inválido" });
 
-  const consulta = "SELECT * FROM prestamos WHERE prestamo_id = ?";
+    const prestamo = await prisma.prestamos.findUnique({
+      where: { prestamo_id: id },
+      
+    });
 
-  db.query(consulta, [id], (err, rows) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-
-    if (!rows.length) {
+    if (!prestamo) {
       return res.status(404).json({ error: "Prestamo no encontrado" });
     }
 
-    return res.json(rows[0]);
-  });
+    return res.json(prestamo);
+  } catch (err) {
+    return res.status(500).json({ message: "Error al obtener préstamo", error: String(err) });
+  }
 };
 
-// Crear un nuevo préstamo
-const create = (req, res) => {
-  const { alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado } =
-    req.body;
+//  Crear un nuevo préstamo
+const create = async (req, res) => {
+  try {
+    const { alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado } = req.body;
 
-  const consulta =
-    "INSERT INTO prestamos (alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado) VALUES (?, ?, ?, ?, ?)";
+    await prisma.prestamos.create({
+      data: {
+        alumno_id,
+        libro_id,
+        fecha_prestamo,               
+        fecha_devolucion: fecha_devolucion || null,
+        estado: estado || "prestado",
+      },
+    });
 
-  db.query(
-    consulta,
-    [
-      alumno_id,
-      libro_id,
-      fecha_prestamo,
-      fecha_devolucion || null,
-      estado || "prestado",
-    ],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({message: err});
-      }
-
-      return res.status(201).json({ message: "Prestamo creado con exito" });
-    }
-  );
+    return res.status(201).json({ message: "Prestamo creado con exito" });
+  } catch (err) {
+    return res.status(500).json({ message: "Error al crear préstamo", error: String(err) });
+  }
 };
 
-// Actualizar un préstamo
-const update = (req, res) => {
-  const { id } = req.params;
+//  Actualizar un préstamo
+const update = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ error: "ID inválido" });
 
-  const { alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado } =
-    req.body;
+    const { alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado } = req.body;
 
-  const consulta =
-    "UPDATE prestamos SET alumno_id=?, libro_id=?, fecha_prestamo=?, fecha_devolucion=?, estado=? WHERE prestamo_id=?";
+  
+    const existe = await prisma.prestamos.findUnique({ where: { prestamo_id: id } });
+    if (!existe) return res.status(404).json({ error: "Prestamo no encontrado" });
 
-  db.query(
-    consulta,
-    [
-      alumno_id,
-      libro_id,
-      fecha_prestamo,
-      fecha_devolucion || null,
-      estado || "prestado",
-      id,
-    ],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json(err);
-      }
+    await prisma.prestamos.update({
+      where: { prestamo_id: id },
+      data: {
+        alumno_id,
+        libro_id,
+        fecha_prestamo,
+        fecha_devolucion: fecha_devolucion || null,
+        estado: estado || "prestado",
+      },
+    });
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Prestamo no encontrado" });
-      }
-
-      return res.json({ message: "Prestamo actualizado con exito" });
-    }
-  );
+    return res.json({ message: "Prestamo actualizado con exito" });
+  } catch (err) {
+    return res.status(500).json({ message: "Error al actualizar préstamo", error: String(err) });
+  }
 };
 
-// Eliminar un préstamo
-const remove = (req, res) => {
-  const { id } = req.params;
+//  Eliminar un préstamo
+const remove = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ error: "ID inválido" });
 
-  const consulta = "DELETE FROM prestamos WHERE prestamo_id=?";
+ 
+    const existe = await prisma.prestamos.findUnique({ where: { prestamo_id: id } });
+    if (!existe) return res.status(404).json({ error: "Prestamo no encontrado" });
 
-  db.query(consulta, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Prestamo no encontrado" });
-    }
+    await prisma.prestamos.delete({ where: { prestamo_id: id } });
 
     return res.json({ message: "Prestamo eliminado con exito" });
-  });
+  } catch (err) {
+    return res.status(500).json({ message: "Error al eliminar préstamo", error: String(err) });
+  }
 };
 
-module.exports = {
-  getAll,
-  getById,
-  create,
-  update,
-  remove
-}
+module.exports = { getAll, getById, create, update, remove };
