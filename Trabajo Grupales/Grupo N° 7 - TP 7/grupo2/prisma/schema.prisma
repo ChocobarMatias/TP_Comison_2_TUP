@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model catmedicos {
+  idCatMedico Int    @id @default(autoincrement())
+  NombreCat   String @db.VarChar(500)
+  IsActive    Int?   @default(1) @db.TinyInt
+}
+
+model medicos {
+  idMedico        Int      @id @default(autoincrement())
+  NombreMedico    String   @db.VarChar(50)
+  ApellidoMedico  String   @db.VarChar(50)
+  FechaNacMedico  DateTime @db.Date
+  TelefonoMedico  String   @db.VarChar(20)
+  DireccionMedico String   @db.VarChar(50)
+  LocalidadMedico String   @db.VarChar(50)
+  SalarioMedico   Decimal  @db.Decimal(10, 2)
+  IsActive        Int?     @default(1) @db.TinyInt
+  idUsuario       Int?
+  idCatMedico     Int
+
+  @@index([idCatMedico], map: "idCatMedico")
+  @@index([idUsuario], map: "idUsuario")
+}
+
+model observaciones {
+  idObservacion Int       @id @default(autoincrement())
+  idTurno       Int
+  Comentario    String    @db.Text
+  FechaRegistro DateTime? @default(now()) @db.DateTime(0)
+
+  @@index([idTurno], map: "idTurno")
+}
+
+model pacientes {
+  idPaciente        Int                    @id @default(autoincrement())
+  NombrePaciente    String                 @db.VarChar(50)
+  ApellidoPaciente  String                 @db.VarChar(50)
+  FechaNacPaciente  DateTime               @db.Date
+  TelefonoPaciente  String                 @db.VarChar(20)
+  DireccionPaciente String                 @db.VarChar(50)
+  SexoPaciente      pacientes_SexoPaciente
+  IsActive          Int?                   @default(1) @db.TinyInt
+  idUsuario         Int?
+
+  @@index([idUsuario], map: "idUsuario")
+}
+
+model turnos {
+  idTurno               Int                @id @default(autoincrement())
+  FechaRequeridaTurno   DateTime           @db.Date
+  HorarioRequeridoTurno DateTime           @db.Time(0)
+  EstadoTurno           turnos_EstadoTurno
+  idPaciente            Int
+  idMedico              Int
+
+  @@unique([idMedico, FechaRequeridaTurno, HorarioRequeridoTurno], map: "unique_turno_medico_fecha_hora")
+  @@index([idPaciente], map: "idPaciente")
+}
+
+model usuarios {
+  idUsuario       Int                 @id @default(autoincrement())
+  MailUsuario     String              @unique(map: "MailUsuario") @db.VarChar(50)
+  PasswordUsuario String              @db.VarChar(250)
+  RolUsuario      usuarios_RolUsuario
+  IsActive        Int?                @default(1) @db.TinyInt
+}
+
+enum usuarios_RolUsuario {
+  Admin
+  Medico
+  Paciente
+}
+
+enum turnos_EstadoTurno {
+  Pendiente
+  Cancelado
+  Finalizado
+}
+
+enum pacientes_SexoPaciente {
+  Femenino
+  Masculino
+  Otro
+}

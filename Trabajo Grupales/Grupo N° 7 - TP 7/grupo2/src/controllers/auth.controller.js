@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
-import pool from '../config/db.js';
+const prisma = require('../config/prisma.js')
 import { sendEmail } from '../services/email.service.js';
 
 dotenv.config();
