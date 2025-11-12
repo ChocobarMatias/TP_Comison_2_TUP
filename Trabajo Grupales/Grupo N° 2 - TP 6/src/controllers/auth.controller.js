@@ -1,115 +1,124 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const db = require("../config/prisma");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
-// ==============================
-// Obtener todos los alumnos
-// ==============================
-const getAll = async (req, res) => {
+const { enviarEmailRecuperacion } = require("../services/email.service");
+const { hashPassword, comparePassword } = require("../utils/hash.utils");
+
+//traigo la clave secreta para el token y la expiracion
+const SECRET_KEY = process.env.JWT_SECRET;
+
+//Registrarse
+const register = async (req, res) => {
   try {
-    const alumnos = await prisma.alumnos.findMany();
-    return res.json(alumnos);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Error al obtener los alumnos", error: err });
+    const { usuario, contraseña, email } = req.body;
+
+    const hash = await hashPassword(contraseña);
+
+    await db.$executeRaw`INSERT INTO usuarios (nombre_usuario,contraseña,email) VALUES (${usuario}, ${hash}, ${email})`;
+
+    return res.status(201).json({ message: "Usuario registrado con exito" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error al registrarse", error });
   }
 };
 
-// ==============================
-// Obtener un alumno por ID
-// ==============================
-const getById = async (req, res) => {
-  const { id } = req.params;
+//Iniciar sesion
+const login = async (req, res) => {
   try {
-    const alumno = await prisma.alumnos.findUnique({
-      where: { alumno_id: Number(id) },
-    });
+    const { usuario, contraseña } = req.body;
 
-    if (!alumno) {
-      return res.status(404).json({ error: "Alumno no encontrado" });
+    const results = await db.$queryRaw`SELECT usuario_id, contraseña FROM usuarios WHERE nombre_usuario = ${usuario}`;
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    return res.json(alumno);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Error al obtener el alumno", error: err });
-  }
-};
+    const id_usuario = results[0].usuario_id;
+    const hash = results[0].contraseña;
 
-// ==============================
-// Crear un nuevo alumno
-// ==============================
-const create = async (req, res) => {
-  const { nombre, curso, dni } = req.body;
-  try {
-    await prisma.alumnos.create({
-      data: {
-        nombre,
-        curso: curso || null,
-        dni,
-      },
-    });
-    return res.status(201).json({ message: "Alumno creado con éxito" });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Error al crear el alumno", error: err });
-  }
-};
+    const esValida = await comparePassword(String(contraseña), String(hash));
 
-// ==============================
-// Actualizar un alumno
-// ==============================
-const update = async (req, res) => {
-  const { id } = req.params;
-  const { nombre, curso, dni } = req.body;
+    if (!esValida) {
+      return res.status(401).json({ message: "Contraseña incorrecta " });
+    } else {
+      //creacion del token para iniciar la sesion
 
-  try {
-    // Verificar si el alumno existe
-    const alumnoExistente = await prisma.alumnos.findUnique({
-      where: { alumno_id: Number(id) },
-    });
+      const token = jwt.sign(
+        { id_usuario: id_usuario, nombre_usuario: usuario },
+        SECRET_KEY,
+        { expiresIn: "1h" }
+      );
 
-    if (!alumnoExistente) {
-      return res.status(404).json({ error: "Alumno no encontrado" });
+      return res.status(200).json({ message: "Usuario logueado con exito", token: token });
     }
-
-    await prisma.alumnos.update({
-      where: { alumno_id: Number(id) },
-      data: { nombre, curso: curso || null, dni },
-    });
-
-    return res.json({ message: "Alumno actualizado con éxito" });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Error al actualizar el alumno", error: err });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error al buscar el usuario", error });
   }
 };
 
-// ==============================
-// Eliminar un alumno
-// ==============================
-const remove = async (req, res) => {
-  const { id } = req.params;
+// Controlador para iniciar el proceso de recuperación de contraseña
+const recuperarPassword = async (req, res) => {
+  const { mail } = req.body; //recuperamos el mail del body
+
+  const consulta = "SELECT * FROM usuarios WHERE email = ?"; // consulta para verificar si el usuario existe
 
   try {
-    await prisma.alumnos.delete({
-      where: { alumno_id: Number(id) },
-    });
-
-    return res.json({ message: "Alumno eliminado con éxito" });
-  } catch (err) {
-    console.error(err);
-    // Si el alumno no existe, Prisma lanza un error de tipo "P2025"
-    if (err.code === "P2025") {
-      return res.status(404).json({ error: "Alumno no encontrado" });
+    const result = await db.$queryRaw`SELECT * FROM usuarios WHERE email = ${mail}`;
+    if (!result || result.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
-    return res.status(500).json({ message: "Error al eliminar el alumno", error: err });
+    const usuario = result[0];
+
+    const token = jwt.sign(
+      { id: usuario.usuario_id, email: usuario.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+    // generamos un token JWT con el id y email del usuario, con expiración de 15 minutos
+
+    const link = `http://localhost:3000/auth/cambio_password/${token}`; // link de recuperación de contraseña
+    await enviarEmailRecuperacion(mail, link); // enviamos el email de recuperación
+
+    res.status(200).json({ message: "Email de recuperación enviado" }); // respondemos que el email fue enviado
+  } catch (err) {
+    return res.status(500).json({ message: "Error en el servidor", err });
+  }
+};
+
+const cambioPasswordRecuperado = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
+
+    // Hashear la nueva contraseña
+    const hashedPassword = await bcrypt.hash(String(newPassword), 10);
+
+    const consulta = "UPDATE usuarios SET contraseña = ? WHERE usuario_id = ?";
+
+    try {
+      await db.$executeRaw`UPDATE usuarios SET contraseña = ${hashedPassword} WHERE usuario_id = ${decoded.id}`;
+      return res.status(200).json({ message: "Contraseña actualizada correctamente" });
+    } catch (err) {
+      return res.status(500).json({ message: "Error en el servidor", err });
+    }
+  } catch (error) {
+    res.status(400).json({
+      message: "Token inválido o expirado",
+      name: error?.name,
+      message: error?.message,
+    });
   }
 };
 
 module.exports = {
-  getAll,
-  getById,
-  create,
-  update,
-  remove,
+  register,
+  login,
+  recuperarPassword,
+  cambioPasswordRecuperado,
 };
