@@ -16,12 +16,16 @@ Describir brevemente lo encontrado al abrir el proyecto:
 
 - Errores detectados (bugs, warnings, import fallidos, rutas rotas, etc.)
 
+Servidor corriendo normal
 
 
 - Faltantes respecto a Semana 1 (carpetas vacías, componentes incompletos, etc.)
+
+carpeta models sin archivos funcionando
+
 - Problemas de estructura, naming, uso de git o dependencias
 
-
+Carpetas de routes con nombres incorrectos, por ejemplo : alumnos.js , deberia ser alumnos.routes.js para mayor claridad 
 
 > Este apartado debe completarse **ANTES** de modificar el código.
 
@@ -30,15 +34,17 @@ Describir brevemente lo encontrado al abrir el proyecto:
 ## 2) SOLUCIONES IMPLEMENTADAS + NUEVO AGREGADO
 
 ### ✅ Soluciones aplicadas a problemas detectados
-- …
+- corregimos rutas y realizamos restructuracion. Tambien corregimos imports
 
 ### ✅ Nuevos requerimientos de Semana 2 agregados
-- …
-
+- 
+ nodemailer y hasheo ✅
 ---
 
 ## Observaciones finales (opcional)
-- Comentarios sobre el flujo de trabajo, dificultades o acuerdos del equipo.
 
+Tuvimos dificultades con la implementacion de prisma, pero despues de varios intentos pudimos configurar y el servidor quedo funcionando 
+
+-- se adjuntan capturas de los comandos.
 ![npx prisma db pull](image.png)
 ![npx prisma generate](image-1.png)
