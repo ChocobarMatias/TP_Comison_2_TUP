@@ -1,10 +1,12 @@
 # 🧾 Auditoría — Semana 3  
-### Grupo Nº: ___  
-### Tema asignado: ___  
+### Grupo Nº: 2 
+### Tema asignado: Sistema de gestion "Biblioteca Escolar" 
 ### Integrantes (Nombre completo + Legajo):
-- …
-- …
-- …
+- Bazan Matias Tomas 61152
+- Cardozo Martin Daniel 61658
+- Gimenez Ruesga Marcos David 61698
+- Herrera Karen Luciana 61151
+- Navarro Lautaro Cesar 61649
 
 ---
 
@@ -13,8 +15,13 @@
 Describir brevemente lo encontrado al abrir el proyecto:
 
 - Errores detectados (bugs, warnings, import fallidos, rutas rotas, etc.)
+
+
+
 - Faltantes respecto a Semana 1 (carpetas vacías, componentes incompletos, etc.)
 - Problemas de estructura, naming, uso de git o dependencias
+
+
 
 > Este apartado debe completarse **ANTES** de modificar el código.
 
