@@ -1,4 +1,4 @@
-const mysql = require("mysql2");
+/*const mysql = require("mysql2");
 
 // Creo la conexion a la db
 //// Se crea un pool de conexiones para reutilizar conexiones activas a la base de datos.
@@ -14,3 +14,4 @@ const pool = mysql.createPool({
 });
 
 module.exports = pool;
+*/

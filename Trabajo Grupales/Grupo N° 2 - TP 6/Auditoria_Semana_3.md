@@ -32,3 +32,6 @@ Describir brevemente lo encontrado al abrir el proyecto:
 
 ## Observaciones finales (opcional)
 - Comentarios sobre el flujo de trabajo, dificultades o acuerdos del equipo.
+
+![npx prisma db pull](image.png)
+![npx prisma generate](image-1.png)

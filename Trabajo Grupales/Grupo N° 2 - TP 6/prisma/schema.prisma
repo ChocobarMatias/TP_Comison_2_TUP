@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model alumnos {
+  alumno_id Int         @id @default(autoincrement())
+  nombre    String      @db.VarChar(255)
+  curso     String?     @db.VarChar(50)
+  dni       String      @unique(map: "dni") @db.VarChar(20)
+  prestamos prestamos[]
+}
+
+model libros {
+  libro_id               Int         @id @default(autoincrement())
+  titulo                 String      @db.VarChar(255)
+  autor                  String      @db.VarChar(255)
+  categoria              String?     @db.VarChar(100)
+  ejemplares_disponibles Int         @default(0)
+  prestamos              prestamos[]
+}
+
+model prestamos {
+  prestamo_id      Int               @id @default(autoincrement())
+  alumno_id        Int
+  libro_id         Int
+  fecha_prestamo   DateTime          @db.Date
+  fecha_devolucion DateTime?         @db.Date
+  estado           prestamos_estado? @default(prestado)
+  alumnos          alumnos           @relation(fields: [alumno_id], references: [alumno_id], onDelete: Cascade, onUpdate: NoAction, map: "prestamos_ibfk_1")
+  libros           libros            @relation(fields: [libro_id], references: [libro_id], onDelete: Cascade, onUpdate: NoAction, map: "prestamos_ibfk_2")
+
+  @@index([alumno_id], map: "alumno_id")
+  @@index([libro_id], map: "libro_id")
+}
+
+model usuarios {
+  usuario_id             Int      @id @default(autoincrement())
+  nombre_usuario         String   @db.VarChar(50)
+  contrase_a             String   @map("contraseña") @db.VarChar(255)
+  email                  String   @db.VarChar(255)
+  estado_usuario         Int      @default(1) @db.TinyInt
+  fecha_creacion_usuario DateTime @default(now()) @db.DateTime(0)
+}
+
+enum prestamos_estado {
+  prestado
+  devuelto
+}
