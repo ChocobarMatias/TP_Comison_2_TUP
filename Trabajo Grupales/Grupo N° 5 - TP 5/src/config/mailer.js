@@ -9,18 +9,21 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-function enviarCorreo(email, nombre, link, callback) {
-  const mailOptions = {
-    from: `"Gimnasio Grupo 7" <${process.env.MAIL_USER}>`,
-    to: email,
-    subject: 'Recuperación de contraseña',
-    text: `Hola ${nombre}, haz click en este enlace para restablecer tu contraseña: ${link}`
-  };
+async function enviarCorreo(email, nombre, link) {
+  try {
 
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err) return callback(err);
-    callback(null, info);
-  });
+    const mailOptions = {
+      from: `"Gimnasio" <${process.env.MAIL_USER}>`,
+      to: email,
+      subject: 'Recuperación de contraseña',
+      text: `Hola ${nombre}, haz click en este enlace para restablecer tu contraseña: ${link}`
+    };
+    await transporter.sendMail(mailOptions);
+    return {status: 200, message: 'Correo enviado exitosamente' };
+  } catch (error) {
+    console.error('Error al enviar el correo:', error);
+    return {status: 500, message: 'Error al enviar el correo' };
+  }
 }
 
 module.exports = { enviarCorreo };
