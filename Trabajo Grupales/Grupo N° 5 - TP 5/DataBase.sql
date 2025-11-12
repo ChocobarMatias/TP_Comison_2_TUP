@@ -13,7 +13,7 @@ CREATE TABLE reservas (
 CREATE TABLE actividades (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    cupo_maximo INT NOT NULL CHECK (cupo_maximo > 0)
+    cupo_maximo INT NOT NULL
 );
 CREATE TABLE socios (
     idSocio INT AUTO_INCREMENT PRIMARY KEY,

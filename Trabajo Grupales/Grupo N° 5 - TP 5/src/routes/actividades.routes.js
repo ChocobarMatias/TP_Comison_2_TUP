@@ -1,8 +1,8 @@
 const Router = require("express")
 
-const { verificarToken } = require("../middleware/auth");
+const { verificarToken } = require("../../middleware/auth");
 const router = Router();
-const {getActividades, CreateAtividades, updateActividades, deleteActividades} = require("../controllers/actividades.controler")
+const {getActividades, CreateAtividades, updateActividades, deleteActividades} = require("../controllers/actividades.controller")
 
 
 

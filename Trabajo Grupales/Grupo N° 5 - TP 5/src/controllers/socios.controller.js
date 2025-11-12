@@ -1,52 +1,58 @@
 const { conection } = require("../config/DB");
+const { prisma } = require('../config/prisma');
 const bcrypt = require("bcryptjs"); 
 
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { enviarCorreo } = require('../config/mailer');
 
-const getSocios = (req, res)=>{
-    const consulta = "select * from socios"
-
-    conection.query(consulta,(err,result)=>{
-        if(err){
-            console.log("Error al tratar de traer los socios", err)
-            return res.status(500).json({error:"Error al traer los socios"});
-        }
-        res.status(200).json({message:"Socios traidos con exito", result})
-    })
+const getSocios = async (req, res)=>{
+    console.log("testing");
+    try {
+        const socios = await prisma.socios.findMany({
+            where: { activo: true }
+        })
+        res.status(200).json({ message: "Socios traidos con exito", socios });
+    } catch (error) {
+        console.log("Error al traer los socios", error);
+        res.status(500).json({ error: "Error al traer los socios" });
+    }
 }
 
-const getSocio = (req, res) =>{
+const getSocio = async (req, res) =>{
     const id = req.params.id
-    const consulta = "select * from socios where idSocio = ?"
-
-    conection.query(consulta,[id],(error,result)=>{
-        if (error) {
-      console.log("Error al traer el socio:", error);
-      return res.status(500).json({ error: "Error al traer al el socio" });
+    try {
+        const socio = await prisma.socios.findUnique({
+            where: { idSocio: parseInt(id) }
+        })
+        res.status(200).json({ message: "Socio traido con exito", socio });
+    } 
+    catch (error) {
+        console.log("Error al traer el socio", error);
+        res.status(500).json({ error: "Error al traer el socio" });
     }
-    res.status(200).json({ message: "Socio traido con exito", result });
-    })
 }
 
 
 const createSocio = async (req, res) => {
+
+    console.log("TEsteando");
     const { nombreSocio, apellidoSocio, emailSocio, contraSocio } = req.body;
 
     try {
         let salt = await bcrypt.genSalt(10);
         let contraEncrip = await bcrypt.hash(contraSocio, salt);
 
-        const consulta = "INSERT INTO socios (nombreSocio, apellidoSocio, emailSocio, contraSocio) VALUES (?,?,?,?)";
-        
-        conection.query(consulta, [nombreSocio, apellidoSocio, emailSocio, contraEncrip], (err, result) => {
-            if (err) {
-                console.log("Error al crear Socio", err);
-                return res.status(500).json({ error: "Error al crear Socio" });
+        await prisma.socios.create({
+            data: {
+                nombreSocio: nombreSocio,
+                apellidoSocio: apellidoSocio,
+                emailSocio: emailSocio,
+                contraSocio: contraEncrip
             }
-            res.status(201).json({ message: "Socio creado con exito" });
         });
+        res.status(201).json({ message: "Socio creado con exito" });
+
     } catch (error) {
         console.log("Error interno al crear socio", error);
         res.status(500).json({ error: "Error interno del servidor" });
@@ -58,45 +64,60 @@ const updateSocio = async (req,res) =>{
     const id = req.params.id
     const {nombreSocio, apellidoSocio, emailSocio, contraSocio} = req.body;
     
-    let salt = await brcyptjs.genSalt(10);
-    let contraEncrip = await brcyptjs.hash(contraSocio, salt);
+    let salt = await bcrypt.genSalt(10);
+    let contraEncrip = await bcrypt.hash(contraSocio, salt);
 
-    const consulta = "update socios set nombreSocio=?, apellidoSocio=?, emailSocio=?, contraSocio=? where idSocio =?"
-
-    conection.query(consulta, [nombreSocio, apellidoSocio, emailSocio, contraEncrip, id], (err,result)=>{
-        if(err){
-            console.log("Error al actualizar el socio",err)
-           return res.status(500).json({error:"Error al actulizar el socio"})
-        }
+    try {
+        await prisma.socios.update({
+            where: { idSocio: parseInt(id) },
+            data: {
+                nombreSocio: nombreSocio,
+                apellidoSocio: apellidoSocio,
+                emailSocio: emailSocio,
+                contraSocio: contraEncrip
+            }
+        })
         res.status(201).json({message:"Socio actualizado con exito"})
-    })
+
+    } catch (error) {
+        console.log("Error al actualizar el socio", error)
+        res.status(500).json({error:"Error al actulizar el socio"})
+    }
 }
 
-const darBajaSocio = (req, res)=>{
+const darBajaSocio = async (req, res)=>{
     const id = req.params.id;
-    const consulta = "update socios set activo = false where idSocio=?";
 
-    conection.query(consulta,[id], (err,result)=>{
-        if(err){
-            console.log("Error al dar de baja al socio", err)
-            return res.status(500).json({error:"Error al dar de baja al socio"})
-        }
-        res.status(201).json({message:"Socio dado de baja con exito"})
-    })
+    try {
+        await prisma.socios.update({
+            where: { idSocio: parseInt(id) },
+            data: {
+                activo: false
+            }
+        })
+        res.status(200).json({message:"Socio dado de baja con exito"})
+    } catch (error) {
+        console.log("Error al dar de baja al socio", error)
+        res.status(500).json({error:"Error al dar de baja al socio"})
+    }
 }
 
 
-const reactivarSocio = (req, res)=>{
+const reactivarSocio = async (req, res)=>{
     const id = req.params.id;
     const consulta = "update socios set activo = true where idSocio=?";
 
-    conection.query(consulta,[id], (err,result)=>{
-        if(err){
-            console.log("Error al reactivar al socio", err)
-            return res.status(500).json({error:"Error al reactivar al socio"})
-        }
-        res.status(201).json({message:"Socio reactivado con exito"})
-    })
+    try {
+        await prisma.socios.update({
+            where: {idSocio: parseInt(id)},
+            data: {activo: true}
+        })
+        res.status(200).json({message:"Socio reactivado con exito"})
+    } catch (error) {
+        console.log("Error al reactivar al socio", error)
+        res.status(500).json({error:"Error al reactivar al socio"})
+    }
+    c
 }
 
 

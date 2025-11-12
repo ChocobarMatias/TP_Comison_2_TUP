@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { conection } = require('./config/DB');
+const { conection } = require('./src/config/DB.js');
 
 const app = express();
 
@@ -12,12 +12,12 @@ app.get('/', (req, res) => res.send('Bienvenido a GymCode (v2)'));
 
 // Mount existing routes from project root if available
 try {
-  const routesSocios = require('../routes/socios.routes');
-  const routesActivades = require('../routes/actividades.routes');
-  const routesReservas = require('../routes/routes.reservas');
-  app.use('/', routesSocios);
-  app.use('/', routesActivades);
-  app.use('/', routesReservas);
+  const routesSocios = require('./src/routes/socios.routes.js');
+  const routesActivades = require('./src/routes/actividades.routes.js');
+  const routesReservas = require('./src/routes/reservas.routes.js');
+  app.use('/api/socios', routesSocios);
+  app.use('/api/actividades', routesActivades);
+  app.use('/api/reservas', routesReservas);
 } catch (err) {
   // If routes can't be loaded yet, skip — teammates will integrate
   console.warn('Some routes were not mounted:', err.message);
