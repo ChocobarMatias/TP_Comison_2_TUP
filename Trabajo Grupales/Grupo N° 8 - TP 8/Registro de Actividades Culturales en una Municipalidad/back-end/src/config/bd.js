@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+/* const mysql = require('mysql2');
 require('dotenv').config();
 
 // Conexión simple con soporte para async/await
@@ -9,4 +9,8 @@ const connection = mysql.createConnection({
   database: process.env.DB_NAME,
 }).promise();
 
-module.exports = connection;
+module.exports = connection; */
+
+
+
+//comento db, porque voy a usar prisma.

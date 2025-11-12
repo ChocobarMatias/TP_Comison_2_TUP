@@ -1,7 +1,7 @@
-const connection = require("../config/db");
+const prisma = require("../config/prisma"); //utilizo prisma
 const jwt = require("jsonwebtoken");
-const { hashPass } = require("../utils/bcrypt");
-const enviarReuperacionPassword = require("../services/emailService"); // tu email service
+const { hashPass } = require("../utils/hash.utils");
+const enviarReuperacionPassword = require("../services/email");
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key_tp";
@@ -12,25 +12,31 @@ const recover = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const [rows] = await connection.query(
-      "SELECT id_usuario FROM usuarios WHERE email_usuario = ? AND estado_usuario = 1 LIMIT 1",
-      [email]
-    );
+    // Buscar usuario activo
+    const usuario = await prisma.usuarios.findFirst({
+      where: {
+        email_usuario: email,
+        estado_usuario: 1,
+      },
+      select: { id_usuario: true },
+    });
 
-    if (rows.length === 0) {
+    // No revelar si el correo no existe (por seguridad)
+    if (!usuario) {
       return res.json({
         message:
           "Si el correo existe, se ha enviado un enlace de recuperación.",
       });
     }
 
-    const id_usuario = rows[0].id_usuario;
-    const token = jwt.sign({ id_usuario }, JWT_SECRET, {
+    // Generar token temporal JWT
+    const token = jwt.sign({ id_usuario: usuario.id_usuario }, JWT_SECRET, {
       expiresIn: TOKEN_EXPIRATION,
     });
 
     const link = `http://localhost:3000/api/auth/reset/${token}`;
 
+    // Enviar correo con el link
     await enviarReuperacionPassword(email, link);
 
     return res.json({
@@ -59,12 +65,13 @@ const reset = async (req, res) => {
     const id_usuario = payload.id_usuario;
     const hashedPass = await hashPass(password);
 
-    const [result] = await connection.query(
-      "UPDATE usuarios SET password_usuario = ? WHERE id_usuario = ? AND estado_usuario = 1",
-      [hashedPass, id_usuario]
-    );
+    // Actualizar contraseña solo si el usuario sigue activo
+    const actualizado = await prisma.usuarios.updateMany({
+      where: { id_usuario, estado_usuario: 1 },
+      data: { password_usuario: hashedPass },
+    });
 
-    if (result.affectedRows === 0) {
+    if (actualizado.count === 0) {
       return res
         .status(404)
         .json({ error: "Usuario no encontrado o inactivo" });

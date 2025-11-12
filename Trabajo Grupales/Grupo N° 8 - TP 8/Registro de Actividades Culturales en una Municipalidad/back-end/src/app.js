@@ -1,7 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const connection = require("./config/bd"); // tu conexión a MySQL
+
+//Prisma maneja la conexión automáticamente
+// const connection = require("./config/bd");
 
 const app = express();
 
@@ -14,13 +16,16 @@ const api = require("./routes/index.routes");
 // Usar rutas de artistas bajo /api/artistas
 app.use("/api", api);
 
-// Probar conexión a la DB
-connection.connect((err) => {
-  if (err) {
-    console.error("Error conectando a la base de datos:", err);
-  } else {
-    console.log("Conectado a la base de datos correctamente");
-  }
-});
+
+// Prisma maneja la conexión de base de datos internamente.
+// connection.connect((err) => {
+//   if (err) {
+//     console.error("Error conectando a la base de datos:", err);
+//   } else {
+//     console.log("Conectado a la base de datos correctamente");
+//   }
+// });
+
+
 
 module.exports = app;
