@@ -1,4 +1,4 @@
-const db = require("../config/DB");
+const db = require("../config/prisma");
 
 // Obtener todos los libros
 const getAll = (req, res) => {
