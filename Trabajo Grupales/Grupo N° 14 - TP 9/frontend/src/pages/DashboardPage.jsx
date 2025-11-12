@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../store/useAuthStore";
+import useAuth from "../hooks/useAuth";
 import "../styles/DashboardPage.css";
 
 function DashboardPage() {
-  const { user, logout, token } = useAuthStore();
+  const { user, logout, token, userEmail, userType, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -22,17 +22,19 @@ function DashboardPage() {
 
       <div className="dashboard-content">
         <div className="welcome-card">
-          <h2>¡Bienvenido!</h2>
+          <h2>¡Bienvenido{isAdmin ? " Administrador" : ""}!</h2>
           <div className="user-info">
             <p>
-              <strong>Email:</strong> {user?.email}
+              <strong>Email:</strong> {userEmail || user?.email}
             </p>
             <p>
-              <strong>Tipo:</strong> {user?.user_type}
+              <strong>Tipo:</strong> {userType || user?.user_type}
             </p>
-            <p>
-              <strong>Rol:</strong> {user?.rol}
-            </p>
+            {user?.rol && (
+              <p>
+                <strong>Rol:</strong> {user.rol}
+              </p>
+            )}
           </div>
         </div>
 

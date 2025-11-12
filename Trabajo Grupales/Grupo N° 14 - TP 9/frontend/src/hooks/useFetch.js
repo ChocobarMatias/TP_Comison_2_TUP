@@ -3,18 +3,21 @@ import api from '../services/api';
 
 /**
  * Hook para hacer peticiones HTTP con manejo de estados
- * @param {string} url - URL del endpoint (relativa a la baseURL de api)
- * @param {Object} options - Opciones de configuración
- * @param {boolean} options.autoFetch - Si debe hacer la petición automáticamente al montar
- * @param {string} options.method - Método HTTP (GET, POST, PUT, DELETE)
- * @param {Object} options.body - Datos a enviar en el body (para POST/PUT)
+ * @param {string|Object} urlOrConfig - URL del endpoint o objeto de configuración
+ * @param {Object} options - Opciones de configuración (si el primer parámetro es string)
  */
-const useFetch = (url, options = {}) => {
-  const {
-    autoFetch = true,
-    method = 'GET',
-    body = null,
-  } = options;
+const useFetch = (urlOrConfig, options = {}) => {
+  // Determinar si se pasó una URL o un objeto de configuración
+  let url, autoFetch, method, body, fetchFn;
+  
+  if (typeof urlOrConfig === 'string') {
+    // Uso tradicional: useFetch(url, options)
+    url = urlOrConfig;
+    ({ autoFetch = true, method = 'GET', body = null } = options);
+  } else {
+    // Uso con configuración: useFetch({ url, fetchFn, autoFetch, ... })
+    ({ url, fetchFn, autoFetch = true, method = 'GET', body = null } = urlOrConfig || {});
+  }
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -29,6 +32,19 @@ const useFetch = (url, options = {}) => {
 
     try {
       let response;
+      
+      // Si se proporcionó una función fetchFn, usarla directamente
+      if (fetchFn && typeof fetchFn === 'function') {
+        const result = await fetchFn(customBody);
+        setData(result);
+        return result;
+      }
+
+      // Si no, usar el método HTTP tradicional con la URL
+      if (!url) {
+        throw new Error('Se debe proporcionar una URL o una función fetchFn');
+      }
+
       const requestBody = customBody || body;
 
       switch (method.toUpperCase()) {
@@ -75,7 +91,7 @@ const useFetch = (url, options = {}) => {
 
   // Auto-fetch al montar el componente si está habilitado
   useEffect(() => {
-    if (autoFetch && url) {
+    if (autoFetch && (url || fetchFn)) {
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
