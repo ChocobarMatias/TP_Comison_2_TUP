@@ -4,7 +4,7 @@
 ### Integrantes (Nombre completo + Legajo):
 - Lucas Agustin Yudi - 61659
 - Nicolas Iñigo - 61199
-- Juarez Camila
+- Juarez Camila - 61276
 
 ---
 
