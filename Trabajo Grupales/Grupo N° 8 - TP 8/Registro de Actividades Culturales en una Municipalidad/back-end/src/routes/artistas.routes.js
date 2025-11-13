@@ -59,6 +59,6 @@ router.put(
 );
 
 // 🔹 Borrado lógico de artista (protegido)
-router.delete("/delete/:id", verifyToken, idArtista, validateInput, eliminar);
+router.delete("/delete/:id_usuario", verifyToken, idArtista, validateInput, eliminar);
 
 module.exports = router;

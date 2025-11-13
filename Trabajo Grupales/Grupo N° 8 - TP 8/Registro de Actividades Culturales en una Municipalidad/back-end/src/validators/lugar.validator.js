@@ -11,9 +11,8 @@ const crearLugarValidation = [
   body("direccion_lugar").optional().isLength({ max: 255 }),
   body("contacto_nombre_lugar").optional().isLength({ max: 100 }),
   body("contacto_telefono_lugar")
-    .optional()
-    .isMobilePhone("any")
-    .withMessage("Telefono inválido"),
+    .notEmpty()
+    .withMessage("El telefono es obligatorio"),
   body("contacto_email_lugar")
     .optional()
     .isEmail()
@@ -35,7 +34,9 @@ const actualizarLugarValidation = [
   body("tipo_lugar").optional().isLength({ max: 50 }),
   body("direccion_lugar").optional().isLength({ max: 255 }),
   body("contacto_nombre_lugar").optional().isLength({ max: 100 }),
-  body("contacto_telefono_lugar").optional().isMobilePhone("any"),
+  body("contacto_telefono_lugar")
+    .notEmpty()
+    .withMessage("El telefono es obligatorio"),
   body("contacto_email_lugar").optional().isEmail(),
   body("equipamiento_lugar").optional().isLength({ max: 500 }),
   body("capacidad_maxima_lugar").optional().isInt({ min: 0 }),

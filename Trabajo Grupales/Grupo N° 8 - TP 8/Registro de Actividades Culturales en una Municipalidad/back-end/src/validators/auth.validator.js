@@ -8,7 +8,7 @@ const registroValidation = [
     .withMessage("La contraseña debe tener al menos 6 caracteres"),
   body("rol_usuario")
     .optional()
-    .isIn(["admin", "artista", "asistente"])
+    .isIn(["empleado", "asistente", "admin"])
     .withMessage("El rol no es válido"),
 ];
 

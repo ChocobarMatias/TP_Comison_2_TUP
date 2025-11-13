@@ -13,6 +13,6 @@ router.use("/auth", auth);
 router.use("/eventos", eventos);
 router.use("/lugares", lugares);
 router.use("/password", password);
-router.use("venta_boletos", ventas_boletos);
+router.use("/venta_boletos", ventas_boletos);
 
 module.exports = router

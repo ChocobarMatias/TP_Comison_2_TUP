@@ -37,14 +37,14 @@ const obtenerPorEvento = async (req, res) => {
   }
 };
 
-// Obtener un artista por id
+// Obtener un artista por id_artista
 const obtenerUno = async (req, res) => {
-  const { id } = req.params;
+  const { id_artista } = req.params;
 
   try {
     const artista = await prisma.artistas.findFirst({
       where: {
-        id_artista: parseInt(id),
+        id_artista: parseInt(id_artista),
         estado_artista: 1,
       },
     });
@@ -95,7 +95,7 @@ const crear = async (req, res) => {
 
 // Actualizar artista
 const actualizar = async (req, res) => {
-  const { id } = req.params;
+  const { id_artista } = req.params;
   const {
     nombre_artista,
     tipo_arte_artista,
@@ -108,7 +108,7 @@ const actualizar = async (req, res) => {
   try {
     const actualizado = await prisma.artistas.updateMany({
       where: {
-        id_artista: parseInt(id),
+        id_artista: parseInt(id_artista),
         estado_artista: 1,
       },
       data: {
@@ -136,11 +136,11 @@ const actualizar = async (req, res) => {
 
 // Borrado lógico de artista
 const eliminar = async (req, res) => {
-  const { id } = req.params;
+  const { id_artista } = req.params;
 
   try {
     const eliminado = await prisma.artistas.updateMany({
-      where: { id_artista: parseInt(id) },
+      where: { id_artista: parseInt(id_artista) },
       data: { estado_artista: 0 },
     });
 

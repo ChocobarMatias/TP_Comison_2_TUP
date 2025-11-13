@@ -1,4 +1,4 @@
-const prisma = require("../config/prisma"); //utilizo prisma 
+const prisma = require("../config/prisma"); //utilizo prisma
 
 //Obtener todas las ventas activas
 const obtenerTodas = async (req, res) => {
@@ -27,8 +27,7 @@ const obtenerUna = async (req, res) => {
       },
     });
 
-    if (!venta)
-      return res.status(404).json({ error: "Venta no encontrada" });
+    if (!venta) return res.status(404).json({ error: "Venta no encontrada" });
 
     return res.json(venta);
   } catch (error) {
@@ -70,16 +69,23 @@ const crearVenta = async (req, res) => {
         .json({ error: "Faltan datos o cantidad inválida" });
     }
 
-    // Obtener el evento activo
+    // Obtener el evento activo con datos del lugar
     const evento = await prisma.eventos.findFirst({
       where: { id_evento: parseInt(id_evento), estado_evento: 1 },
+      include: {
+        lugares: {
+          select: {
+            capacidad_maxima_lugar: true,
+          },
+        },
+      },
     });
 
     if (!evento) {
       return res.status(404).json({ error: "Evento no encontrado o inactivo" });
     }
 
-    const cupo = Number(evento.cupo_maximo_evento) || 0;
+    const cupo = Number(evento.lugares.capacidad_maxima_lugar) || 0;
     const vendidos = Number(evento.entradas_vendidas_evento) || 0;
     const disponibles = Math.max(0, cupo - vendidos);
 
@@ -120,7 +126,7 @@ const crearVenta = async (req, res) => {
   }
 };
 
- /* Total de ventas por todos los eventos (agregado) */
+/* Total de ventas por todos los eventos (agregado) */
 
 const totalVentasPorEventos = async (req, res) => {
   try {
@@ -146,7 +152,6 @@ const totalVentasPorEventos = async (req, res) => {
     return res.status(500).json({ error: "Error del servidor" });
   }
 };
-
 
 //Total de ventas para un solo evento
 

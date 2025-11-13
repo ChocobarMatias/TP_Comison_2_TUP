@@ -4,7 +4,8 @@ const { hashPass, comparePass } = require("../utils/hash.utils");
 
 // Registro de usuario
 const registrar = async (req, res) => {
-  const { nombre_usuario, mail_usuario, password_usuario, rol_usuario } = req.body;
+  const { nombre_usuario, mail_usuario, password_usuario, rol_usuario } =
+    req.body;
 
   try {
     // Verificar si el usuario ya existe (por email)
@@ -29,7 +30,9 @@ const registrar = async (req, res) => {
       },
     });
 
-    return res.status(201).json({ message: "Usuario registrado correctamente." });
+    return res
+      .status(201)
+      .json({ message: "Usuario registrado correctamente." });
   } catch (err) {
     console.error("Error en el registro:", err);
     return res.status(500).json({ message: "Error en el servidor." });
@@ -50,13 +53,20 @@ const login = async (req, res) => {
     });
 
     if (!usuario) {
-      return res.status(400).json({ message: "Usuario y/o contraseña incorrectos." });
+      return res
+        .status(400)
+        .json({ message: "Usuario y/o contraseña incorrectos." });
     }
 
     // Comparar contraseñas
-    const passOk = await comparePass(password_usuario, usuario.password_usuario);
+    const passOk = await comparePass(
+      password_usuario,
+      usuario.password_usuario
+    );
     if (!passOk) {
-      return res.status(400).json({ message: "Usuario y/o contraseña incorrectos." });
+      return res
+        .status(400)
+        .json({ message: "Usuario y/o contraseña incorrectos." });
     }
 
     // Generar token JWT
@@ -71,12 +81,7 @@ const login = async (req, res) => {
 
     return res.status(200).json({
       message: "Inicio de sesión exitoso.",
-      token,
-      usuario: {
-        id_usuario: usuario.id_usuario,
-        nombre_usuario: usuario.nombre_usuario,
-        rol_usuario: usuario.rol_usuario,
-      },
+      token
     });
   } catch (err) {
     console.error("Error en el login:", err);

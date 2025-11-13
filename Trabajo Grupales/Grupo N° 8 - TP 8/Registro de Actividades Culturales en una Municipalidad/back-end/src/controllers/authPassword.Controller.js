@@ -31,10 +31,13 @@ const recover = async (req, res) => {
 
     // Generar token temporal JWT
     const token = jwt.sign({ id_usuario: usuario.id_usuario }, JWT_SECRET, {
-      expiresIn: TOKEN_EXPIRATION,
+      expiresIn: "1d",
     });
 
-    const link = `http://localhost:3000/api/auth/reset/${token}`;
+    console.log(token);
+    
+
+    const link = `http://localhost:3000/api/password/reset/${token}`;
 
     // Enviar correo con el link
     await enviarReuperacionPassword(email, link);

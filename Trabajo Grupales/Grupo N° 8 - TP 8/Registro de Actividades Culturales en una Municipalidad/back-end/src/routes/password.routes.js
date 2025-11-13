@@ -8,7 +8,10 @@ const {
 } = require("../validators/authPassword.validator");
 const validateInput = require("../middlewares/validateInput");
 
+//Ruta para enviar el email de recuperacion
 router.post("/recover", recoverValidation, validateInput, recover);
-router.post("/reset/:token", resetValidation, validateInput, reset);
+
+//Ruta para recuperar la contraseña
+router.put("/reset/:token", resetValidation, validateInput, reset);
 
 module.exports = router;

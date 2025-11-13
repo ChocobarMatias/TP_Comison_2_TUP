@@ -7,7 +7,7 @@ const verifyToken = async (req, res, next) => {
            return res.status(400).json({msg:"Token ausente"})
             
         }
-        const verify = jwt.verify(token, process.env.SECRET_KEY)
+        const verify = jwt.verify(token, process.env.JWT_SECRET)
        if(verify ){
         next()
        }else {

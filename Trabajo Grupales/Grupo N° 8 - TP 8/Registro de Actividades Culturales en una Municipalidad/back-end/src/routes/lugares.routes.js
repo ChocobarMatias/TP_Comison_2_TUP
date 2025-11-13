@@ -32,11 +32,11 @@ router.get(
 );
 
 // Crear lugar
-router.post("/", verifyToken, crearLugarValidation, validateInput, crear);
+router.post("/create", verifyToken, crearLugarValidation, validateInput, crear);
 
 // Actualizar lugar
 router.put(
-  "/:id_lugar",
+  "/update/:id_lugar",
   verifyToken,
   actualizarLugarValidation,
   validateInput,
@@ -45,7 +45,7 @@ router.put(
 
 // Borrado lógico de lugar
 router.delete(
-  "/:id_lugar",
+  "/delete/:id_lugar",
   verifyToken,
   eliminarLugarValidation,
   validateInput,

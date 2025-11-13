@@ -1,5 +1,5 @@
 // validators/authPassword.validator.js
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 
 const recoverValidation = [
   body('email')
@@ -8,7 +8,7 @@ const recoverValidation = [
 ];
 
 const resetValidation = [
-  body('token')
+  param('token')
     .notEmpty().withMessage('Token es obligatorio'),
   body('password')
     .notEmpty().withMessage('La contraseña es obligatoria')
