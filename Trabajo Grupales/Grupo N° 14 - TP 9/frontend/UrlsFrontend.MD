@@ -147,29 +147,21 @@ Header obligatorio en todas las rutas protegidas:
 
 - Obtener todos los pagos
 
-  GET - /api/pagos
+  GET - http://localhost:3000/api/pagos
 
 - Registrar pago
 
-  POST - /api/pagos
+  POST - http://localhost:3000/api/pagos
 
-  Body (JSON):
 
-  {
-  "socio_id": 1,
-  "deporte_id": 2,
-  "mes": 11,
-  "anio": 2025,
-  "monto": 15000.00
-  }
 
 - Pagos de un socio
  
-  GET - /api/pagos/socio/:socio_id
+  GET - http://localhost:3000/api/pagos/socio/:socio_id
 
 - Deuda de un socio (año actual)
 
-  GET - /api/pagos/deuda/:socio_id
+  GET - http://localhost:3000/api/pagos/deuda/:socio_id
 
 ---
 

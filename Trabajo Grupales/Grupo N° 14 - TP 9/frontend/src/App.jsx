@@ -7,6 +7,9 @@ import ProtectedRoute from "./proteccionRutas/ProtectedRoutes.jsx";
 import Asignaciones from "./pages/Asignaciones.jsx";
 import Deportes from "./pages/Deportes.jsx";
 import Socios from "./pages/Socios.jsx";
+import Pagos from "./pages/pagos.jsx"; // Corregí la importación para que apunte al archivo correcto.
+import RegistrarPagoForm from "./components/RegistrarPagoForm.jsx";
+import ListaPagos from "./components/ListaPagos.jsx";
 
 function App() {
   return (
@@ -20,6 +23,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Pagos"
+            element={
+              <ProtectedRoute>
+                <Pagos />
               </ProtectedRoute>
             }
           />
