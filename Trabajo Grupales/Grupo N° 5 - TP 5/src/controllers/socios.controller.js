@@ -187,8 +187,9 @@ const recuperarPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  const { id, token } = req.query;
-  const { password } = req.body;
+  //const { , token } = req.query;
+  const { password, token, id  } = req.body;
+  console.log(token);
   
   try {
     jwt.verify(token, process.env.JWT_SECRET || "clave_secreta");

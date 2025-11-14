@@ -1,15 +1,7 @@
 create database gimnasio;
 use gimnasio;
 
-CREATE TABLE reservas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    socio_id INT NOT NULL,
-    actividad_id INT NOT NULL,
-    fecha DATE NOT NULL,
-    hora TIME,
-    FOREIGN KEY (socio_id) REFERENCES socios(idSocio) ON DELETE CASCADE,
-    FOREIGN KEY (actividad_id) REFERENCES actividades(id) ON DELETE CASCADE
-);
+
 CREATE TABLE actividades (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -24,7 +16,17 @@ CREATE TABLE socios (
     activo BOOLEAN DEFAULT TRUE,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-    
+
+
+    CREATE TABLE reservas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    socio_id INT NOT NULL,
+    actividad_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME,
+    FOREIGN KEY (socio_id) REFERENCES socios(idSocio) ON DELETE CASCADE,
+    FOREIGN KEY (actividad_id) REFERENCES actividades(id) ON DELETE CASCADE
+);
     INSERT INTO actividades (nombre, cupo_maximo) VALUES
 ('Yoga', 20),
 ('Spinning', 15),
@@ -36,5 +38,3 @@ CREATE TABLE socios (
 ('Funcional', 22),
 ('Musculación', 35),
 ('Kickboxing', 16);
-
-    

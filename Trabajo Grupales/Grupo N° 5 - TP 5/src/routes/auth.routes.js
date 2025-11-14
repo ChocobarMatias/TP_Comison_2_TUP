@@ -4,7 +4,7 @@ const { loginSocio, createSocio, resetPassword} = require("../controllers/socios
 
 
 router.post("/login", loginSocio);
-router.get("/reset", resetPassword);
+router.post("/reset", resetPassword);
 router.post("/registro", createSocio);
 
 module.exports = router;
