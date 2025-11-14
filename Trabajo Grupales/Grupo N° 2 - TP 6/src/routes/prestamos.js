@@ -8,18 +8,18 @@ const verifyToken = require("../middlewares/verifyToken");
 const router = express.Router();
 
 //Traer todos los prestamos
-router.get("/", verifyToken, getAll);
+router.get("/",  getAll);
 
 //Traer un prestamo
-router.get("/:id", verifyToken, getById);
+router.get("/:id",  getById);
 
 //Crear un prestamo
-router.post("/", verifyToken, create);
+router.post("/crear", verifyToken, create);
 
 //Editar un prestamo
-router.put("/:id", verifyToken, update);
+router.put("/editar/:id", verifyToken, update);
 
 //Eliminar un prestamo
-router.delete("/:id", verifyToken, remove);
+router.delete("/eliminar/:id", verifyToken, remove);
 
 module.exports = router;

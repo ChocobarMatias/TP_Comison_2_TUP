@@ -15,10 +15,10 @@ const { validate } = require("../middlewares/checkValidations");
 const router = express.Router();
 
 //Registro
-router.post("/register", registerValidator, validate, register);
+router.post("/register",  register);
 
 //Login
-router.post("/login", loginValidator, validate, login);
+router.post("/login",  login);
 
 //aca se envía el email con el link de recuperación
 router.post("/recuperar-password", recuperarPassword);
