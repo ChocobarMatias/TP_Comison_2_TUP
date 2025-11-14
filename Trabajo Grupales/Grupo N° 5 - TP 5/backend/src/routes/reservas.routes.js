@@ -5,7 +5,7 @@ const { verificarToken, verificarTokenAdmin } = require("../../middleware/auth")
 const { getReservas, addReserva, deleteReserva } = require("../controllers/reservas.controller");
 
 router.get("/", getReservas);
-router.post("/", verificarToken, addReserva); 
-router.delete("/:id", verificarTokenAdmin, deleteReserva); 
+router.post("/", addReserva); 
+router.delete("/:id", deleteReserva); 
 
 module.exports = router;
