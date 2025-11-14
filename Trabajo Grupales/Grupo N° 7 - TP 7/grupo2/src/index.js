@@ -9,6 +9,7 @@ const dotenv = require('dotenv')
 const usuariosRoutes = require('../src/routes/usuariosRoutes')
 const catMedicosRoutes=require('../src/routes/catMedicos.Routes')
 const medicosRoutes=require('../src/routes/medicos.Routes')
+const pacientesRoutes = require('../src/routes/pacientesRoutes')
 dotenv.config()
 
 const app = express()
@@ -25,6 +26,11 @@ const PORT = process.env.PORT || 3000
 app.use('/api/usuarios', usuariosRoutes) 
 app.use('/api/catMedicos', catMedicosRoutes);
 app.use('/api/medi',medicosRoutes);
+app.use('/api/pacientes', pacientesRoutes);
+
+
+
+
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`)
 })
