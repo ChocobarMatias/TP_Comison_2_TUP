@@ -21,7 +21,7 @@ router.get('/inactivas', mostrarCatMedicosInactivos);
 router.get('/:id', getOneCatMedico);
 
 // 🆕 Crear nueva categoría médica
-router.post('/', crearCatMedico);
+router.post('/crear', crearCatMedico);
 
 // ✏️ Actualizar categoría médica
 router.put('/:id', updateCatMedico);

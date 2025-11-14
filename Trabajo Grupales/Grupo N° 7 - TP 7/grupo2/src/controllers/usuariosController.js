@@ -1,6 +1,7 @@
 const { PrismaClient } = require('../generated/prisma'); 
 const prisma = new PrismaClient();                       
-const bcrypt = require('bcrypt');
+const {hashPassword} = require('../utils/hash.utils');
+
 
 
 
@@ -81,25 +82,36 @@ const crearUsuario = async (req, res) => {
 
 
 const updateUser = async (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
   const { MailUsuario, PasswordUsuario, RolUsuario, IsActive } = req.body;
+
   try {
-    const hashedPass = await hashPassword(PasswordUsuario);
+    const dataToUpdate = {
+      MailUsuario,
+      RolUsuario,
+      IsActive
+    };
+
+    // Solo hashear si el usuario envía una nueva contraseña
+    if (PasswordUsuario) {
+      dataToUpdate.PasswordUsuario = await hashPassword(PasswordUsuario);
+    }
+
     const usuarioActualizado = await prisma.usuarios.update({
-     where: { idUsuario: Number(id) },
-  data: {
-    MailUsuario,
-    PasswordUsuario: hashedPass,
-    RolUsuario,
-    IsActive
-  }
-    })
-    res.status(200).json({message: 'Usuario actualizado exitosamente', usuario: usuarioActualizado})
+      where: { idUsuario: Number(id) },
+      data: dataToUpdate
+    });
+
+    res.status(200).json({
+      message: 'Usuario actualizado exitosamente',
+      usuario: usuarioActualizado
+    });
+
   } catch (error) {
-    console.error('Error al actualizar el usuario: ', error)
-    res.status(500).json({ message: 'Error al actualizar el usuario' })
+    console.error('Error al actualizar usuario', error);
+    res.status(500).json({ message: 'Error al actualizar el usuario' });
   }
-}
+};
 
 
 const deleteUser = async (req, res) => {

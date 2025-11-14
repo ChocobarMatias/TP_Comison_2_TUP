@@ -1,11 +1,7 @@
-import { Router } from 'express';
-import { register, login, forgotPassword, resetPassword } from '../controllers/auth.controller.js';
+const router = require('express').Router();
+const { solicitarReset,resetPassword } = require('../controllers/auth.controller');
 
-const router = Router();
+router.post('/solicitar-reset', solicitarReset);
+router.post('/reset-password', resetPassword);
 
-router.post('/register', register);
-router.post('/login', login);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password/:token', resetPassword);
-
-export default router;
+module.exports = router;
