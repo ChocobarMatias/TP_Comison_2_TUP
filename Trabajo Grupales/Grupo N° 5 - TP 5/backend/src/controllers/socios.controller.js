@@ -24,6 +24,7 @@ const getSocio = async (req, res) => {
     const socio = await prisma.socios.findUnique({
       where: { idSocio: parseInt(id) },
     });
+    delete socio.contraSocio
     res.status(200).json({ message: "Socio traido con exito", socio });
   } catch (error) {
     console.log("Error al traer el socio", error);

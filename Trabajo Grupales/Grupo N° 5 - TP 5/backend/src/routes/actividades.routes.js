@@ -1,14 +1,14 @@
 const Router = require("express")
 
-const { verificarToken } = require("../../middleware/auth");
+const { verificarTokenAdmin } = require("../../middleware/auth");
 const router = Router();
 const {getActividades, CreateAtividades, updateActividades, deleteActividades} = require("../controllers/actividades.controller")
 
 
 
 router.get("/", getActividades)
-router.post("/", verificarToken, CreateAtividades);
-router.put("/:id", verificarToken, updateActividades);
-router.delete("/:id", deleteActividades)
+router.post("/", verificarTokenAdmin, CreateAtividades);
+router.put("/:id", verificarTokenAdmin, updateActividades);
+router.delete("/:id", verificarTokenAdmin, deleteActividades)
 
 module.exports = router

@@ -7,6 +7,7 @@ CREATE TABLE actividades (
     nombre VARCHAR(100) NOT NULL,
     cupo_maximo INT NOT NULL
 );
+
 CREATE TABLE socios (
     idSocio INT AUTO_INCREMENT PRIMARY KEY,
     nombreSocio VARCHAR(100) NOT NULL,
@@ -15,10 +16,10 @@ CREATE TABLE socios (
     contraSocio VARCHAR(255) NOT NULL,
     activo BOOLEAN DEFAULT TRUE,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+);
 
 
-    CREATE TABLE reservas (
+CREATE TABLE reservas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     socio_id INT NOT NULL,
     actividad_id INT NOT NULL,
@@ -27,7 +28,18 @@ CREATE TABLE socios (
     FOREIGN KEY (socio_id) REFERENCES socios(idSocio) ON DELETE CASCADE,
     FOREIGN KEY (actividad_id) REFERENCES actividades(id) ON DELETE CASCADE
 );
-    INSERT INTO actividades (nombre, cupo_maximo) VALUES
+
+CREATE TABLE administradores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    contra VARCHAR(255) NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO actividades (nombre, cupo_maximo) VALUES
 ('Yoga', 20),
 ('Spinning', 15),
 ('CrossFit', 25),
@@ -38,3 +50,6 @@ CREATE TABLE socios (
 ('Funcional', 22),
 ('Musculación', 35),
 ('Kickboxing', 16);
+
+INSERT INTO administradores (nombre, apellido, email, contra) VALUES
+('Juan', 'Pérez', 'admin@admin.com', 'admin');

@@ -37,3 +37,13 @@ model socios {
   fecha_creacion DateTime?  @default(now()) @db.Timestamp(0)
   reservas       reservas[]
 }
+
+model administradores {
+  id             Int       @id @default(autoincrement())
+  nombre         String    @db.VarChar(100)
+  apellido       String    @db.VarChar(100)
+  email          String    @unique(map: "email") @db.VarChar(150)
+  contra         String    @db.VarChar(255)
+  activo         Boolean?  @default(true)
+  fecha_creacion DateTime? @default(now()) @db.Timestamp(0)
+}
