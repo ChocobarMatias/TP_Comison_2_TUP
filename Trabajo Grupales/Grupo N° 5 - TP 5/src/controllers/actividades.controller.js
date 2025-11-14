@@ -1,42 +1,74 @@
 const {conection} = require ("../config/DB")
+const { prisma } = require('../config/prisma');
 
-const getActividades = (req, res) => {
-    const consulta = "select * from actividades"
+const getActividades = async (req, res) => {
 
-    conection.query(consulta, (err, result) => {
-        if(err) throw err
-        res.json(result)
+
+   try {
+    const consulta = await prisma.actividades.findMany({
+    
     })
+    res.status(200).json({message: "Actividades traidas con exito", consulta})
+   }
+   catch (error) {
+    console.log("Error al traer las actividades", error);
+    res.status(500).json({ error: "Error al traer las actividades" });
+   }
 }
 
-const CreateAtividades = (req, res) => {
-    const consulta = "insert into actividades (nombre, cupo_maximo) values (?,?)"
-
-    conection.query(consulta, [nombre, cupo_maximo],(err, result)=> {
-        if(err) throw err
-        res.json({message: "Actividad creada con exito"})
+const CreateAtividades = async(req, res) => {
+    
+    try{
+    const { nombre, cupo_maximo } = req.body;
+    const consulta = await prisma.actividades.create({
+        data: {
+            nombre: nombre,
+            cupo_maximo: cupo_maximo
+        }
     })
+    res.status(200).json({message:"Actividad creada con exito"})
+    }
+    catch (error) {
+        console.log("Error al crear la actividad", error)
+        res.status(500).json({error:"Error al crear la actividad"})
+    }
 }
 
-const updateActividades = (req, res) => {
-    const {id} = req.params;
-    const {nombre, cupo_maximo} = req.body;
-    const consulta = "update actividades set nombre = ?, cupo_maximo = ? where id = ?"
 
-    conection.query(consulta, [nombre, cupo_maximo, id], (err, result) =>{
-        if(err) throw err
-        res.json({message: "Actividad actualizada con exito"})
-    })
+
+const updateActividades = async(req, res) => {
+   const { id } = req.params;
+    const { nombre, cupo_maximo } = req.body;
+    try {
+        const consulta = await prisma.actividades.update({
+            where: { id: parseInt(id) },
+            data: {
+                nombre: nombre,
+                cupo_maximo: cupo_maximo
+            }
+        })
+        res.status(200).json({message:"Actividad actualizada con exito"})
+    }
+    catch (error) {
+        console.log("Error al actualizar la actividad", error)
+        res.status(500).json({error:"Error al actualizar la actividad"})
+    }
 }
 
-const deleteActividades = (req, res) => {
+const deleteActividades = async (req, res) => {
     const {id} = req.params
-    const consulta = "delete from actividades where id = ?"
 
-    conection,query(consulta, [id], (err, result)=>{
-        if(err) throw err
-        res.json({message: "Actividad borrada con exito"})
-    })
+
+    try{
+        const consulta = await prisma.actividades.delete({
+            where: { id: parseInt(id) }
+        })
+        res.status(200).json({message:"Actividad borrada con exito"})
+    }
+    catch (error) {
+        console.log("Error al borrar la actividad", error)
+        res.status(500).json({error:"Error al borrar la actividad"})
+    }
 }
 
 module.exports = {getActividades, CreateAtividades, updateActividades, deleteActividades}
