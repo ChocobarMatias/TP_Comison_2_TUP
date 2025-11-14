@@ -1,0 +1,21 @@
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import './App.css'
+
+function App() {
+  
+
+  return (
+    <BrowserRouter>
+    <div className='d-flex flex-column min-vh-100'>
+    <Navbar/>
+      <main className='flex-fill app-main'>
+        <Routes>
+        <Route path='/' element={<h1 className='text-center mt-5'>Welcome to the App</h1>} />
+      </Routes>
+      </main>
+      </div>
+    </BrowserRouter>
+  )
+}
+
+export default App
