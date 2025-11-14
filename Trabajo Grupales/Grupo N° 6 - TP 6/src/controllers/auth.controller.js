@@ -147,20 +147,25 @@
 
 
 
+// src/controllers/auth.controller.js
 const prisma = require("../config/prisma");
 const jwt = require("jsonwebtoken");
-const bicrypt = require("bicrypt");
+const bcrypt = require("bcrypt");
 const { enviarEmailRecuperacion } = require("../services/email.service");
 const { hashPassword, comparePassword } = require("../utils/hash.utils");
 
 const SECRET_KEY = process.env.JWT_SECRET;
+const FRONT_URL = process.env.FRONT_URL || "http://localhost:3000";
 
 // 📌 REGISTRAR USUARIO
 const register = async (req, res) => {
   try {
     const { usuario, contraseña, email } = req.body;
 
-    // Verificar si el usuario ya existe
+    if (!usuario || !contraseña || !email) {
+      return res.status(400).json({ message: "usuario, contraseña y email son obligatorios" });
+    }
+
     const userExists = await prisma.usuarios.findUnique({
       where: { nombre_usuario: usuario },
     });
@@ -172,11 +177,7 @@ const register = async (req, res) => {
     const hash = await hashPassword(contraseña);
 
     await prisma.usuarios.create({
-      data: {
-        nombre_usuario: usuario,
-        contraseña: hash,
-        email,
-      },
+      data: { nombre_usuario: usuario, contraseña: hash, email },
     });
 
     return res.status(201).json({ message: "Usuario registrado con éxito" });
@@ -195,15 +196,10 @@ const login = async (req, res) => {
       where: { nombre_usuario: usuario },
     });
 
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
 
     const esValida = await comparePassword(String(contraseña), String(user.contraseña));
-
-    if (!esValida) {
-      return res.status(401).json({ message: "Contraseña incorrecta" });
-    }
+    if (!esValida) return res.status(401).json({ message: "Contraseña incorrecta" });
 
     const token = jwt.sign(
       { id_usuario: user.usuario_id, nombre_usuario: user.nombre_usuario },
@@ -211,10 +207,7 @@ const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    return res.status(200).json({
-      message: "Usuario logueado con éxito",
-      token,
-    });
+    return res.status(200).json({ message: "Usuario logueado con éxito", token });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error en el servidor", error });
@@ -226,13 +219,10 @@ const recuperarPassword = async (req, res) => {
   try {
     const { mail } = req.body;
 
-    const user = await prisma.usuarios.findUnique({
-      where: { email: mail },
-    });
+    if (!mail) return res.status(400).json({ message: "El email es obligatorio" });
 
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
+    const user = await prisma.usuarios.findUnique({ where: { email: mail } });
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
 
     const token = jwt.sign(
       { id: user.usuario_id, email: user.email },
@@ -240,7 +230,9 @@ const recuperarPassword = async (req, res) => {
       { expiresIn: "15m" }
     );
 
-    const link = 'http://localhost:3000/auth/cambio_password/${token}';
+    // 👇 AQUÍ estaba el error: faltaban backticks
+    const link = `${FRONT_URL}/auth/cambio_password/${token}`;
+
     await enviarEmailRecuperacion(mail, link);
 
     res.status(200).json({ message: "Email de recuperación enviado" });
@@ -256,9 +248,11 @@ const cambioPasswordRecuperado = async (req, res) => {
     const { token } = req.params;
     const { newPassword } = req.body;
 
+    if (!newPassword) return res.status(400).json({ message: "La nueva contraseña es obligatoria" });
+
     const decoded = jwt.verify(token, SECRET_KEY);
 
-    const hashedPassword = await bicrypt.hash(String(newPassword), 10);
+    const hashedPassword = await bcrypt.hash(String(newPassword), 10);
 
     const updatedUser = await prisma.usuarios.update({
       where: { usuario_id: decoded.id },
@@ -285,4 +279,4 @@ module.exports = {
   login,
   recuperarPassword,
   cambioPasswordRecuperado,
-}
+};
