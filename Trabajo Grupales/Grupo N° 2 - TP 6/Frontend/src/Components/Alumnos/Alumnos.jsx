@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import BusquedaAlumno from "./BusquedaAlumno";
 import useCustomAlumnos from "../../Hooks/useCustomAlumnos";
+import "../../Styles/Alumnos/Alumnos.css";
 
 const Alumnos = () => {
   const {
@@ -9,18 +10,12 @@ const Alumnos = () => {
     obtenerAlumnos,
     crearAlumno,
     editarAlumno,
+    eliminarAlumno,
   } = useCustomAlumnos();
 
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
-
-  const [formAlumno, setFormAlumno] = useState({
-    nombre: "",
-    curso: "",
-    dni: "",
-  });
-
+  const [formAlumno, setFormAlumno] = useState({ nombre: "", curso: "", dni: "" });
   const [idAlumnoEditar, setIdAlumnoEditar] = useState(null);
-
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState("");
 
@@ -29,7 +24,6 @@ const Alumnos = () => {
 
   useEffect(() => {
     obtenerAlumnos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const mostrarMensaje = (msg, tipo) => {
@@ -39,10 +33,7 @@ const Alumnos = () => {
   };
 
   const handleChange = (e) => {
-    setFormAlumno({
-      ...formAlumno,
-      [e.target.name]: e.target.value,
-    });
+    setFormAlumno({ ...formAlumno, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -82,13 +73,7 @@ const Alumnos = () => {
       }
 
       await obtenerAlumnos();
-
-      setFormAlumno({
-        nombre: "",
-        curso: "",
-        dni: "",
-      });
-
+      setFormAlumno({ nombre: "", curso: "", dni: "" });
       setIdAlumnoEditar(null);
       setOpenModalNuevo(false);
 
@@ -115,11 +100,7 @@ const Alumnos = () => {
   };
 
   const handleNuevoAlumno = () => {
-    setFormAlumno({
-      nombre: "",
-      curso: "",
-      dni: "",
-    });
+    setFormAlumno({ nombre: "", curso: "", dni: "" });
     setIdAlumnoEditar(null);
     setOpenModalNuevo(true);
   };
@@ -129,11 +110,29 @@ const Alumnos = () => {
     setOpenModalVer(true);
   };
 
+  const handleDeleteAlumno = (id) => {
+    Swal.fire({
+      title: "¿Eliminar alumno?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (res) => {
+      if (res.isConfirmed) {
+        try {
+          await eliminarAlumno(id);
+          mostrarMensaje("Alumno eliminado.", "success");
+          await obtenerAlumnos();
+        } catch {
+          mostrarMensaje("Ocurrió un error al eliminar.", "danger");
+        }
+      }
+    });
+  };
+
   const resultado = alumnos.filter((al) => {
-    if (!terminoBusqueda.trim()) return true;
-
     const t = terminoBusqueda.toLowerCase();
-
     return (
       al.nombre.toLowerCase().includes(t) ||
       al.curso.toLowerCase().includes(t) ||
@@ -145,104 +144,89 @@ const Alumnos = () => {
     <>
       <BusquedaAlumno setTerminoBusqueda={setTerminoBusqueda} />
 
-      {mensaje && (
-        <div className={`alert alert-${tipoMensaje}`}>{mensaje}</div>
-      )}
+      {mensaje && <div className={`alert alert-${tipoMensaje} mt-3`}>{mensaje}</div>}
 
-      <div className="card-header bg-white d-flex justify-content-between">
-        <h5>Alumnos</h5>
-        <button className="btn btn-primary" onClick={handleNuevoAlumno}>
-          Nuevo Alumno
-        </button>
-      </div>
+      <div className="card shadow-lg mt-3">
+        <div className="card-header bg-primary text-white d-flex justify-content-between">
+          <h5 className="m-0">Alumnos</h5>
+          <button className="btn btn-light btn-sm" onClick={handleNuevoAlumno}>
+            + Nuevo Alumno
+          </button>
+        </div>
 
-      <div className="card-body">
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Curso</th>
-              <th>DNI</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {resultado.map((al) => (
-              <tr key={al.alumno_id}>
-                <td>{al.alumno_id}</td>
-                <td>{al.nombre}</td>
-                <td>{al.curso}</td>
-                <td>{al.dni}</td>
-
-                <td>
-                  <button
-                    className="btn btn-outline-primary btn-sm me-2"
-                    onClick={() => handleEditAlumno(al)}
-                  >
-                    Editar
-                  </button>
-
-                  <button
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={() => handleVerAlumno(al)}
-                  >
-                    Ver
-                  </button>
-                </td>
+        <div className="card-body">
+          <table className="table table-striped table-hover">
+            <thead className="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Curso</th>
+                <th>DNI</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
+            </thead>
 
-        </table>
+            <tbody>
+              {resultado.map((al) => (
+                <tr key={al.alumno_id}>
+                  <td>{al.alumno_id}</td>
+                  <td>{al.nombre}</td>
+                  <td>{al.curso}</td>
+                  <td>{al.dni}</td>
+
+                  <td>
+                    <button
+                      className="btn btn-sm btn-outline-primary me-2"
+                      onClick={() => handleEditAlumno(al)}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className="btn btn-sm btn-outline-secondary me-2"
+                      onClick={() => handleVerAlumno(al)}
+                    >
+                      Ver
+                    </button>
+
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => handleDeleteAlumno(al.alumno_id)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* MODAL NUEVO/EDITAR */}
+      {/* MODAL NUEVO / EDITAR */}
       {openModalNuevo && (
-        <div className="modal fade show d-block">
-          <div className="modal-dialog">
-            <div className="modal-content bg-dark text-white">
+        <div className="custom-modal-overlay">
+          <div className="custom-modal">
+            <div className="custom-modal-header">
+              <h5>{idAlumnoEditar ? "Editar Alumno" : "Nuevo Alumno"}</h5>
+              <button className="btn-close" onClick={() => setOpenModalNuevo(false)}></button>
+            </div>
 
-              <div className="modal-header">
-                <h5>{idAlumnoEditar ? "Editar Alumno" : "Nuevo Alumno"}</h5>
-                <button className="btn-close bg-warning" onClick={() => setOpenModalNuevo(false)} />
-              </div>
+            <div className="custom-modal-body">
+              <form onSubmit={handleSubmit}>
+                <label>Nombre</label>
+                <input name="nombre" className="form-control mb-3" value={formAlumno.nombre} onChange={handleChange} />
 
-              <div className="modal-body">
-                <form onSubmit={handleSubmit}>
+                <label>Curso</label>
+                <input name="curso" className="form-control mb-3" value={formAlumno.curso} onChange={handleChange} />
 
-                  <label>Nombre</label>
-                  <input
-                    name="nombre"
-                    className="form-control mb-2"
-                    value={formAlumno.nombre}
-                    onChange={handleChange}
-                  />
+                <label>DNI</label>
+                <input name="dni" className="form-control mb-3" value={formAlumno.dni} onChange={handleChange} />
 
-                  <label>Curso</label>
-                  <input
-                    name="curso"
-                    className="form-control mb-2"
-                    value={formAlumno.curso}
-                    onChange={handleChange}
-                  />
-
-                  <label>DNI</label>
-                  <input
-                    name="dni"
-                    className="form-control mb-2"
-                    value={formAlumno.dni}
-                    onChange={handleChange}
-                  />
-
-                  <button className="btn btn-primary w-100">
-                    {idAlumnoEditar ? "Actualizar" : "Guardar"}
-                  </button>
-
-                </form>
-              </div>
-
+                <button className="btn btn-success w-100">
+                  {idAlumnoEditar ? "Actualizar" : "Guardar"}
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -250,21 +234,17 @@ const Alumnos = () => {
 
       {/* MODAL VER */}
       {openModalVer && (
-        <div className="modal fade show d-block">
-          <div className="modal-dialog">
-            <div className="modal-content bg-dark text-white">
+        <div className="custom-modal-overlay">
+          <div className="custom-modal">
+            <div className="custom-modal-header">
+              <h5>Datos del Alumno</h5>
+              <button className="btn-close" onClick={() => setOpenModalVer(false)}></button>
+            </div>
 
-              <div className="modal-header">
-                <h5>Datos del Alumno</h5>
-                <button className="btn-close bg-warning" onClick={() => setOpenModalVer(false)} />
-              </div>
-
-              <div className="modal-body">
-                <p><b>Nombre:</b> {formAlumno.nombre}</p>
-                <p><b>Curso:</b> {formAlumno.curso}</p>
-                <p><b>DNI:</b> {formAlumno.dni}</p>
-              </div>
-
+            <div className="custom-modal-body">
+              <p><b>Nombre:</b> {formAlumno.nombre}</p>
+              <p><b>Curso:</b> {formAlumno.curso}</p>
+              <p><b>DNI:</b> {formAlumno.dni}</p>
             </div>
           </div>
         </div>
