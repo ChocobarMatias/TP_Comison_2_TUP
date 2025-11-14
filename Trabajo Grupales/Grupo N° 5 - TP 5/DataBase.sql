@@ -24,7 +24,6 @@ CREATE TABLE reservas (
     socio_id INT NOT NULL,
     actividad_id INT NOT NULL,
     fecha DATE NOT NULL,
-    hora TIME,
     FOREIGN KEY (socio_id) REFERENCES socios(idSocio) ON DELETE CASCADE,
     FOREIGN KEY (actividad_id) REFERENCES actividades(id) ON DELETE CASCADE
 );
