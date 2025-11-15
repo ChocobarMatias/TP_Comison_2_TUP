@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:pull": "dotenv -e .env -- npx prisma db pull",
+  "db:push": "dotenv -e .env -- npx prisma db push",
+  "prisma:generate": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "bcrypt": "^6.0.0", 
+    "@prisma/client": "^6.18.0",
+    "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -20,5 +24,8 @@
     "morgan": "^1.10.1",
     "mysql2": "^3.15.1",
     "nodemailer": "^7.0.7"
+  },
+  "devDependencies": {
+    "prisma": "^6.18.0"
   }
 }
