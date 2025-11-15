@@ -15,7 +15,7 @@ const { validate } = require("../middlewares/checkValidations");
 const router = express.Router();
 
 //Registro
-router.post("/register",  register);
+router.post("/register", register);
 
 //Login
 router.post("/login",  login);

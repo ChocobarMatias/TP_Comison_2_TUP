@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { obtenerTodosLosPrestamos, eliminarPrestamo } from "../../Hooks/CustomPrestamos.js";
+import {
+  obtenerTodosLosPrestamos,
+  eliminarPrestamo,
+} from "../../Hooks/CustomPrestamos.js";
 import "../../Styles/Prestamos/Prestamos.css";
 
 // Componentes importados
 import FiltroPrestamos from "./FiltroPrestamo.jsx";
 import CrearPrestamoModal from "./CrearPrestamoModal.jsx";
+import EditarPrestamoModal from "./EditarPrestamoModal.jsx";
 import CambiarEstadoPrestamo from "./CambiarEstadoPrestamo.jsx";
 import DetallesPrestamoModal from "./DetallesPrestamoModal.jsx";
 import EliminarPrestamoModal from "./EliminarPrestamoModal.jsx";
@@ -17,6 +21,7 @@ const Prestamos = () => {
 
   // Estados para modales
   const [showCrear, setShowCrear] = useState(false);
+  const [showEditar, setShowEditar] = useState(false);
   const [showEstado, setShowEstado] = useState(false);
   const [showEliminar, setShowEliminar] = useState(false);
 
@@ -54,7 +59,6 @@ const Prestamos = () => {
 
   return (
     <div className="container mt-4">
-
       {/* TÍTULO */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2>Gestión de Préstamos</h2>
@@ -67,7 +71,6 @@ const Prestamos = () => {
       {/* TABLA */}
       <div className="card">
         <div className="card-body table-responsive">
-
           <table className="table table-hover">
             <thead>
               <tr>
@@ -95,14 +98,28 @@ const Prestamos = () => {
                   <td>{p.prestamo_id}</td>
                   <td>
                     {p.alumno_nombre || `ID: ${p.alumno_id}`}
-                    {p.alumno_dni && <><br/><small className="text-muted">DNI: {p.alumno_dni}</small></>}
+                    {p.alumno_dni && (
+                      <>
+                        <br />
+                        <small className="text-muted">
+                          DNI: {p.alumno_dni}
+                        </small>
+                      </>
+                    )}
                   </td>
                   <td>
                     {p.libro_titulo || `ID: ${p.libro_id}`}
-                    {p.libro_autor && <><br/><small className="text-muted">{p.libro_autor}</small></>}
+                    {p.libro_autor && (
+                      <>
+                        <br />
+                        <small className="text-muted">{p.libro_autor}</small>
+                      </>
+                    )}
                   </td>
                   <td>{p.fecha_prestamo.slice(0, 10)}</td>
-                  <td>{p.fecha_devolucion ? p.fecha_devolucion.slice(0, 10) : "—"}</td>
+                  <td>
+                    {p.fecha_devolucion ? p.fecha_devolucion.slice(0, 10) : "—"}
+                  </td>
 
                   <td>
                     <span
@@ -125,6 +142,18 @@ const Prestamos = () => {
                       }}
                     >
                       Estado
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="warning"
+                      className="me-1"
+                      onClick={() => {
+                        setPrestamoSeleccionado(p);
+                        setShowEditar(true);
+                      }}
+                    >
+                      Editar
                     </Button>
 
                     <Button
@@ -152,9 +181,7 @@ const Prestamos = () => {
                 </tr>
               ))}
             </tbody>
-
           </table>
-
         </div>
       </div>
 
@@ -165,6 +192,13 @@ const Prestamos = () => {
         onSuccess={cargarPrestamos}
       />
 
+      <EditarPrestamoModal
+        show={showEditar}
+        onClose={() => setShowEditar(false)}
+        prestamo={prestamoSeleccionado}
+        onSuccess={cargarPrestamos}
+      />
+
       <CambiarEstadoPrestamo
         show={showEstado}
         onClose={() => setShowEstado(false)}
@@ -172,11 +206,11 @@ const Prestamos = () => {
         onSuccess={cargarPrestamos}
       />
 
-        <DetallesPrestamoModal
-          show={showDetalles}
-          onClose={() => setShowDetalles(false)}
-          prestamo={prestamoSeleccionado}
-        />
+      <DetallesPrestamoModal
+        show={showDetalles}
+        onClose={() => setShowDetalles(false)}
+        prestamo={prestamoSeleccionado}
+      />
       <EliminarPrestamoModal
         show={showEliminar}
         onClose={() => setShowEliminar(false)}
@@ -191,7 +225,6 @@ const Prestamos = () => {
           }
         }}
       />
-
     </div>
   );
 };

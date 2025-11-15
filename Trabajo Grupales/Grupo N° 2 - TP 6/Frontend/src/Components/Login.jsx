@@ -45,6 +45,7 @@ const Login = () => {
 
     try {
       const response = await funcionLogin(data);
+      console.log("Respuesta del login:", response);
 
       if (response.token) {
         setToken(response.token);
@@ -64,6 +65,10 @@ const Login = () => {
         showConfirmButton: false
       });
 
+      if(response.user.rol === 'admin'){
+        navigate("/admin/*");
+        return;
+      }
       navigate("/home");
     } catch (error) {
       const errorMessage =

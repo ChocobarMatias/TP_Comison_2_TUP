@@ -37,6 +37,8 @@ const register = async (req, res) => {
     // -----------------------------------------------------------
     // 1) INSERTAR USUARIO (ahora con rol)
     // -----------------------------------------------------------
+    //verificamos que no exista el suaurio o email o dni 
+    
     const sqlUsuario = `
       INSERT INTO usuarios (nombre_usuario, contraseña, email, rol)
       VALUES (?, ?, ?, ?)
@@ -95,7 +97,7 @@ const login = (req, res) => {
     const { usuario, contraseña } = req.body;
 
     const consulta =
-      "SELECT usuario_id, contraseña, nombre_usuario, email FROM usuarios WHERE nombre_usuario = ?";
+      "SELECT usuario_id, contraseña, nombre_usuario, email, rol FROM usuarios WHERE nombre_usuario = ?";
 
     db.query(consulta, [usuario], async (err, results) => {
       if (err) {
@@ -110,6 +112,7 @@ const login = (req, res) => {
       const hash = results[0].contraseña;
       const nombre_usuario = results[0].nombre_usuario;
       const email = results[0].email;
+      const rol = results[0].rol;
 
       const esValida = await comparePassword(String(contraseña), String(hash));
 
@@ -119,7 +122,7 @@ const login = (req, res) => {
         //creacion del token para iniciar la sesion
 
         const token = jwt.sign(
-          { id_usuario: id_usuario, nombre_usuario: usuario },
+          { id_usuario: id_usuario, nombre_usuario: usuario,rol: rol },
           SECRET_KEY,
           { expiresIn: "1h" }
         );
@@ -132,7 +135,8 @@ const login = (req, res) => {
             user: {
               id: id_usuario,
               nombre_usuario: nombre_usuario,
-              email: email
+              email: email,
+              rol: rol
             }
           });
       }

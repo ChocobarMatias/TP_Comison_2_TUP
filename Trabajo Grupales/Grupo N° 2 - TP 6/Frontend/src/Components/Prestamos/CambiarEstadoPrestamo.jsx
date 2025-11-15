@@ -11,13 +11,16 @@ const CambiarEstadoPrestamo = ({ show, onClose, prestamo, onSuccess }) => {
   useEffect(() => {
     if (prestamo) {
       setEstado(prestamo.estado);
-      setFechaDevolucion(prestamo.fecha_devolucion ? prestamo.fecha_devolucion.slice(0, 10) : "");
+      setFechaDevolucion(
+        prestamo.fecha_devolucion ? prestamo.fecha_devolucion.slice(0, 10) : ""
+      );
       setError("");
     }
   }, [prestamo]);
 
   const handleSubmit = async () => {
     setError("");
+ 
 
     // Validar que si el estado es devuelto, debe tener fecha de devolución
     if (estado === "devuelto" && !fechaDevolucion) {
@@ -27,18 +30,22 @@ const CambiarEstadoPrestamo = ({ show, onClose, prestamo, onSuccess }) => {
 
     setLoading(true);
     try {
-      await actualizarPrestamo(prestamo.prestamo_id, {
-        alumno_id: prestamo.alumno_id,
-        libro_id: prestamo.libro_id,
-        fecha_prestamo: prestamo.fecha_prestamo,
+      const dataToSend = {
+        alumno_id: parseInt(prestamo.alumno_id),
+        libro_id: parseInt(prestamo.libro_id),
+        fecha_prestamo: prestamo.fecha_prestamo.slice(0, 10),
         fecha_devolucion: estado === "devuelto" ? fechaDevolucion : null,
         estado,
-      });
+      };
+  
+      await actualizarPrestamo(prestamo.prestamo_id, dataToSend);
 
       onSuccess();
       onClose();
     } catch (error) {
-      setError(error.response?.data?.message || "Error al actualizar el préstamo");
+      setError(
+        error.response?.data?.message || "Error al actualizar el préstamo"
+      );
     } finally {
       setLoading(false);
     }
@@ -50,14 +57,12 @@ const CambiarEstadoPrestamo = ({ show, onClose, prestamo, onSuccess }) => {
     <div className="modal fade show d-block" role="dialog">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
-
           <div className="modal-header">
             <h5 className="modal-title">Cambiar estado del préstamo</h5>
             <button className="btn-close" onClick={onClose}></button>
           </div>
 
           <div className="modal-body">
-
             {error && (
               <div className="alert alert-danger" role="alert">
                 {error}
@@ -87,7 +92,6 @@ const CambiarEstadoPrestamo = ({ show, onClose, prestamo, onSuccess }) => {
                 />
               </div>
             )}
-
           </div>
 
           <div className="modal-footer">
@@ -99,7 +103,6 @@ const CambiarEstadoPrestamo = ({ show, onClose, prestamo, onSuccess }) => {
               {loading ? "Guardando..." : "Guardar cambios"}
             </Button>
           </div>
-
         </div>
       </div>
     </div>

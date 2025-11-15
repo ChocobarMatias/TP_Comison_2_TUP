@@ -26,7 +26,9 @@ CREATE TABLE alumnos (
     alumno_id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     curso VARCHAR(50),
-    dni VARCHAR(20) UNIQUE NOT NULL
+    dni VARCHAR(20) UNIQUE NOT NULL,
+    usuario_id INT NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id) ON DELETE CASCADE
 );
 
 -- Tabla prestamos

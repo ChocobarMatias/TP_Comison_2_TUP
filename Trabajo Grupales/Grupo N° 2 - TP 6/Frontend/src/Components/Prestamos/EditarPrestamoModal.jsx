@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Button from "../Prestamos/Button.jsx";
-import { crearNuevoPrestamo } from "../../Hooks/CustomPrestamos.js";
+import { actualizarPrestamo } from "../../Hooks/CustomPrestamos.js";
 import axios from "axios";
 import { BASE_URL } from "../../Services/Api.js";
 
-const CrearPrestamoModal = ({ show, onClose, onSuccess }) => {
+const EditarPrestamoModal = ({ show, onClose, prestamo, onSuccess }) => {
   const [alumnos, setAlumnos] = useState([]);
   const [libros, setLibros] = useState([]);
   const [error, setError] = useState("");
@@ -14,17 +14,29 @@ const CrearPrestamoModal = ({ show, onClose, onSuccess }) => {
     alumno_id: "",
     libro_id: "",
     fecha_prestamo: "",
+    fecha_devolucion: "",
+    estado: "",
   });
 
   useEffect(() => {
-    if (show) {
+    if (show && prestamo) {
       cargarAlumnos();
       cargarLibros();
-      // Resetear formulario y errores
-      setForm({ alumno_id: "", libro_id: "", fecha_prestamo: "" });
+      // Cargar datos del préstamo en el formulario
+      setForm({
+        alumno_id: prestamo.alumno_id,
+        libro_id: prestamo.libro_id,
+        fecha_prestamo: prestamo.fecha_prestamo
+          ? prestamo.fecha_prestamo.slice(0, 10)
+          : "",
+        fecha_devolucion: prestamo.fecha_devolucion
+          ? prestamo.fecha_devolucion.slice(0, 10)
+          : "",
+        estado: prestamo.estado,
+      });
       setError("");
     }
-  }, [show]);
+  }, [show, prestamo]);
 
   const cargarAlumnos = async () => {
     const { data } = await axios.get(`${BASE_URL}alumnos/`);
@@ -42,50 +54,41 @@ const CrearPrestamoModal = ({ show, onClose, onSuccess }) => {
 
   const handleSubmit = async () => {
     setError("");
-   
 
     // Validaciones
     if (!form.alumno_id || !form.libro_id || !form.fecha_prestamo) {
-      setError("Todos los campos son obligatorios");
-      console.error(
-        "Validación fallida. alumno_id:",
-        form.alumno_id,
-        "libro_id:",
-        form.libro_id,
-        "fecha_prestamo:",
-        form.fecha_prestamo
-      );
+      setError("Los campos alumno, libro y fecha de préstamo son obligatorios");
       return;
     }
 
     setLoading(true);
     try {
-      const dataToSend = {
+      await actualizarPrestamo(prestamo.prestamo_id, {
         alumno_id: parseInt(form.alumno_id),
         libro_id: parseInt(form.libro_id),
         fecha_prestamo: form.fecha_prestamo,
-        estado: "prestado",
-      };
-     
-      await crearNuevoPrestamo(dataToSend);
-      setForm({ alumno_id: "", libro_id: "", fecha_prestamo: "" });
+        fecha_devolucion: form.fecha_devolucion || null,
+        estado: form.estado,
+      });
       onSuccess();
       onClose();
     } catch (error) {
-      setError(error.response?.data?.message || "Error al crear el préstamo");
+      setError(
+        error.response?.data?.message || "Error al actualizar el préstamo"
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  if (!show) return null;
+  if (!show || !prestamo) return null;
 
   return (
     <div className="modal fade show d-block" role="dialog">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Crear Nuevo Préstamo</h5>
+            <h5 className="modal-title">Editar Préstamo</h5>
             <button className="btn-close" onClick={onClose}></button>
           </div>
 
@@ -101,6 +104,7 @@ const CrearPrestamoModal = ({ show, onClose, onSuccess }) => {
               <select
                 name="alumno_id"
                 className="form-select"
+                value={form.alumno_id}
                 onChange={handleChange}
               >
                 <option value="">Seleccione un alumno</option>
@@ -117,6 +121,7 @@ const CrearPrestamoModal = ({ show, onClose, onSuccess }) => {
               <select
                 name="libro_id"
                 className="form-select"
+                value={form.libro_id}
                 onChange={handleChange}
               >
                 <option value="">Seleccione un libro</option>
@@ -134,9 +139,36 @@ const CrearPrestamoModal = ({ show, onClose, onSuccess }) => {
                 type="date"
                 name="fecha_prestamo"
                 className="form-control"
+                value={form.fecha_prestamo}
                 onChange={handleChange}
               />
             </div>
+
+            <div className="mb-3">
+              <label className="form-label">Estado</label>
+              <select
+                name="estado"
+                className="form-select"
+                value={form.estado}
+                onChange={handleChange}
+              >
+                <option value="prestado">Prestado</option>
+                <option value="devuelto">Devuelto</option>
+              </select>
+            </div>
+
+            {form.estado === "devuelto" && (
+              <div className="mb-3">
+                <label className="form-label">Fecha de devolución</label>
+                <input
+                  type="date"
+                  name="fecha_devolucion"
+                  className="form-control"
+                  value={form.fecha_devolucion}
+                  onChange={handleChange}
+                />
+              </div>
+            )}
           </div>
 
           <div className="modal-footer">
@@ -144,7 +176,7 @@ const CrearPrestamoModal = ({ show, onClose, onSuccess }) => {
               Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={loading}>
-              {loading ? "Creando..." : "Crear Préstamo"}
+              {loading ? "Actualizando..." : "Actualizar Préstamo"}
             </Button>
           </div>
         </div>
@@ -153,4 +185,4 @@ const CrearPrestamoModal = ({ show, onClose, onSuccess }) => {
   );
 };
 
-export default CrearPrestamoModal;
+export default EditarPrestamoModal;
