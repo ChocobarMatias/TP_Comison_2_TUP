@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model deportes {
+  idDeporte   Int          @id @default(autoincrement()) // CAMBIO AQUÍ
+  nombre      String       @unique(map: "nombre") @db.VarChar(100)
+  descripcion String?      @db.Text
+  created_at  DateTime?    @default(now()) @db.Timestamp(0)
+  activo      Boolean?     @default(true) // <--- AÑADE ESTA LÍNEA
+  membresias  membresias[]
+}
+
+model membresias {
+  idMembresia   Int       @id @default(autoincrement()) // CAMBIO AQUÍ
+  socio_id      Int
+  deporte_id    Int
+  cuota_mensual Decimal   @default(0.00) @db.Decimal(10, 2)
+  fecha_alta    DateTime? @default(now()) @db.DateTime(0)
+  activo        Boolean?  @default(true)
+  
+  // --- REFERENCIAS CORREGIDAS ---
+  socios        socios    @relation(fields: [socio_id], references: [idSocio], onDelete: Cascade, onUpdate: NoAction, map: "membresias_ibfk_1")
+  deportes      deportes  @relation(fields: [deporte_id], references: [idDeporte], onDelete: Cascade, onUpdate: NoAction, map: "membresias_ibfk_2")
+  // --- FIN CORRECCIÓN ---
+
+  pagos         pagos[]
+
+  @@unique([socio_id, deporte_id], map: "socio_id")
+  @@index([deporte_id], map: "deporte_id")
+  @@index([socio_id], map: "idx_membresias_socio")
+}
+
+model pagos {
+  idPago         Int        @id @default(autoincrement()) 
+  membresia_id   Int
+  importe        Decimal    @db.Decimal(10, 2)
+  fecha_pago     DateTime?  @default(now()) @db.DateTime(0)
+  cuota_mes      Int        @db.TinyInt
+  cuota_anio     Int        @db.SmallInt
+  metodo_pago    String?    @db.VarChar(50)
+  comentario     String?    @db.VarChar(255)
+  created_at     DateTime?  @default(now()) @db.Timestamp(0)
+
+  // --- REFERENCIA CORREGIDA ---
+  membresias     membresias @relation(fields: [membresia_id], references: [idMembresia], onDelete: Cascade, onUpdate: NoAction, map: "pagos_ibfk_1")
+  // --- FIN CORRECCIÓN ---
+
+  @@index([cuota_anio, cuota_mes], map: "idx_pagos_periodo")
+  @@index([membresia_id], map: "membresia_id")
+}
+
+model socios {
+  idSocio             Int          @id @default(autoincrement()) // CAMBIO AQUÍ
+  nombre              String       @db.VarChar(150)
+  apellido            String       @db.VarChar(100)
+  dni                 String       @unique(map: "dni") @db.VarChar(20)
+  telefono            String?      @db.VarChar(50)
+  contrasena          String?      @db.VarChar(250)
+  
+  // --- CAMBIO PARA LOGIN ---
+  email               String       @unique(map: "email_unique") @db.VarChar(150)
+  // --- FIN CAMBIO ---
+
+  fecha_alta          DateTime?    @default(now()) @db.DateTime(0)
+  activo              Boolean?     @default(true)
+  created_at          DateTime?    @default(now()) @db.Timestamp(0)
+  membresias          membresias[]
+  resetToken          String?      @db.VarChar(255)
+  resetTokenExpires   DateTime?    @db.DateTime(0)
+  rol                 String?      @default("socio") @db.VarChar(50)
+}
