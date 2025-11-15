@@ -25,7 +25,8 @@ CREATE TABLE reservas (
     actividad_id INT NOT NULL,
     fecha DATE NOT NULL,
     FOREIGN KEY (socio_id) REFERENCES socios(idSocio) ON DELETE CASCADE,
-    FOREIGN KEY (actividad_id) REFERENCES actividades(id) ON DELETE CASCADE
+    FOREIGN KEY (actividad_id) REFERENCES actividades(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_reserva_unica UNIQUE (socio_id, actividad_id, fecha)
 );
 
 CREATE TABLE administradores (

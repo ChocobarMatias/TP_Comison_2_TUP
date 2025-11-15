@@ -174,8 +174,8 @@ const recuperarPassword = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
-    const link = `http://localhost:${PORT}/api/auth/reset?id=${socio.idSocio}&token=${token}`;
-    console.log(link);
+    const link = `http://localhost:5173/reset-contrasena?id=${socio.idSocio}&token=${token}`;
+    
     //TODO: Ver tema de envio de correo
     const envio = await enviarCorreo(socio.emailSocio, socio.nombreSocio, link)
     res.status(envio.status).json({ message: envio.message });

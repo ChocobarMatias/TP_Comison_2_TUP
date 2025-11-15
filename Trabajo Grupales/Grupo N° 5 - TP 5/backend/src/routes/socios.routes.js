@@ -9,13 +9,14 @@ const {
   darBajaSocio,
   reactivarSocio,
   loginSocio,
-  recuperarPassword
+  recuperarPassword,
+  createSocio
 } = require("../controllers/socios.controller");
 
 
 router.post("/login", loginSocio);
 router.post("/recuperar", recuperarPassword);
-//router.post("/crear", createSocio);
+router.post("/crear", createSocio);
 
 router.get("/", getSocios);
 router.get("/:id", verificarToken, getSocio);
