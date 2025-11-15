@@ -6,6 +6,7 @@ import LoginPage from './Pages/LoginPage'
 import Libros from './Components/Libros/Libros.jsx'
 import Registro from './Components/Registro/Registro.jsx'
 import HomePage from './Pages/HomePage.jsx'
+import AdminPage from './Pages/AdminPage.jsx'
 
 function App() {
   
@@ -23,6 +24,7 @@ function App() {
         <Route path='/prestamos' element={<Prestamos />} />
         <Route path='/registro' element={<Registro />} />
         <Route path='/libros' element={<Libros />} />
+        <Route path='/admin/*' element={<AdminPage />} />
         <Route path='*' element={<Navigate to='/' />} />
 
       </Routes>
