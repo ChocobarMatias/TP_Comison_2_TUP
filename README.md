@@ -1,236 +1,264 @@
-📘 Guía Oficial – Entrega de TP Semanal (Programación 4 – UTN FRT)
-💻 Trabajo colaborativo en GitHub con repositorio por grupo
-🧭 Estructura del Repositorio
+# 🚀 TP – Semana 3 | Actualización del Back-End a Prisma ORM
 
-El repositorio base del profesor contiene una carpeta raíz llamada:
+---
 
-📂 Trabajos_Grupales/
+## 🎯 Objetivo de la semana
+Migrar el **back-end existente (Node + Express + MySQL)** al uso del ORM **Prisma**, reemplazando las consultas SQL manuales por un enfoque moderno, seguro y escalable basado en modelos de datos.
 
+---
 
-Dentro de ella, cada grupo tiene su propia carpeta asignada:
+## 👥 Importante para el líder del grupo
 
-Trabajos_Grupales/
-├─ Grupo_1/
-├─ Grupo_2/
-├─ Grupo_3/
-├─ Grupo_4/
-└─ Grupo_5/
-.
-.
-.
-.├─ Grupo_N/
+Antes de comenzar, el **líder del grupo** debe **sincronizar el repositorio** para obtener los nuevos archivos base:
 
-📌 Cada grupo deberá trabajar únicamente dentro de su carpeta.
-El resto de las carpetas no deben ser modificadas.
+```bash
+git pull upstream main
 
-🎯 Objetivo General
+🧠 ¿Qué es Prisma ORM?
 
-El objetivo es evaluar:
+Prisma ORM (Object Relational Mapper) permite interactuar con bases de datos utilizando código JavaScript en lugar de SQL manual.
+Traduce los modelos de la base a objetos de Node.js, generando código más limpio, mantenible y escalable.
 
-✅ Trabajo en equipo.
-✅ Organización del código por grupo.
-✅ Participación individual mediante ramas y commits.
-✅ Conocimiento técnico (Node + MySQL + Express).
+Ventajas:
 
-🚀 Pasos para la entrega
-1️⃣ Fork del repositorio base
+Código más corto y legible
 
-Cada grupo debe hacer un Fork del repositorio del profesor:
+Menos errores de sintaxis SQL
 
-👉 https://github.com/ChocobarMatias/TP_Comision_2_TUP
+Tipado automático
 
-Solo un integrante del grupo (el líder) realiza el fork inicial.
-Los demás integrantes trabajarán como colaboradores dentro de ese fork.
+Soporte multiplataforma (MySQL, PostgreSQL, SQLite, SQL Server)
 
-📘 Agregar Colaboradores al Fork (Importante)
+⚙️ Pasos para la migración a Prisma
+1️⃣ Instalación de Prisma
 
-El líder del grupo debe agregar a todos los integrantes como colaboradores para que puedan clonar, crear ramas y subir sus cambios.
+npm install prisma @prisma/client
 
-🔹 Pasos:
+Instala Prisma y su cliente para que pueda ser utilizado por el servidor Node.js.
 
-Ingresar al fork del grupo.
+2️⃣ Inicialización de Prisma
 
-Ir a Settings → Collaborators → Add people.
+npx prisma init
 
-Escribir el usuario de GitHub de cada integrante y presionar Add collaborator.
+Crea la carpeta /prisma con el archivo schema.prisma y agrega la variable DATABASE_URL al .env.
 
-Cada integrante recibirá una invitación que debe aceptar.
+3️⃣ Configuración del archivo .env
 
-💡 Una vez aceptada la invitación, todos los integrantes tendrán permisos de escritura sobre el mismo repositorio del grupo.
+Editá tu archivo .env agregando la cadena de conexión correspondiente a tu base MySQL:
 
-2️⃣ Clonar el fork del grupo
+DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
 
-Cada integrante debe clonar el repositorio del líder de su grupo, no el del profesor:
+Reemplazá USER, PASSWORD, HOST, PORT y DATABASE con tus datos reales.
 
-git clone https://github.com/<usuario_del_lider>/TP_Comision_2_TUP.git
-cd TP_Comision_2_TUP
+4️⃣ Conectar Prisma a la base existente
 
-3️⃣ Ubicación del trabajo del grupo
+npx prisma db pull   (Prisma lee la estructura de tu base de datos y genera automáticamente los modelos dentro de schema.prisma.)
 
-Dentro de la carpeta 📂 Trabajos_Grupales, el grupo debe trabajar solo dentro de su carpeta asignada.
-Por ejemplo:
+Genera el archivo schema.prisma basado en la estructura actual de la base de datos. (recordar que si no le esta funcionado verifiquen que el archivo prisma.config.ts este importado el dotenv/config)
 
-📂 Trabajos_Grupales/
-└─ 📂 Grupo_1/
-     ├─ index.js
-     ├─ config/
-     │   └─ DB.js
-     ├─ controllers/
-     ├─ routes/
-     └─ package.json
+5️⃣ Generar el cliente de Prisma
 
+npx prisma generate
 
-💡 Todo el desarrollo del sistema (backend monolítico) se debe realizar dentro de la carpeta correspondiente al grupo asignado.
+Crea el cliente Prisma dentro de node_modules/@prisma/client, permitiendo realizar consultas con sintaxis moderna:
 
-4️⃣ Creación de ramas personales (por integrante)
+const usuarios = await prisma.usuarios.findMany();
 
-Cada integrante del grupo debe crear su propia rama dentro del fork con su nombre o legajo.
-Ejemplo:
+6️⃣ (✅ Opcional) Crear archivo de configuración de Prisma
 
-git checkout -b cardozo_martin
-git add .
-git commit -m "Agrego controlador de productos - Martin"
-git push origin cardozo_martin
+Para centralizar la conexión, podés crear un archivo:
 
+📁 /config/prisma.js
 
-📘 Regla:
-Cada alumno trabaja en su rama y luego se integran todos en la rama grupal (por ejemplo grupo1).
+const { PrismaClient } = require('@prisma/client');  (recuerden que aqui tiene que apuntar a la carpeta generada)
+const prisma = new PrismaClient();
 
-5️⃣ Integración del trabajo grupal
+module.exports = prisma;
 
-El líder del grupo será responsable de integrar las ramas individuales dentro de la carpeta del grupo.
+🧾 Auditoría del trabajo
 
-Ejemplo:
+Cada grupo deberá incluir un archivo AUDITORIA.md dentro de su carpeta con:
 
-git checkout grupo1
-git merge cardozo_martin
-git merge bazan_matias
-git merge herrera_karen
+Breve descripción de los cambios realizados.
 
-6️⃣ Pull Request (PR) de entrega
+Capturas del resultado de los comandos:
 
-Una vez terminado el trabajo, el líder del grupo debe realizar un Pull Request (PR) desde su fork hacia el repositorio del profesor.
+npx prisma db pull
 
-🔹 Instrucciones:
+npx prisma generate
 
-Base repository: ChocobarMatias/TP_Comision_2_TUP
+Ejemplo funcional de un controlador usando Prisma (findMany, create, update, etc).
 
-Base branch: main
+🧑‍💻 Resumen de comandos
+Propósito	Comando	Descripción
+💾 Instalar ORM	npm install prisma @prisma/client	Añade Prisma al proyecto
+⚙️ Inicializar	npx prisma init	Crea la configuración base
+🧩 Leer DB existente	npx prisma db pull	Importa la estructura de la base
+🏗️ Generar cliente	npx prisma generate	Compila el cliente Prisma
+🧹 Formatear schema	npx prisma format	Ordena el archivo schema.prisma
+👀 Visualizar datos	npx prisma studio	Abre interfaz gráfica para explorar tablas
+🎯 Resultado esperado
 
-Head repository: <usuario_del_grupo>/TP_Comision_2_TUP
-
-Compare branch: grupo1 (o la rama principal del grupo)
-
-🔹 Título del PR:
-Entrega TP1 - Grupo 1 - Legajo líder 61658
-
-🔹 Descripción del PR:
-Integrantes:
-- Cardozo Martín (61658)
-- Bazan Matías (61152)
-- Herrera Karen (61151)
-- Navarro Lautaro (61160)
-
-🧮 Forma de Evaluación
-Criterio	Descripción	Resultado
-✅ Carpeta del grupo creada correctamente	El grupo trabajó dentro de su carpeta asignada	AP
-✅ Ramas personales creadas	Cada integrante subió su rama con commits propios	AP
-✅ PR grupal realizado	Se envió un Pull Request al repo del profesor	AP
-⚠️ Faltan ramas personales	Algún integrante no participó	OB
-❌ Sin PR o sin carpeta del grupo	No se considera entrega	DS
-🧩 Ejemplo visual
-TP_Comision_2_TUP/
-└─ 📂 Trabajos_Grupales/
-   ├─ 📂 Grupo_1/
-   │   ├─ index.js
-   │   ├─ config/DB.js
-   │   ├─ controllers/
-   │   └─ routes/
-   ├─ 📂 Grupo_2/
-   ├─ 📂 Grupo_3/
-   └─ 📂 Grupo_4/
-
-
-Cada grupo trabaja solo en su carpeta y cada alumno en su rama.
-
-🧠 Evaluación Automática
-
-El sistema del profesor (GitHub Actions) se ejecutará automáticamente al llegar la fecha límite:
-
-🕒 15 de octubre de 2025 a las 23:59 (hora Argentina)
-
-Se validará:
-
-Que exista la carpeta del grupo.
-
-Que haya un Pull Request del grupo.
-
-Que existan ramas individuales de cada integrante.
-
-Que el sistema compile y cumpla la estructura mínima.
-
-Los resultados aparecerán automáticamente en el README del repo base, por ejemplo:
-
-Grupo	Integrantes	Estado	Observaciones
-Grupo 1	4	AP	Cumple estructura
-Grupo 2	3	OB	Falta rama de un integrante
-Grupo 3	4	DS	No presentó PR
-📘 Resumen para los alumnos
-Acción requerida	Responsable	Evaluación
-Hacer fork del repo base	Líder del grupo	Obligatorio
-Agregar colaboradores	Líder del grupo	Obligatorio
-Crear ramas individuales	Cada integrante	AP
-Trabajar dentro de su carpeta del grupo	Todos los integrantes	AP
-Crear PR grupal	Líder	AP
-No tener rama personal	Alumno	DS (No entregó)
-No tener carpeta de grupo o PR	Grupo	DS (No entregó)
-💬 Consejos finales
-
-Cada commit debe tener mensaje claro y legible.
-
-Usar nombres de ramas sin espacios (nombre_apellido).
-
-Evitar subir node_modules (usar .gitignore).
-
-Verificar que el proyecto compile antes del PR.
-
-Respetar la estructura de carpetas asignada.
-
-Aceptar las invitaciones de colaborador antes de comenzar a trabajar.
-
-
-GRUPOS	      Semana 1
-
-Grupo N° 1 -	TP 6
-   
-Grupo N° 2 -	TP 7
-
-Grupo N° 3 -	TP 8
-
-Grupo N° 4 -	TP 9
-
-Grupo N° 5 -	TP 10
-
-Grupo N° 6 -	TP 1
-
-Grupo N° 7 -	TP 2
-
-Grupo N° 8 -	TP 3
-
-Grupo N° 9 -	TP 4
-
-Grupo N° 10 -	TP 5
-
-Grupo N° 11 -	TP 6
-
-Grupo N° 12 -	TP 9
-
-Grupo N° 13 -	TP 8
-
-Grupo N° 14 -	TP 5
-
-Grupo N° 15 -	TP 7
-
-Grupo N° 16 -	TP 2
-
-Grupo N° 17 -	TP 1
+Al finalizar la Semana 3:
+
+El back-end debe utilizar Prisma ORM en lugar de consultas SQL con mysql2.
+
+Los controladores principales (usuarios, clientes, ventas, productos, etc.) deben usar los métodos Prisma (findMany, findUnique, create, update, delete).
+
+El proyecto debe correr correctamente con:
+
+npm run dev  o nodemon
+
+
+sin errores de conexión a base de datos.
+
+💡 Consejo :
+Recordá que Prisma no usa variables sueltas como DB_HOST o DB_USER.
+Usa una sola cadena de conexión DATABASE_URL, lo que simplifica la configuración y evita errores comunes.
+
+
+construccion del front 
+
+arquitectura de carpetas 
+
+📦 src/
+│
+├── 📁 components/              # Componentes UI reutilizables
+│   ├── Button.jsx
+│   ├── Modal.jsx
+│   ├── InputField.jsx
+│   └── Table.jsx
+│
+├── 📁 hooks/                   # Custom hooks globales
+│   ├── useFetch.js
+│   ├── useAuth.js
+│   ├── useModal.js
+│   └── usePagination.js
+│
+├── 📁 pages/                   # Páginas principales (views)
+│   ├── HomePage.jsx
+│   ├── LoginPage.jsx
+│   ├── DashboardPage.jsx
+│   └── NotFoundPage.jsx
+│
+├── 📁 services/                # Lógica de conexión con API / Endpoints
+│   ├── api.js                  # Config base de Axios
+│   ├── usuariosService.js
+│   ├── ventasService.js
+│   ├── productosService.js
+│   └── authService.js
+│
+├── 📁 proteccionRutas/         # Rutas privadas o protegidas
+│   ├── ProtectedRoute.jsx
+│   ├── AdminRoute.jsx
+│   └── RoleBasedRoute.jsx
+│
+├── 📁 store/                   # Estado global (Zustand o Redux)
+│   ├── useAuthStore.js
+│   ├── useVentasStore.js
+│   └── useThemeStore.js
+│
+├── 📁 styles/                  # Estilos globales
+│   ├── index.css
+│   ├── variables.css
+│   └── themes/
+│       ├── light.css
+│       └── dark.css
+│
+├── 📁 utils/                   # Funciones auxiliares
+│   ├── formatDate.js
+│   ├── validateEmail.js
+│   ├── calculateTotal.js
+│   └── capitalize.js
+│
+├── 📁 router/                  # Configuración general de rutas
+│   ├── AppRouter.jsx
+│   ├── routes.js               # Lista de rutas y roles
+│   └── index.js
+│
+├── 📁 endpoint/                # URLs centralizadas del backend
+│   └── endpoints.js
+│
+├── App.jsx                     # Componente raíz
+├── main.jsx                    # Punto de entrada principal
+└── vite.config.js
+
+🧩 Justificación por nivel
+Nivel	Propósito	Ejemplo
+assets/	Recursos estáticos globales	Logos, íconos, imágenes
+components/	Elementos UI reutilizables	Botones, Modales, Inputs
+features/	Módulos específicos (auth, ventas, usuarios, etc.)	Divide la lógica por dominio
+hooks/	Custom hooks globales	useFetch, useModal
+layouts/	Plantillas de diseño	DashboardLayout, PublicLayout
+pages/	Páginas enrutadas	/home, /dashboard
+router/	Navegación y protección de rutas	AppRouter, ProtectedRoute
+services/	Capa de comunicación con la API	Axios, endpoints REST
+store/	Estado global (Zustand / Redux)	useAuthStore, useThemeStore
+utils/	Funciones auxiliares puras	Validaciones, formateos
+styles/	CSS global y variables	Estilos comunes y temas
+
+Atencion (de esta forma solo se configura una vez axios en el proyecto y se importa en los servicios, osea una sola vez)
+
+⚙️ Ejemplo de configuración Axios base
+
+📁 src/services/api.js
+
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  headers: { 'Content-Type': 'application/json' },
+});
+
+export default api;
+
+---
+
+hooks personalizado para fetch exportados por constantes retornando datos, carga y error funciones etc, en lo mismo podemos usar todo el crud de la peticiopnes 
+📁 src/hooks/useFetch.js
+
+ejemplo:
+
+import { useState, useEffect } from 'react';
+import api from '../services/api';
+
+export const useFetch = (url) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(url);
+        setData(response.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]);
+
+  return { data, loading, error };
+};
+
+de esta forma lo llamamos en cualquier componente las veces que queramos
+---
+store personalizado con zustand
+📁 src/store/useAuthStore.js
+import create from 'zustand';
+export const useAuthStore = create((set) => ({
+  user: null,
+  token: null,
+  setUser: (user) => set({ user }),
+  setToken: (token) => set({ token }),
+  logout: () => set({ user: null, token: null }),
+}));
+---
+# 📘 Trabajo Práctico – Semana 3
+
+📚 UTN – Programación 4 | Comisión 2
+Profesor: Matías Chocobar
