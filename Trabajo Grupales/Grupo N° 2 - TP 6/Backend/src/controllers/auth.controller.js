@@ -11,9 +11,6 @@ const SECRET_KEY = process.env.JWT_SECRET;
 //Registrarse
 const register = async (req, res) => {
   try {
-    console.log("=== REGISTRO INICIADO ===");
-    console.log("Body recibido:", req.body);
-
     const { 
       usuario, 
       contraseña, 
@@ -29,7 +26,6 @@ const register = async (req, res) => {
     }
 
     const hash = await hashPassword(contraseña);
-    console.log("Hash generado");
 
     // -----------------------------------------------------------
     // 1) INSERTAR USUARIO
@@ -41,14 +37,11 @@ const register = async (req, res) => {
 
     db.query(sqlUsuario, [usuario, hash, email], (err, resultUsuario) => {
       if (err) {
-        console.error("Error al insertar usuario:", err);
         return res.status(500).json({ 
           message: "Error al registrar usuario", 
           error: err.message 
         });
       }
-
-      console.log("Usuario creado:", resultUsuario);
 
       const usuarioId = resultUsuario.insertId;
 
@@ -65,14 +58,11 @@ const register = async (req, res) => {
         [nombreAlumno, curso, dni, usuarioId], 
         (errAlumno, resultAlumno) => {
           if (errAlumno) {
-            console.error("Error al insertar alumno:", errAlumno);
             return res.status(500).json({
               message: "El usuario se creó pero no se pudo registrar el alumno",
               error: errAlumno.message
             });
           }
-
-          console.log("Alumno creado:", resultAlumno);
 
           return res.status(201).json({
             message: "Registro exitoso (usuario + alumno)",
@@ -84,7 +74,6 @@ const register = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("ERROR EN EL CATCH GENERAL:", error);
     return res.status(500).json({ message: "Error interno", error: error.message });
   }
 };
@@ -96,12 +85,10 @@ const login = (req, res) => {
     const { usuario, contraseña } = req.body;
 
     const consulta =
-      "SELECT usuario_id, contraseña FROM usuarios WHERE nombre_usuario = ?";
+      "SELECT usuario_id, contraseña, nombre_usuario, email FROM usuarios WHERE nombre_usuario = ?";
 
     db.query(consulta, [usuario], async (err, results) => {
       if (err) {
-        console.log(err);
-
         return res.status(500).json({ message: "Error al buscar el usuario" });
       }
 
@@ -111,11 +98,13 @@ const login = (req, res) => {
 
       const id_usuario = results[0].usuario_id;
       const hash = results[0].contraseña;
+      const nombre_usuario = results[0].nombre_usuario;
+      const email = results[0].email;
 
       const esValida = await comparePassword(String(contraseña), String(hash));
 
       if (!esValida) {
-        return res.status(401).json({ message: "Contraseña incorrecta " });
+        return res.status(401).json({ message: "Contraseña incorrecta" });
       } else {
         //creacion del token para iniciar la sesion
 
@@ -127,7 +116,15 @@ const login = (req, res) => {
 
         return res
           .status(200)
-          .json({ message: "Usuario logueado con exito", token: token });
+          .json({ 
+            message: "Usuario logueado con exito", 
+            token: token,
+            user: {
+              id: id_usuario,
+              nombre_usuario: nombre_usuario,
+              email: email
+            }
+          });
       }
     });
   } catch (error) {
@@ -156,7 +153,7 @@ const recuperarPassword = async (req, res) => {
     );
     // generamos un token JWT con el id y email del usuario, con expiración de 15 minutos
 
-    const link = `http://localhost:3000/auth/cambio_password/${token}`; // link de recuperación de contraseña
+    const link = `http://localhost:5173/auth/cambio_password/${token}`; // link de recuperación de contraseña
     await enviarEmailRecuperacion(mail, link); // enviamos el email de recuperación
 
     res.status(200).json({ message: "Email de recuperación enviado" }); // respondemos que el email fue enviado
@@ -166,23 +163,27 @@ const recuperarPassword = async (req, res) => {
 const cambioPasswordRecuperado = async (req, res) => {
   try {
     const { token } = req.params;
-    const { newPassword } = req.body;
+    const { contraseña } = req.body;
+
+    if (!contraseña) {
+      return res.status(400).json({ message: "La contraseña es requerida" });
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
 
-    // Hashear la nueva contraseña
-    const hashedPassword = await bcrypt.hash(String(newPassword), 10);
+    // Hashear la nueva contraseña usando la función del utils
+    const hashedPassword = await hashPassword(contraseña);
 
     const consulta = "UPDATE usuarios SET contraseña = ? WHERE usuario_id = ?";
 
     db.query(consulta, [hashedPassword, decoded.id], (err, result) => {
-      if (err)
+      if (err) {
         return res.status(500).json({ message: "Error en el servidor", err });
+      }
 
-      if (result.affectedRows === 0)
-        // para UPDATE se usa affectedRows
+      if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Usuario no encontrado" });
+      }
 
       res.status(200).json({ message: "Contraseña actualizada correctamente" });
     });

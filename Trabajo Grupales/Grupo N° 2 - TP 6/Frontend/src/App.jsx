@@ -6,6 +6,7 @@ import LoginPage from './Pages/LoginPage'
 import Registro from './Components/Registro/Registro.jsx'
 import Libros from './Components/Libros/Libros'
 import HomePage from './Pages/HomePage.jsx'
+import CambioPassword from './Pages/CambioPassword.jsx'
 
 function App() {
   
@@ -16,12 +17,12 @@ function App() {
     
       
         <Route path='/' element={<LoginPage/>} />
-       
         <Route path='/home' element={<HomePage />} />
         <Route path='/alumnos' element={<Alumnos/>} />
         <Route path='/prestamos' element={<Prestamos />} />
         <Route path='/registro' element={<Registro />} />
         <Route path='/libros' element={<Libros />} />
+        <Route path='/auth/cambio_password/:token' element={<CambioPassword />} />
         <Route path='*' element={<Navigate to='/' />} />
       </Routes>
       
