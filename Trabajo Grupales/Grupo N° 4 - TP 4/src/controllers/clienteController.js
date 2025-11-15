@@ -2,7 +2,7 @@ exports.crearCliente = async (req, res) => {
   try {
     const { nombre, apellido, email } = req.body;
 
-    if (!nombre  !apellido  !email) {
+    if (!nombre  || !apellido || !email) {
       return res.status(400).json({ error: 'Todos los campos son obligatorios' });
     }
 
