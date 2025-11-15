@@ -1,0 +1,80 @@
+function ModalCrearSocio({ cerrar, crear }) {
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const nombre = e.target.nombre.value;
+        const email = e.target.email.value;
+
+        if (!nombre || !email) {
+        alert("Todos los campos son obligatorios");
+        return;
+        }
+
+        const nuevoSocio = {
+            nombre,
+            email
+        };
+
+
+
+        crear(nuevoSocio);
+        cerrar();
+    };
+
+    return (
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center" onClick={cerrar}>
+        <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md relative animate-fadeIn"
+        onClick={(e) => e.stopPropagation()}>
+
+            <h2 className="text-xl font-bold mb-4 text-gray-800">
+            Crear nuevo socio
+            </h2>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+                <div>
+                    <label className="font-medium text-gray-700">Nombre</label>
+                    <input
+                    type="text"
+                    name="nombre"
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ej: Juan Pérez"
+                    />
+                </div>
+
+                <div>
+                    <label className="font-medium text-gray-700">Email</label>
+                    <input
+                    type="email"
+                    name="email"
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    placeholder="correo@gmail.com"
+                    />
+                </div>
+
+                <div className="flex justify-end gap-3 mt-4">
+
+                    <button
+                    type="button"
+                    onClick={cerrar}
+                    className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition"
+                    >
+                    Cancelar
+                    </button>
+
+                    <button
+                    type="submit"
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                    >
+                        Crear
+                    </button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+    );
+}
+
+export default ModalCrearSocio;
