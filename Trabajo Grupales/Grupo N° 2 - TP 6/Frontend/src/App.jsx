@@ -8,6 +8,7 @@ import Registro from './Components/Registro/Registro.jsx'
 import HomePage from './Pages/HomePage.jsx'
 import AdminPage from './Pages/AdminPage.jsx'
 import Footer from './Components/Common/Footer.jsx'
+import CambioPassword from './Pages/CambioPassword.jsx'
 
 function App() {
   
@@ -26,6 +27,7 @@ function App() {
         <Route path='/registro' element={<Registro />} />
         <Route path='/libros' element={<Libros />} />
         <Route path='/admin/*' element={<AdminPage />} />
+        <Route path='/auth/cambio_password/:token' element={<CambioPassword />} />
         <Route path='*' element={<Navigate to='/' />} />
 
       </Routes>
