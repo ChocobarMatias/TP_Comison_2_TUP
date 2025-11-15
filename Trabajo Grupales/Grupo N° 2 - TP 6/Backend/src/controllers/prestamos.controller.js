@@ -2,11 +2,21 @@ const db = require("../config/DB");
 
 // Obtener todos los préstamos
 const getAll = (req, res) => {
-  const consulta = "SELECT * FROM prestamos";
+  const consulta = `
+    SELECT 
+      p.*,
+      a.nombre as alumno_nombre,
+      a.dni as alumno_dni,
+      l.titulo as libro_titulo,
+      l.autor as libro_autor
+    FROM prestamos p
+    LEFT JOIN alumnos a ON p.alumno_id = a.alumno_id
+    LEFT JOIN libros l ON p.libro_id = l.libro_id
+  `;
 
   db.query(consulta, (err, rows) => {
     if (err) {
-      return res.status(500).json(err);
+      return res.status(500).json({ message: err.message || "Error al obtener los préstamos" });
     }
 
     return res.json(rows);
@@ -21,11 +31,11 @@ const getById = (req, res) => {
 
   db.query(consulta, [id], (err, rows) => {
     if (err) {
-      return res.status(500).json(err);
+      return res.status(500).json({ message: err.message || "Error al buscar el préstamo" });
     }
 
     if (!rows.length) {
-      return res.status(404).json({ error: "Prestamo no encontrado" });
+      return res.status(404).json({ message: "Préstamo no encontrado" });
     }
 
     return res.json(rows[0]);
@@ -36,6 +46,13 @@ const getById = (req, res) => {
 const create = (req, res) => {
   const { alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado } =
     req.body;
+
+  // Validaciones básicas
+  if (!alumno_id || !libro_id || !fecha_prestamo) {
+    return res.status(400).json({ 
+      message: "Los campos alumno_id, libro_id y fecha_prestamo son obligatorios" 
+    });
+  }
 
   const consulta =
     "INSERT INTO prestamos (alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado) VALUES (?, ?, ?, ?, ?)";
@@ -51,10 +68,13 @@ const create = (req, res) => {
     ],
     (err, result) => {
       if (err) {
-        return res.status(500).json({message: err});
+        return res.status(500).json({message: err.message || "Error al crear el préstamo"});
       }
 
-      return res.status(201).json({ message: "Prestamo creado con exito" });
+      return res.status(201).json({ 
+        message: "Préstamo creado con éxito",
+        prestamo_id: result.insertId 
+      });
     }
   );
 };
@@ -65,6 +85,13 @@ const update = (req, res) => {
 
   const { alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado } =
     req.body;
+
+  // Validaciones básicas
+  if (!alumno_id || !libro_id || !fecha_prestamo) {
+    return res.status(400).json({ 
+      message: "Los campos alumno_id, libro_id y fecha_prestamo son obligatorios" 
+    });
+  }
 
   const consulta =
     "UPDATE prestamos SET alumno_id=?, libro_id=?, fecha_prestamo=?, fecha_devolucion=?, estado=? WHERE prestamo_id=?";
@@ -81,14 +108,14 @@ const update = (req, res) => {
     ],
     (err, result) => {
       if (err) {
-        return res.status(500).json(err);
+        return res.status(500).json({ message: err.message || "Error al actualizar el préstamo" });
       }
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Prestamo no encontrado" });
+        return res.status(404).json({ message: "Préstamo no encontrado" });
       }
 
-      return res.json({ message: "Prestamo actualizado con exito" });
+      return res.json({ message: "Préstamo actualizado con éxito" });
     }
   );
 };
@@ -101,14 +128,14 @@ const remove = (req, res) => {
 
   db.query(consulta, [id], (err, result) => {
     if (err) {
-      return res.status(500).json(err);
+      return res.status(500).json({ message: err.message || "Error al eliminar el préstamo" });
     }
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Prestamo no encontrado" });
+      return res.status(404).json({ message: "Préstamo no encontrado" });
     }
 
-    return res.json({ message: "Prestamo eliminado con exito" });
+    return res.json({ message: "Préstamo eliminado con éxito" });
   });
 };
 

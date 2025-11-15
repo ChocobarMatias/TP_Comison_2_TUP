@@ -1,4 +1,5 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
+import PrestamosPage from './Pages/PrestamosPage.jsx'
 import './App.css'
 
 function App() {
@@ -7,11 +8,10 @@ function App() {
   return (
     <BrowserRouter>
     <div className='d-flex flex-column min-vh-100'>
-    <Navbar/>
       <main className='flex-fill app-main'>
         <Routes>
-        <Route path='/' element={<h1 className='text-center mt-5'>Welcome to the App</h1>} />
-      </Routes>
+          <Route path='/prestamos' element={<PrestamosPage />} />
+        </Routes>
       </main>
       </div>
     </BrowserRouter>
