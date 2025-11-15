@@ -14,12 +14,12 @@ router.get("/",  getAll);
 router.get("/:id",  getById);
 
 //Crear un prestamo
-router.post("/crear", verifyToken, create);
+router.post("/", verifyToken, create);
 
 //Editar un prestamo
-router.put("/editar/:id", verifyToken, update);
+router.put("/:id", verifyToken, update);
 
 //Eliminar un prestamo
-router.delete("/eliminar/:id", verifyToken, remove);
+router.delete("/:id", verifyToken, remove);
 
 module.exports = router;

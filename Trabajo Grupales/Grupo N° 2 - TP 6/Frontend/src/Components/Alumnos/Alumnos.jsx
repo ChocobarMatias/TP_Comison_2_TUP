@@ -142,6 +142,10 @@ const Alumnos = () => {
 
   return (
     <>
+    <h1>Gestión de Alumnos    </h1>
+    <br />
+    <br />
+    
       <BusquedaAlumno setTerminoBusqueda={setTerminoBusqueda} />
 
       {mensaje && <div className={`alert alert-${tipoMensaje} mt-3`}>{mensaje}</div>}
