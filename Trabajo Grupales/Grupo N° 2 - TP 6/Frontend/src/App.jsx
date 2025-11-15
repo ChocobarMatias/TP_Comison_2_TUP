@@ -5,6 +5,7 @@ import Alumnos from './Components/Alumnos/Alumnos'
 import LoginPage from './Pages/LoginPage'
 import Registro from './Components/Registro/Registro.jsx'
 import Libros from './Components/Libros/Libros'
+import HomePage from './Pages/HomePage.jsx'
 
 function App() {
   
@@ -16,7 +17,7 @@ function App() {
       
         <Route path='/' element={<LoginPage/>} />
        
-        <Route path='/' element={<h1 className='text-center mt-5'>Welcome to the App</h1>} />
+        <Route path='/home' element={<HomePage />} />
         <Route path='/alumnos' element={<Alumnos/>} />
         <Route path='/prestamos' element={<Prestamos />} />
         <Route path='/registro' element={<Registro />} />

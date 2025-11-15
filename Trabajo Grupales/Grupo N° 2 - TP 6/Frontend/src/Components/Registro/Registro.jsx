@@ -1,8 +1,11 @@
 import React from 'react';
 import useCustomRegister from '../../Hooks/UseCustomRegister';
+import { useNavigate } from 'react-router-dom'; // Importamos useNavigate
+import Swal from 'sweetalert2'; // Importamos SweetAlert2
 import "../../Styles/Registro/Registro.css";
 
 const Registro = () => {
+  const navigate = useNavigate(); // Hook para navegar
   const {
     usuario,
     setUsuario,
@@ -24,7 +27,19 @@ const Registro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await registrarUsuario();
+    const resultado = await registrarUsuario();
+
+    // Si el registro fue exitoso, mostramos SweetAlert y redirigimos
+    if (resultado.success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Registro exitoso',
+        text: 'Tu cuenta ha sido creada correctamente',
+        confirmButtonText: 'Ir al login'
+      }).then(() => {
+        navigate('/login'); // Redirige a LoginPage
+      });
+    }
   };
 
   return (
@@ -34,7 +49,6 @@ const Registro = () => {
           <h1 className="h4 mb-4 text-center">Registro</h1>
 
           <form onSubmit={handleSubmit} noValidate>
-
             {/* Nombre de usuario */}
             <div className="mb-3">
               <label htmlFor="usuario" className="form-label">Nombre de usuario</label>
@@ -132,4 +146,3 @@ const Registro = () => {
 };
 
 export default Registro;
-
