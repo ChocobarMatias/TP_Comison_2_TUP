@@ -43,6 +43,7 @@ model planes_pago {
   @@index([servicio_id], map: "servicio_id")
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model servicios {
   id           Int           @id @default(autoincrement())
   nombre       String        @db.VarChar(100)
@@ -65,4 +66,3 @@ enum cuotas_estado {
   PENDIENTE
   PAGADO
 }
-

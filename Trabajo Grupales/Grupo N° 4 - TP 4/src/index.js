@@ -1,11 +1,9 @@
-require('dotenv').config();
+const express = require('express');
 const app = require('./app');
-const { sequelize, connectDB } = require('./config/db');
-const PORT = Number(process.env.PORT || 3000);
+require('dotenv').config();
 
-(async () => {
-  await connectDB();
-  await sequelize.sync();
-  app.listen(PORT, () => console.log(`🚀 API lista en http://localhost:${PORT}`));
-})();
+const PORT = process.env.PORT || 3000;
 
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
