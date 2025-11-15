@@ -93,12 +93,31 @@ variables de entorno inexistentes
 ## 2) SOLUCIONES IMPLEMENTADAS + NUEVO AGREGADO
 
 ### ✅ Soluciones aplicadas a problemas detectados
-- …
+- Reconstrucción completa de la base de datos faltante.
 
+Unificación del acceso a datos mediante Prisma ORM.
+
+Corrección del montaje de rutas principales.
+
+Eliminación de código incompatible (mysql2 vs Sequelize).
+
+Reorganización de carpetas.
+
+Corrección de email.service.js.
+
+Eliminación de dependencias redundantes.
 ### ✅ Nuevos requerimientos de Semana 2 agregados
-- …
+- Migración a Prisma ORM.
 
----
+Creación del archivo schema.prisma.
+
+Generación de Prisma Client.
+
+Ajuste de controladores a sintaxis Prisma.
+
+Inclusión de DATABASE_URL en .env.
+
+Verificación de conexión estable mediante prisma studio.
 
 ## Observaciones finales (opcional)
 - Comentarios sobre el flujo de trabajo, dificultades o acuerdos del equipo.
