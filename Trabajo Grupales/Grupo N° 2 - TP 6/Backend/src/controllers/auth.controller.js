@@ -13,31 +13,82 @@ const register = async (req, res) => {
   try {
     console.log("=== REGISTRO INICIADO ===");
     console.log("Body recibido:", req.body);
-    
-    const { usuario, contraseña, email } = req.body;
-    
-    console.log("Datos extraídos:", { usuario, contraseña: "****", email });
+
+    const { 
+      usuario, 
+      contraseña, 
+      email, 
+      nombreAlumno, 
+      curso, 
+      dni 
+    } = req.body;
+
+    // Validación mínima
+    if (!usuario || !contraseña || !email || !nombreAlumno || !dni) {
+      return res.status(400).json({ message: "Faltan datos obligatorios" });
+    }
 
     const hash = await hashPassword(contraseña);
-    console.log("Hash generado exitosamente");
+    console.log("Hash generado");
 
-    const consulta =
-      "INSERT INTO usuarios (nombre_usuario,contraseña,email) VALUES (?,?,?)";
+    // -----------------------------------------------------------
+    // 1) INSERTAR USUARIO
+    // -----------------------------------------------------------
+    const sqlUsuario = `
+      INSERT INTO usuarios (nombre_usuario, contraseña, email)
+      VALUES (?, ?, ?)
+    `;
 
-    db.query(consulta, [usuario, hash, email], (err, results) => {
+    db.query(sqlUsuario, [usuario, hash, email], (err, resultUsuario) => {
       if (err) {
-        console.error("ERROR EN LA CONSULTA SQL:", err);
-        return res.status(500).json({ message: "Error al registrarse", error: err.message });
+        console.error("Error al insertar usuario:", err);
+        return res.status(500).json({ 
+          message: "Error al registrar usuario", 
+          error: err.message 
+        });
       }
 
-      console.log("Usuario registrado exitosamente:", results);
-      return res.status(201).json({ message: "Usuario registrado con exito" });
+      console.log("Usuario creado:", resultUsuario);
+
+      const usuarioId = resultUsuario.insertId;
+
+      // -----------------------------------------------------------
+      // 2) INSERTAR ALUMNO ASOCIADO
+      // -----------------------------------------------------------
+      const sqlAlumno = `
+        INSERT INTO alumnos (nombre, curso, dni, usuario_id)
+        VALUES (?, ?, ?, ?)
+      `;
+
+      db.query(
+        sqlAlumno, 
+        [nombreAlumno, curso, dni, usuarioId], 
+        (errAlumno, resultAlumno) => {
+          if (errAlumno) {
+            console.error("Error al insertar alumno:", errAlumno);
+            return res.status(500).json({
+              message: "El usuario se creó pero no se pudo registrar el alumno",
+              error: errAlumno.message
+            });
+          }
+
+          console.log("Alumno creado:", resultAlumno);
+
+          return res.status(201).json({
+            message: "Registro exitoso (usuario + alumno)",
+            usuario_id: usuarioId,
+            alumno_id: resultAlumno.insertId
+          });
+        }
+      );
     });
+
   } catch (error) {
-    console.error("ERROR EN EL CATCH:", error);
+    console.error("ERROR EN EL CATCH GENERAL:", error);
     return res.status(500).json({ message: "Error interno", error: error.message });
   }
 };
+
 
 //Iniciar sesion
 const login = (req, res) => {

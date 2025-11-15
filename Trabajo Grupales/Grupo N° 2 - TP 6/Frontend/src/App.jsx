@@ -1,10 +1,11 @@
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
-import PrestamosPage from './Pages/PrestamosPage.jsx'
+import Prestamos from './Components/Prestamos/Prestamos'
 import './App.css'
-import Alumnos from './Components/Alumnos/Alumnos'
+import Alumnos from './Components/Alumnos/Alumnos.jsx'
 import LoginPage from './Pages/LoginPage'
 import Libros from './Components/Libros/Libros.jsx'
-
+import Registro from './Components/Registro/Registro.jsx'
+import HomePage from './Pages/HomePage.jsx'
 
 function App() {
   
@@ -14,12 +15,16 @@ function App() {
       <Routes>
     
       
-        <Route path='/login' element={<LoginPage/>} />
+        <Route path='/' element={<LoginPage/>} />
        
-        <Route path='/' element={<h1 className='text-center mt-5'>Welcome to the App</h1>} />
+        <Route path='/home' element={<HomePage />} />
         <Route path='/alumnos' element={<Alumnos/>} />
-        <Route path='/prestamos' element={<PrestamosPage />} />
+
+        <Route path='/prestamos' element={<Prestamos />} />
+        <Route path='/registro' element={<Registro />} />
         <Route path='/libros' element={<Libros />} />
+        <Route path='*' element={<Navigate to='/' />} />
+
       </Routes>
       
       
