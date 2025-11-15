@@ -10,6 +10,12 @@ const Registro = () => {
     setPassword,
     email,
     setEmail,
+    nombreAlumno,
+    setNombreAlumno,
+    curso,
+    setCurso,
+    dni,
+    setDni,
     loading,
     mensaje,
     error,
@@ -25,8 +31,11 @@ const Registro = () => {
     <div className="registro-container d-flex align-items-center justify-content-center">
       <div className="card shadow-sm registro-card">
         <div className="card-body">
-          <h1 className="h4 mb-3 text-center">Registro de Usuario</h1>
+          <h1 className="h4 mb-4 text-center">Registro</h1>
+
           <form onSubmit={handleSubmit} noValidate>
+
+            {/* Nombre de usuario */}
             <div className="mb-3">
               <label htmlFor="usuario" className="form-label">Nombre de usuario</label>
               <input
@@ -39,6 +48,8 @@ const Registro = () => {
                 required
               />
             </div>
+
+            {/* Email */}
             <div className="mb-3">
               <label htmlFor="email" className="form-label">Email</label>
               <input
@@ -50,6 +61,8 @@ const Registro = () => {
                 required
               />
             </div>
+
+            {/* Contraseña */}
             <div className="mb-3">
               <label htmlFor="password" className="form-label">Contraseña</label>
               <input
@@ -61,10 +74,53 @@ const Registro = () => {
                 required
                 minLength={6}
               />
-              <div className="form-text">Mínimo 6 caracteres.</div>
             </div>
+
+            {/* Nombre completo */}
+            <div className="mb-3">
+              <label htmlFor="nombreAlumno" className="form-label">Nombre completo</label>
+              <input
+                type="text"
+                id="nombreAlumno"
+                className="form-control"
+                value={nombreAlumno}
+                onChange={(e) => setNombreAlumno(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Curso */}
+            <div className="mb-3">
+              <label htmlFor="curso" className="form-label">Curso</label>
+              <input
+                type="text"
+                id="curso"
+                className="form-control"
+                value={curso}
+                onChange={(e) => setCurso(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* DNI */}
+            <div className="mb-3">
+              <label htmlFor="dni" className="form-label">DNI</label>
+              <input
+                type="text"
+                id="dni"
+                className="form-control"
+                value={dni}
+                onChange={(e) => setDni(e.target.value)}
+                required
+                maxLength={20}
+              />
+            </div>
+
+            {/* Mensajes */}
             {error && <div className="alert alert-danger py-2" role="alert">{error}</div>}
             {mensaje && <div className="alert alert-success py-2" role="alert">{mensaje}</div>}
+
+            {/* Botón */}
             <button type="submit" className="btn btn-primary w-100" disabled={loading}>
               {loading ? 'Registrando...' : 'Registrarme'}
             </button>
@@ -76,3 +132,4 @@ const Registro = () => {
 };
 
 export default Registro;
+
