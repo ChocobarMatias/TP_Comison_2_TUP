@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { hashPassword, comparePassword } = require('../utils/hash.utils');
 const { sendPasswordResetEmail } = require('../services/email.service');
+const prisma = require('../config/prisma');
 
 function signToken(user) {
   return jwt.sign(

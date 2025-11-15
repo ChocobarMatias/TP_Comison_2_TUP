@@ -1,3 +1,6 @@
+const prisma = require('../config/prisma');
+
+
 exports.crearPlanDePago = async (req, res) => {
   try {
     const { cliente_id, servicio_id, numero_cuotas } = req.body;

@@ -1,3 +1,6 @@
+const prisma = require('../config/prisma');
+
+
 exports.crearServicio = async (req, res) => {
   try {
     const { nombre, descripcion, precio_total } = req.body;

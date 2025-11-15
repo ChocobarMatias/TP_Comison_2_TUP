@@ -1,3 +1,6 @@
+const prisma = require('../config/prisma');
+
+
 exports.crearCliente = async (req, res) => {
   try {
     const { nombre, apellido, email } = req.body;
