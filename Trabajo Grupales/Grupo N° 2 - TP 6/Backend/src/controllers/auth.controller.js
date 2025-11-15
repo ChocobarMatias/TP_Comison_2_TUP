@@ -14,13 +14,15 @@ const register = async (req, res) => {
     console.log("=== REGISTRO INICIADO ===");
     console.log("Body recibido:", req.body);
 
-    const { 
-      usuario, 
-      contraseña, 
-      email, 
-      nombreAlumno, 
-      curso, 
-      dni 
+
+    const {
+      usuario,
+      contraseña,
+      email,
+      nombreAlumno,
+      curso,
+      dni,
+      rol // ahora se puede recibir el rol
     } = req.body;
 
     // Validación mínima
@@ -32,19 +34,19 @@ const register = async (req, res) => {
     console.log("Hash generado");
 
     // -----------------------------------------------------------
-    // 1) INSERTAR USUARIO
+    // 1) INSERTAR USUARIO (ahora con rol)
     // -----------------------------------------------------------
     const sqlUsuario = `
-      INSERT INTO usuarios (nombre_usuario, contraseña, email)
-      VALUES (?, ?, ?)
+      INSERT INTO usuarios (nombre_usuario, contraseña, email, rol)
+      VALUES (?, ?, ?, ?)
     `;
 
-    db.query(sqlUsuario, [usuario, hash, email], (err, resultUsuario) => {
+    db.query(sqlUsuario, [usuario, hash, email, rol || 'alumno'], (err, resultUsuario) => {
       if (err) {
         console.error("Error al insertar usuario:", err);
-        return res.status(500).json({ 
-          message: "Error al registrar usuario", 
-          error: err.message 
+        return res.status(500).json({
+          message: "Error al registrar usuario",
+          error: err.message
         });
       }
 
@@ -61,8 +63,8 @@ const register = async (req, res) => {
       `;
 
       db.query(
-        sqlAlumno, 
-        [nombreAlumno, curso, dni, usuarioId], 
+        sqlAlumno,
+        [nombreAlumno, curso, dni, usuarioId],
         (errAlumno, resultAlumno) => {
           if (errAlumno) {
             console.error("Error al insertar alumno:", errAlumno);
