@@ -1,6 +1,5 @@
 const prisma = require('../config/prisma');
 
-
 exports.crearServicio = async (req, res) => {
   try {
     const { nombre, descripcion, precio_total } = req.body;
@@ -9,11 +8,15 @@ exports.crearServicio = async (req, res) => {
       return res.status(400).json({ error: 'Nombre y precio total son obligatorios' });
     }
 
-    // Aquí irá: prisma.servicio.create()
-
-    res.json({
-      message: 'Controlador listo para migrar a Prisma (crear servicio)'
+    const servicio = await prisma.servicios.create({
+      data: {
+        nombre,
+        descripcion,
+        precio_total: Number(precio_total)
+      }
     });
+
+    res.json({ message: 'Servicio creado', servicio });
 
   } catch (error) {
     console.error(error);
