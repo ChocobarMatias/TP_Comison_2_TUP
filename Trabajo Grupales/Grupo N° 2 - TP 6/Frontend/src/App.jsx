@@ -6,17 +6,18 @@ import LoginPage from './Pages/LoginPage'
 import Registro from './Components/Registro/Registro.jsx'
 import Libros from './Components/Libros/Libros'
 import HomePage from './Pages/HomePage.jsx'
+import Footer from './Components/Common/Footer.jsx'
 
 function App() {
   
 
   return (
     <BrowserRouter>
-      <Routes>
+    <div className='app-container d-flex flex-column min-vh-100'>
     
-      
+      <main className='flex-fill app-main'>
+      <Routes>
         <Route path='/' element={<LoginPage/>} />
-       
         <Route path='/home' element={<HomePage />} />
         <Route path='/alumnos' element={<Alumnos/>} />
         <Route path='/prestamos' element={<Prestamos />} />
@@ -24,6 +25,9 @@ function App() {
         <Route path='/libros' element={<Libros />} />
         <Route path='*' element={<Navigate to='/' />} />
       </Routes>
+      </main>
+      <Footer />
+    </div>
       
       
     </BrowserRouter>

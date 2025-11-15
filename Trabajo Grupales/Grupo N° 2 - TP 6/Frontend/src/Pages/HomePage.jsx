@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useCustomLibros from "../Hooks/useCustomLibros";
 import { crearNuevoPrestamo } from "../Hooks/CustomPrestamos";
+import Navbar from "../Components/Common/Navbar";
 import Swal from "sweetalert2";
 import "../Styles/HomePage/Home.css";
 
@@ -56,54 +57,57 @@ const HomePage = () => {
   if (error) return <p>Error al cargar los libros</p>;
 
   return (
-    <div className="container">
-      <h1>Libros disponibles</h1>
-      <div className="libros-grid">
-        {libros.map((libro) => (
-          <div key={libro.libro_id} className="libro-card">
-            <h3>{libro.titulo}</h3>
-            <p>Autor: {libro.autor}</p>
-            <p>Categoría: {libro.categoria}</p>
-            <p>Ejemplares disponibles: {libro.ejemplares_disponibles}</p>
-            <button onClick={() => handleSolicitar(libro.libro_id)}>
-              Solicitar
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {mostrarFormulario && (
-        <div className="form-prestamo">
-          <h2>Solicitar préstamo</h2>
-          <form onSubmit={handleSubmit}>
-            <label>
-              Fecha de préstamo:
-              <input
-                type="date"
-                name="fecha_prestamo"
-                value={prestamoData.fecha_prestamo}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label>
-              Fecha de devolución:
-              <input
-                type="date"
-                name="fecha_devolucion"
-                value={prestamoData.fecha_devolucion}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <button type="submit">Confirmar préstamo</button>
-            <button type="button" onClick={() => setMostrarFormulario(false)}>
-              Cancelar
-            </button>
-          </form>
+    <>
+      <Navbar />
+      <div className="container" style={{ marginTop: "80px" }}>
+        <h1>Libros disponibles</h1>
+        <div className="libros-grid">
+          {libros.map((libro) => (
+            <div key={libro.libro_id} className="libro-card">
+              <h3>{libro.titulo}</h3>
+              <p>Autor: {libro.autor}</p>
+              <p>Categoría: {libro.categoria}</p>
+              <p>Ejemplares disponibles: {libro.ejemplares_disponibles}</p>
+              <button onClick={() => handleSolicitar(libro.libro_id)}>
+                Solicitar
+              </button>
+            </div>
+          ))}
         </div>
-      )}
-    </div>
+
+        {mostrarFormulario && (
+          <div className="form-prestamo">
+            <h2>Solicitar préstamo</h2>
+            <form onSubmit={handleSubmit}>
+              <label>
+                Fecha de préstamo:
+                <input
+                  type="date"
+                  name="fecha_prestamo"
+                  value={prestamoData.fecha_prestamo}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Fecha de devolución:
+                <input
+                  type="date"
+                  name="fecha_devolucion"
+                  value={prestamoData.fecha_devolucion}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <button type="submit">Confirmar préstamo</button>
+              <button type="button" onClick={() => setMostrarFormulario(false)}>
+                Cancelar
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
