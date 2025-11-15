@@ -1,10 +1,31 @@
-const { conection } = require("../config/DB")
+//const { conection } = require("../config/DB")
 const { prisma } = require("../config/prisma")
 
 //Traer todas las reservas
 const getReservas = async (req, res) => {
     try {
-        const reservas = await prisma.reservas.findMany()
+        const reservas = await prisma.reservas.findMany({
+            select: {
+                id: true,
+                socio_id: true,
+                actividad_id: true,
+                fecha: true,
+                
+                // De la relación 'socio', lo que necesito
+                socios: {
+                    select: {
+                        nombreSocio: true,
+                        apellidoSocio: true
+                    }
+                },
+                
+                actividades: {
+                    select: {
+                        nombre: true
+                    }
+                }
+            }
+        })
         res.json(reservas)
     } catch (error) {
         console.error(error)

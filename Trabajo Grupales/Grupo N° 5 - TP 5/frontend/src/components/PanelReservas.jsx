@@ -1,22 +1,48 @@
-import { useState } from "react";
-import reservasData from "../data/reservas.json";
+import { useCallback, useEffect, useState } from "react";
+//import reservasData from "../data/reservas.json";
 import CrearReserva from "./CrearReserva";
+import axios from "axios";
+import {toast} from 'react-toastify'
 
 function PanelReservas() {
 
-    const [reservas, setReservas] = useState(reservasData);
+    const [reservas, setReservas] = useState(null);
+    const [reservaSeleccionada, setReservaSeleccionada] = useState(null)
     const [abrir, setAbrir] = useState(false);
+    const [eliminar, setEliminar] = useState(false);
+
+      const getReservas = useCallback(async () => {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}reservas`)
+        setReservas(data)
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    },[])
+
+  
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getReservas()
+  }, [getReservas])
+
+
 
     const handleCrear = (nuevaReserva) => {
         nuevaReserva.id = reservas.length + 1;
         setReservas([...reservas, nuevaReserva]);
     };
 
-    const handleEliminar = (id) => {
-        const c = confirm("¿Querés eliminar esta reserva?");
-        if (!c) return;
-
-        setReservas(reservas.filter((r) => r.id !== id));
+    const handleEliminar = async () => {
+        try {
+            const { data } = await axios.delete(`${import.meta.env.VITE_BACKEND}reservas/${reservaSeleccionada?.id}`)
+            toast(data?.mensaje || "Reserva eliminada")
+            await getReservas()
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.error || "Hubo un error")
+        }
     };
 
     return(
@@ -45,16 +71,17 @@ function PanelReservas() {
             </thead>
 
             <tbody>
-                {reservas.map((r) => (
-                <tr key={r.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3">{r.id}</td>
-                    <td className="px-4 py-3">{r.socio}</td>
-                    <td className="px-4 py-3">{r.actividad}</td>
-                    <td className="px-4 py-3">{r.fecha}</td>
-
+                {reservas?.map((r) => (
+                <tr key={r?.id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-3">{r?.id}</td>
+                    <td className="px-4 py-3">{r?.socios?.apellidoSocio + " " + r?.socios?.nombreSocio}</td>
+                    <td className="px-4 py-3">{r?.actividades?.nombre}</td>
+                    <td className="px-4 py-3">{r?.fecha?.slice(0,10)}</td>
                     <td className="px-4 py-3 text-center">
                     <button
-                        onClick={() => handleEliminar(r.id)}
+                        onClick={() => {
+                            setReservaSeleccionada(r)
+                            setEliminar(true)}}
                         className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
                     >
                         Eliminar
@@ -74,6 +101,33 @@ function PanelReservas() {
             cerrar={() => setAbrir(false)}
             crear={handleCrear}
             />
+        )}
+        {eliminar && reservaSeleccionada && (
+            <div className="fixed inset-0 bg-black/50" onClick={() => setEliminar(false)}>
+            <div className="bg-white p-6 rounded-lg max-w-md mx-auto mt-40 shadow-lg" onClick={(e) => e.stopPropagation()}>
+                <h2 className="text-xl font-semibold mb-4">Confirmar eliminación</h2>
+                <p className="mb-6">¿Estás seguro de que deseas eliminar esta reserva {reservaSeleccionada?.id}?</p>
+                <div className="flex justify-end space-x-4">
+                <button
+                    onClick={() => setEliminar(false)}
+                    className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                >
+                    Cancelar
+                </button>
+                <button
+                    onClick={() => {
+                        // Aquí deberías llamar a la función para eliminar la reserva
+                        handleEliminar()
+                        setEliminar(false);
+                    }}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                >
+                    Eliminar
+                </button>
+                </div>
+
+                </div>
+            </div>
         )}
 
     </div>
