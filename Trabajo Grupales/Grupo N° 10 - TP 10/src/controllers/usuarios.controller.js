@@ -1,4 +1,4 @@
-import db from "../config/db.js";
+import db from "../src/config/db.js";
 import { hashPassword } from "../utils/hashPassword.js";
 import enviarEmailDeBievenida from "../utils/servicioDeEmail.js";
 

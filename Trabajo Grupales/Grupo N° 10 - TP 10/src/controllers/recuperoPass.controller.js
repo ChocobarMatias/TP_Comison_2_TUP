@@ -1,7 +1,7 @@
-import db from "../config/db.js";
+import db from "../src/config/db.js";
 import dotenv from "dotenv";
 import jsonwebtoken from "jsonwebtoken";
-import { recuperarContraseña } from "../config/nodemailer.js";
+import { recuperarContraseña } from "../src/config/nodemailer.js";
 import { hashPassword } from "../utils/hashPassword.js";
 
 
