@@ -6,12 +6,14 @@ import "../../Styles/Prestamos/Prestamos.css";
 import FiltroPrestamos from "./FiltroPrestamo.jsx";
 import CrearPrestamoModal from "./CrearPrestamoModal.jsx";
 import CambiarEstadoPrestamo from "./CambiarEstadoPrestamo.jsx";
+import DetallesPrestamoModal from "./DetallesPrestamoModal.jsx";
 import EliminarPrestamoModal from "./EliminarPrestamoModal.jsx";
 import Button from "./Button.jsx";
 
 const Prestamos = () => {
   const [prestamos, setPrestamos] = useState([]);
   const [prestamoSeleccionado, setPrestamoSeleccionado] = useState(null);
+  const [showDetalles, setShowDetalles] = useState(false);
 
   // Estados para modales
   const [showCrear, setShowCrear] = useState(false);
@@ -127,6 +129,17 @@ const Prestamos = () => {
 
                     <Button
                       size="sm"
+                      variant="secondary"
+                      className="me-1"
+                      onClick={() => {
+                        setPrestamoSeleccionado(p);
+                        setShowDetalles(true);
+                      }}
+                    >
+                      Ver detalles
+                    </Button>
+                    <Button
+                      size="sm"
                       variant="danger"
                       onClick={() => {
                         setPrestamoSeleccionado(p);
@@ -159,6 +172,11 @@ const Prestamos = () => {
         onSuccess={cargarPrestamos}
       />
 
+        <DetallesPrestamoModal
+          show={showDetalles}
+          onClose={() => setShowDetalles(false)}
+          prestamo={prestamoSeleccionado}
+        />
       <EliminarPrestamoModal
         show={showEliminar}
         onClose={() => setShowEliminar(false)}

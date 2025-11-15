@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { obtenerAlumnoPorId } from "../../Services/AlumnoService";
-import { obtenerLibroPorId } from "../../Services/LibroService";
+import api from "../../Services/Api";
 
 const DetallePrestamoModal = ({ prestamo, show, onClose }) => {
   const [alumno, setAlumno] = useState(null);
   const [libro, setLibro] = useState(null);
   const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     if (!prestamo || !show) return;
@@ -13,15 +13,12 @@ const DetallePrestamoModal = ({ prestamo, show, onClose }) => {
     const cargarDatos = async () => {
       try {
         setLoading(true);
-
-        const [alumnoData, libroData] = await Promise.all([
-          obtenerAlumnoPorId(prestamo.alumno_id),
-          obtenerLibroPorId(prestamo.libro_id),
+        const [alumnoRes, libroRes] = await Promise.all([
+          api.get(`/alumnos/${prestamo.alumno_id}`),
+          api.get(`/libros/${prestamo.libro_id}`)
         ]);
-
-        setAlumno(alumnoData);
-        setLibro(libroData);
-
+        setAlumno(alumnoRes.data);
+        setLibro(libroRes.data);
       } catch (error) {
         console.error("Error cargando datos del préstamo:", error);
       } finally {
