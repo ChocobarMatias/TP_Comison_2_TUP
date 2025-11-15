@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model clientes {
+  id          Int           @id @default(autoincrement())
+  nombre      String        @db.VarChar(80)
+  apellido    String        @db.VarChar(80)
+  email       String        @unique(map: "email") @db.VarChar(120)
+  planes_pago planes_pago[]
+}
+
+model cuotas {
+  id                Int            @id @default(autoincrement())
+  plan_pago_id      Int
+  numero_cuota      Int
+  monto             Decimal        @db.Decimal(10, 2)
+  fecha_vencimiento DateTime       @db.Date
+  estado            cuotas_estado? @default(PENDIENTE)
+  fecha_pago        DateTime?      @db.DateTime(0)
+  planes_pago       planes_pago    @relation(fields: [plan_pago_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cuotas_ibfk_1")
+
+  @@index([plan_pago_id], map: "plan_pago_id")
+}
+
+model planes_pago {
+  id            Int       @id @default(autoincrement())
+  cliente_id    Int
+  servicio_id   Int
+  numero_cuotas Int
+  fecha_inicio  DateTime  @db.Date
+  cuotas        cuotas[]
+  clientes      clientes  @relation(fields: [cliente_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "planes_pago_ibfk_1")
+  servicios     servicios @relation(fields: [servicio_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "planes_pago_ibfk_2")
+
+  @@index([cliente_id], map: "cliente_id")
+  @@index([servicio_id], map: "servicio_id")
+}
+
+model servicios {
+  id           Int           @id @default(autoincrement())
+  nombre       String        @db.VarChar(100)
+  descripcion  String?       @db.Text
+  precio_total Decimal       @db.Decimal(10, 2)
+  planes_pago  planes_pago[]
+}
+
+model users {
+  id            Int       @id @default(autoincrement())
+  name          String    @db.VarChar(80)
+  email         String    @unique(map: "email") @db.VarChar(120)
+  password      String    @db.VarChar(255)
+  resetToken    String?   @db.VarChar(255)
+  resetTokenExp DateTime? @db.DateTime(0)
+  createdAt     DateTime? @default(now()) @db.Timestamp(0)
+}
+
+enum cuotas_estado {
+  PENDIENTE
+  PAGADO
+}
