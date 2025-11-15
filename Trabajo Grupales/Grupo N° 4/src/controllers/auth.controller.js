@@ -101,7 +101,7 @@ export const resetPassword = async (req, res) => {
             [userId, token]
         );
         
-        if (users.length === 0) return res.status(400).json({ message: 'Token inválido o expirado.' });
+        if (users.length === 0) return res.status(400).json({ message: 'Token  inválido o expirado.' });
 
         // 3. Hashear la NUEVA contraseña
         const hashedPassword = await hashPassword(newPassword);
