@@ -32,3 +32,28 @@ comando de instalacion de nodemailer
 ```bash 
 npm install nodemailer
 ```
+
+instalacion de ORM prisma es un ORM ( Object Relational Mapper) que facilita la interaccion con bases de datos en aplicaciones Node.js.
+---------------------------------------------
+1°) Instalacion de ORM prisma
+```bash
+npm install prisma @prisma/client # instalacion de ORM prisma
+``` 
+2°) Inicializacion de prisma
+```bash
+npx prisma init # inicializacion de prisma, genera la carpeta /prisma con un archivo schema.prisma y actualiza el archivo .env con la variable de entorno DATABASE_URL
+```
+3°) configuracion del .env
+```env
+DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
+```
+4°) conectar prisma a la base de datos existente
+```bash
+npx prisma db pull # conecta prisma a la base de datos existente y genera el modelo en schema.prisma
+```
+5°) generar el cliente de prisma
+```bash
+npx prisma generate # genera el cliente de prisma, genera la carpeta /node_modules/.prisma/client
+``` 
+6°) crear archivo de configuracion de prisma (opcional)
+```ts   
