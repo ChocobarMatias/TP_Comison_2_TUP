@@ -14,12 +14,12 @@ router.get("/",  getAll);
 router.get("/:id",  getById);
 
 //Crear un alumno
-router.post("/crear", verifyToken, create);
+router.post("/crear", create);
 
 //Editar un alumno
-router.put("/editar/:id", verifyToken,update);
+router.put("/editar/:id",update);
 
 //Eliminar un alumno
-router.delete("/eliminar/:id", verifyToken,  remove);
+router.delete("/eliminar/:id",  remove);
 
 module.exports = router;
