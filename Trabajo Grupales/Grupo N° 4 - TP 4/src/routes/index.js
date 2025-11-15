@@ -1,10 +1,21 @@
 const express = require('express');
 const router = express.Router();
 
-// Ruta de prueba para saber si está viva la API
-router.get('/health', (req, res) => res.json({ ok: true }));
+// Health check
+router.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'API funcionando correctamente' });
+});
 
-// Monta todas las rutas de autenticación
+// Auth routes
 router.use('/auth', require('./auth.routes'));
+
+// Clientes
+router.use('/clientes', require('./clienteRoutes'));
+
+// Servicios
+router.use('/servicios', require('./servicioRoutes'));
+
+// Pagos
+router.use('/pagos', require('./pagoRoutes'));
 
 module.exports = router;
