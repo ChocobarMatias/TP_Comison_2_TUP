@@ -53,10 +53,6 @@ export const login = async (req, res) => {
     }
 }
 
-// ... [Código de register y login de Franco] ...
-
-// === PARTE DE GERMÁN: RECUPERACIÓN DE CONTRASEÑA (REQUISITO TP) ===
-
 const RESET_TOKEN_SECRET = process.env.JWT_SECRET;
 const EXPIRATION_TIME = '1h'; 
 
