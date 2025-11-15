@@ -1,10 +1,12 @@
 # 🧾 Auditoría — Semana 3  
-### Grupo Nº: ___  
-### Tema asignado: ___  
+### Grupo Nº: 14
+### Tema asignado: tp9 
 ### Integrantes (Nombre completo + Legajo):
-- …
-- …
-- …
+- Alvarez Jeremias 61274
+- Calcagni Giuliano  61714
+- Dominguez Pablo 61397
+- Roldan Matias 61160
+- Vera Coronel Octavio 61382
 
 ---
 
