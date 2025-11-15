@@ -4,6 +4,7 @@ import Alumnos from '../Components/Alumnos/Alumnos';
 import Libros from '../Components/Libros/Libros';
 import Prestamos from '../Components/Prestamos/Prestamos';
 import '../Styles/AdminPage/AdminPage.css';
+import Navbar from '../Components/Common/Navbar';
 
 const AdminPage = () => {
   const [selected, setSelected] = useState('alumnos');
@@ -14,6 +15,8 @@ const AdminPage = () => {
   else if (selected === 'prestamos') content = <Prestamos />;
 
   return (
+    <>
+    <Navbar/>
     <div className="adminpage-container">
       <aside className="adminpage-sidebar">
         <h3>Panel Admin</h3>
@@ -27,6 +30,7 @@ const AdminPage = () => {
         {content}
       </main>
     </div>
+    </>
   );
 };
 
