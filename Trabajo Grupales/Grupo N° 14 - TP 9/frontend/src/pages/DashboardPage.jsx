@@ -78,17 +78,6 @@ function DashboardPage() {
             </button>
           </div>
         </div>
-
-        <div className="token-card">
-          <h3>🔑 Token JWT</h3>
-          <div className="token-display">
-            <code>{token}</code>
-          </div>
-          <p className="token-hint">
-            Este token se incluye automáticamente en todas las peticiones a la
-            API.
-          </p>
-        </div>
       </div>
     </div>
   );

@@ -61,16 +61,6 @@ function LoginPage() {
             {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
           </button>
         </form>
-
-        <div className="login-footer">
-          <p className="credentials-hint">
-            Credenciales de prueba:
-            <br />
-            Email: admin@club.com
-            <br />
-            Contraseña: admin123
-          </p>
-        </div>
       </div>
     </div>
   );

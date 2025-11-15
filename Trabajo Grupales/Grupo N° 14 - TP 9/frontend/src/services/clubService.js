@@ -59,6 +59,7 @@ const clubService = {
     const response = await api.delete(`/deportes/${id}`);
     return response.data;
   },
+  
 
   // ========== ASIGNACIONES ==========
   
