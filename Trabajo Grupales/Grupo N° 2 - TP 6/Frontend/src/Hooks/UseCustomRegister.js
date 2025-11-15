@@ -84,6 +84,7 @@ const useCustomRegister = () => {
         setError(data.message || 'Error al registrarse');
         return { success: false, error: data.message };
       }
+    // eslint-disable-next-line no-unused-vars
     } catch (err) {
       const msg = 'Error de red o servidor';
       setError(msg);
