@@ -11,24 +11,31 @@ const SECRET_KEY = process.env.JWT_SECRET;
 //Registrarse
 const register = async (req, res) => {
   try {
+    console.log("=== REGISTRO INICIADO ===");
+    console.log("Body recibido:", req.body);
+    
     const { usuario, contraseña, email } = req.body;
+    
+    console.log("Datos extraídos:", { usuario, contraseña: "****", email });
 
     const hash = await hashPassword(contraseña);
+    console.log("Hash generado exitosamente");
 
     const consulta =
       "INSERT INTO usuarios (nombre_usuario,contraseña,email) VALUES (?,?,?)";
 
     db.query(consulta, [usuario, hash, email], (err, results) => {
       if (err) {
-        console.log(err);
-
-        return res.status(500).json({ message: "Error al registrarse" });
+        console.error("ERROR EN LA CONSULTA SQL:", err);
+        return res.status(500).json({ message: "Error al registrarse", error: err.message });
       }
 
+      console.log("Usuario registrado exitosamente:", results);
       return res.status(201).json({ message: "Usuario registrado con exito" });
     });
   } catch (error) {
-    return res.json(error);
+    console.error("ERROR EN EL CATCH:", error);
+    return res.status(500).json({ message: "Error interno", error: error.message });
   }
 };
 
