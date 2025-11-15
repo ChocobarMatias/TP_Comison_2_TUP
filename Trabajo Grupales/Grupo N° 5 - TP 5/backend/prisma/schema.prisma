@@ -19,12 +19,11 @@ model reservas {
   socio_id     Int
   actividad_id Int
   fecha        DateTime    @db.Date
-  hora         DateTime?   @db.Time(0)
   socios       socios      @relation(fields: [socio_id], references: [idSocio], onDelete: Cascade, onUpdate: NoAction, map: "reservas_ibfk_1")
   actividades  actividades @relation(fields: [actividad_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "reservas_ibfk_2")
 
+  @@unique([socio_id, actividad_id, fecha], map: "UQ_reserva_unica")
   @@index([actividad_id], map: "actividad_id")
-  @@index([socio_id], map: "socio_id")
 }
 
 model socios {
