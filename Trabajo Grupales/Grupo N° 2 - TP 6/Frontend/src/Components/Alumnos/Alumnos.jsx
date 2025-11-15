@@ -6,7 +6,7 @@ import "../../Styles/Alumnos/Alumnos.css";
 
 const Alumnos = () => {
   const {
-    alumnos,
+    data,
     obtenerAlumnos,
     crearAlumno,
     editarAlumno,
@@ -44,7 +44,8 @@ const Alumnos = () => {
       return;
     }
 
-    const existeDNI = alumnos.some(
+
+    const existeDNI = (data.alumnos || []).some(
       (al) => al.dni === formAlumno.dni && al.alumno_id !== idAlumnoEditar
     );
 
@@ -99,11 +100,6 @@ const Alumnos = () => {
     });
   };
 
-  const handleNuevoAlumno = () => {
-    setFormAlumno({ nombre: "", curso: "", dni: "" });
-    setIdAlumnoEditar(null);
-    setOpenModalNuevo(true);
-  };
 
   const handleVerAlumno = (al) => {
     setFormAlumno({ ...al });
@@ -131,7 +127,8 @@ const Alumnos = () => {
     });
   };
 
-  const resultado = alumnos.filter((al) => {
+
+  const resultado = (data.alumnos || []).filter((al) => {
     const t = terminoBusqueda.toLowerCase();
     return (
       al.nombre.toLowerCase().includes(t) ||
@@ -153,19 +150,19 @@ const Alumnos = () => {
       <div className="card shadow-lg mt-3">
         <div className="card-header bg-primary text-white d-flex justify-content-between">
           <h5 className="m-0">Alumnos</h5>
-          <button className="btn btn-light btn-sm" onClick={handleNuevoAlumno}>
-            + Nuevo Alumno
-          </button>
         </div>
 
         <div className="card-body">
           <table className="table table-striped table-hover">
+
             <thead className="table-dark">
               <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Curso</th>
                 <th>DNI</th>
+                <th>ID Usuario</th>
+                <th>Nombre Usuario</th>
+                <th>Email</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -173,11 +170,12 @@ const Alumnos = () => {
             <tbody>
               {resultado.map((al) => (
                 <tr key={al.alumno_id}>
-                  <td>{al.alumno_id}</td>
                   <td>{al.nombre}</td>
                   <td>{al.curso}</td>
                   <td>{al.dni}</td>
-
+                  <td>{al.usuario_id}</td>
+                  <td>{al.nombre_usuario}</td>
+                  <td>{al.email}</td>
                   <td>
                     <button
                       className="btn btn-sm btn-outline-primary me-2"
@@ -185,14 +183,12 @@ const Alumnos = () => {
                     >
                       Editar
                     </button>
-
                     <button
                       className="btn btn-sm btn-outline-secondary me-2"
                       onClick={() => handleVerAlumno(al)}
                     >
                       Ver
                     </button>
-
                     <button
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleDeleteAlumno(al.alumno_id)}
