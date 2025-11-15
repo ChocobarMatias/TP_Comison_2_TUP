@@ -2,23 +2,43 @@
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
-  port: Number(process.env.SMTP_PORT || 2525),
+  service: "gmail", // Si usan Outlook cambiar por "hotmail"
   auth: {
-    user: process.env.SMTP_USER || 'demo_user',
-    pass: process.env.SMTP_PASS || 'demo_pass',
-  },
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
+  }
 });
 
-async function sendPasswordResetEmail(to, token) {
-  // Dejalo simple por ahora
-  const url = ${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token};
-  return transporter.sendMail({
-    from: process.env.SMTP_FROM || 'no-reply@tp.com',
-    to,
-    subject: 'Recuperar contraseña',
-    html: <p>Usá este enlace para resetear tu password:</p><a href="${url}">${url}</a>,
-  });
-}
+exports.sendEmail = async ({ to, subject, html }) => {
+  try {
+    await transporter.sendMail({
+      from: `"TP4 Pagos" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html
+    });
 
-module.exports = { sendPasswordResetEmail };
+    return { success: true };
+  } catch (error) {
+    console.error("Error enviando email:", error);
+    return { success: false, error };
+  }
+};
+
+// Enviar correo de recuperación de contraseña
+exports.sendPasswordResetEmail = async (email, token) => {
+  const resetUrl = `${process.env.FRONT_URL}/reset-password/${token}`;
+
+  const html = `
+    <h2>Recuperación de contraseña</h2>
+    <p>Hacé click en el siguiente enlace para restablecer tu contraseña:</p>
+    <a href="${resetUrl}" target="_blank">Restablecer contraseña</a>
+    <p>Si no solicitaste este correo, podés ignorarlo.</p>
+  `;
+
+  return await this.sendEmail({
+    to: email,
+    subject: "Restablecer contraseña - TP4 Pagos",
+    html
+  });
+};
