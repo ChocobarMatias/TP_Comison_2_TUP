@@ -1,0 +1,55 @@
+.site-footer-footer {
+  width: 100%;
+  background: linear-gradient(135deg, #232946 0%, #1b0338 100%);
+  color: #fff;
+  text-align: center;
+  padding: 24px 0 16px 0;
+  box-shadow: 0 -2px 12px #0002;
+  margin-top: 40px;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #eebc1d;
+  letter-spacing: 2px;
+  text-shadow: 0px 3px 8px rgba(109, 79, 145, 0.18);
+  margin-bottom: 6px;
+  animation: fadeInDown 0.8s ease;
+}
+
+.footer-copy {
+  font-size: 1rem;
+  color: #b8c1ec;
+  margin-top: 2px;
+  font-weight: 500;
+  animation: fadeIn 0.9s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

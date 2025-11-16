@@ -1,0 +1,112 @@
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.container {
+    color: #4a3b53;
+}
+
+/* ===== TITULO ===== */
+h2 {
+    font-weight: 700;
+    color: #573f7a;
+}
+
+/* ===== CARD ===== */
+.card {
+    border-radius: 15px;
+    border: 2px solid #e9dff5;
+    box-shadow: 0 0 20px rgba(120, 80, 150, 0.15);
+    background: #faf4eb;
+}
+
+/* ===== TABLA ===== */
+.table thead {
+    background: #b083d6 !important;
+    color: white;
+}
+
+.table-hover tbody tr:hover {
+    background: #f3eafc !important;
+    transition: 0.2s ease;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+/* ===== BADGES DE ESTADO ===== */
+.badge {
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+.bg-warning {
+    background-color: #f7d27c !important;
+    color: #4a3b53;
+}
+
+.bg-success {
+    background-color: #9cd69f !important;
+}
+
+/* ===== BOTONES ===== */
+button,
+.btn {
+    border-radius: 10px !important;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+/* Botón principal estilo lila */
+.btn-primary,
+.custom-button-primary,
+button.custom-button-primary {
+    background: linear-gradient(135deg, #b38adc, #9575cd) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 15px rgba(140, 100, 180, 0.4);
+}
+
+/* Botón info (cambiar estado) */
+.btn-info {
+    background-color: #cab1ec !important;
+    border: none !important;
+    color: #4a3b53 !important;
+}
+
+.btn-info:hover {
+    background-color: #b89ae3 !important;
+}
+
+/* Botón danger (eliminar) */
+.btn-danger {
+    background-color: #e78a8a !important;
+    border: none !important;
+}
+
+.btn-danger:hover {
+    background-color: #d66f6f !important;
+}
+
+/* ===== NO HAY RESULTADOS ===== */
+.text-center {
+    color: #6d5a80;
+}
+
+/* ===== FILTROS (si usan inputs) ===== */
+input, select {
+    border-radius: 10px !important;
+    border: 2px solid #d6c2eb !important;
+    background: #fff !important;
+    color: #4a3b53 !important;
+}
+
+input:focus,
+select:focus {
+    border-color: #b599d9 !important;
+    box-shadow: 0 0 5px rgba(140, 90, 200, 0.3) !important;
+}

@@ -1,0 +1,41 @@
+/* AdminPage.css */
+.adminpage-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.adminpage-sidebar {
+  width: 220px;
+  background: #222;
+  color: #fff;
+  padding: 24px;
+}
+
+.adminpage-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.adminpage-btn {
+  color: #fff;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0;
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.adminpage-btn:hover,
+.adminpage-btn:focus {
+  color: #4fc3f7;
+}
+
+.adminpage-main {
+  flex: 1;
+  padding: 32px;
+  background: #f7f7f7;
+}

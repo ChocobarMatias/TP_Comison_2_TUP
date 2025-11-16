@@ -1,0 +1,104 @@
+/* HomePage.css */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #3a1f5b;
+}
+
+h1, h2 {
+  color: #5a2d8c;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.libros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.libro-card {
+  background: #f4ebfa;
+  border: 2px solid #d1b3f0;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(90, 45, 140, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.libro-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(90, 45, 140, 0.3);
+}
+
+.libro-card h3 {
+  color: #6f3fbf;
+  margin-bottom: 10px;
+}
+
+.libro-card p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+}
+
+.libro-card button {
+  margin-top: 10px;
+  background-color: #7e57c2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.libro-card button:hover {
+  background-color: #5a2d8c;
+}
+
+/* Formulario de préstamo */
+.form-prestamo {
+  background: #f0e7fa;
+  border: 2px solid #d1b3f0;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto 40px;
+  box-shadow: 0 4px 6px rgba(90, 45, 140, 0.2);
+}
+
+.form-prestamo label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.form-prestamo input[type="date"] {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #d1b3f0;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.form-prestamo button {
+  margin-top: 10px;
+  background-color: #7e57c2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-right: 10px;
+  transition: background-color 0.2s;
+}
+
+.form-prestamo button:hover {
+  background-color: #5a2d8c;
+}

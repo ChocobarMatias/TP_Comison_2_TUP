@@ -1,0 +1,59 @@
+.site-navbar {
+  width: 100%;
+  background: linear-gradient(135deg, #e8dff5 0%, #f3e9dc 100%);
+  color: #1b0338;
+  box-shadow: 0 2px 12px rgba(150, 120, 170, 0.12);
+  padding: 0.5rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  transition: box-shadow 0.2s;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #6d4f91 !important;
+  letter-spacing: 1px;
+  text-shadow: 0px 2px 8px rgba(109, 79, 145, 0.12);
+  display: flex;
+  align-items: center;
+}
+
+.fissio-logo {
+  height: 36px;
+  margin-right: 8px;
+}
+
+.navbar-nav .nav-link {
+  color: #5d4b75 !important;
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  background: linear-gradient(135deg, #b38adc 0%, #9575cd 100%);
+  color: #fff !important;
+  box-shadow: 0px 4px 12px rgba(140, 100, 180, 0.12);
+}
+
+.navbar-toggler {
+  border: none;
+  background: transparent;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(109,79,145,0.7)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 991px) {
+  .navbar-nav .nav-link {
+    margin-bottom: 8px;
+  }
+}
