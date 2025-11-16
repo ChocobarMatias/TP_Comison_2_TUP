@@ -1,65 +1,78 @@
--- Crear esquema
-CREATE SCHEMA IF NOT EXISTS biblioteca;
+-- Creación de la base de datos
+CREATE DATABASE IF NOT EXISTS biblioteca;
 USE biblioteca;
 
--- Tabla usuarios
-create table usuarios (
-	usuario_id int auto_increment primary key,
-    nombre_usuario varchar(50) not null,
-    contraseña varchar(255) not null,
-    email VARCHAR(255) NOT NULL,
-    estado_usuario tinyint not null default 1,
-    fecha_creacion_usuario datetime not null default current_timestamp
+-- Tabla: usuarios
+CREATE TABLE usuarios (
+    usuario_id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_usuario VARCHAR(50) NOT NULL,
+    contrasena VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    estado_usuario TINYINT NOT NULL DEFAULT 1,
+    rol VARCHAR(255) NOT NULL,
+    fecha_creacion_usuario DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_estado_usuario (estado_usuario)
 );
 
--- Tabla libros
+-- Tabla: libros
 CREATE TABLE libros (
     libro_id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(255) NOT NULL,
     autor VARCHAR(255) NOT NULL,
-    categoria VARCHAR(100),
-    ejemplares_disponibles INT NOT NULL DEFAULT 0
+    categoria VARCHAR(100) NOT NULL,
+    ejemplares_disponibles INT NOT NULL DEFAULT 0,
+    INDEX idx_titulo (titulo),
+    INDEX idx_autor (autor),
+    INDEX idx_categoria (categoria)
 );
 
--- Tabla alumnos
+-- Tabla: alumnos
 CREATE TABLE alumnos (
     alumno_id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
-    curso VARCHAR(50),
-    dni VARCHAR(20) UNIQUE NOT NULL,
+    curso VARCHAR(50) NOT NULL,
+    dni VARCHAR(20) NOT NULL UNIQUE,
     usuario_id INT NOT NULL,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id) ON DELETE CASCADE
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id) ON DELETE CASCADE,
+    INDEX idx_dni (dni),
+    INDEX idx_curso (curso)
 );
 
--- Tabla prestamos
+-- Tabla: prestamos
 CREATE TABLE prestamos (
     prestamo_id INT AUTO_INCREMENT PRIMARY KEY,
     alumno_id INT NOT NULL,
     libro_id INT NOT NULL,
     fecha_prestamo DATE NOT NULL,
     fecha_devolucion DATE,
-    estado ENUM('prestado', 'devuelto') DEFAULT 'prestado',
+    estado ENUM('prestado', 'devuelto', 'atrasado', 'perdido') NOT NULL DEFAULT 'prestado',
     FOREIGN KEY (alumno_id) REFERENCES alumnos(alumno_id) ON DELETE CASCADE,
-    FOREIGN KEY (libro_id) REFERENCES libros(libro_id) ON DELETE CASCADE
+    FOREIGN KEY (libro_id) REFERENCES libros(libro_id) ON DELETE CASCADE,
+    INDEX idx_alumno_id (alumno_id),
+    INDEX idx_libro_id (libro_id),
+    INDEX idx_fecha_prestamo (fecha_prestamo),
+    INDEX idx_estado (estado)
 );
 
--- Inserts de ejemplo para libros
+-- Datos de ejemplo (opcional)
+-- Insertar usuarios de ejemplo
+INSERT INTO usuarios (nombre_usuario, contrasena, email, rol) VALUES
+('admin', '$2y$10$ejemplo_hash_password', 'admin@biblioteca.com', 'administrador'),
+('bibliotecario', '$2y$10$ejemplo_hash_password', 'biblio@biblioteca.com', 'bibliotecario');
+
+-- Insertar libros de ejemplo
 INSERT INTO libros (titulo, autor, categoria, ejemplares_disponibles) VALUES
-('Cien Años de Soledad', 'Gabriel García Márquez', 'Novela', 5),
-('El Principito', 'Antoine de Saint-Exupéry', 'Infantil', 3),
-('1984', 'George Orwell', 'Distopía', 4),
-('Don Quijote de la Mancha', 'Miguel de Cervantes', 'Clásico', 2);
+('Cien años de soledad', 'Gabriel García Márquez', 'Ficción', 5),
+('Don Quijote de la Mancha', 'Miguel de Cervantes', 'Clásicos', 3),
+('El Principito', 'Antoine de Saint-Exupéry', 'Infantil', 7);
 
--- Inserts de ejemplo para alumnos
-INSERT INTO alumnos (nombre, curso, dni) VALUES
-('Nahuel Juarez', '5to A', '12345678'),
-('María Pérez', '4to B', '87654321'),
-('Juan Gómez', '6to A', '11223344'),
-('Lucía Fernández', '5to C', '44332211');
+-- Insertar alumnos de ejemplo
+INSERT INTO alumnos (nombre, curso, dni, usuario_id) VALUES
+('Juan Pérez', '5to Año', '12345678', 1),
+('María González', '4to Año', '87654321', 2);
 
--- Inserts de ejemplo para prestamos
-INSERT INTO prestamos (alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado) VALUES
-(1, 1, '2025-10-01', NULL, 'prestado'),
-(2, 2, '2025-10-03', '2025-10-10', 'devuelto'),
-(3, 3, '2025-10-05', NULL, 'prestado'),
-(4, 4, '2025-10-07', '2025-10-12', 'devuelto');
+-- Insertar préstamos de ejemplo
+INSERT INTO prestamos (alumno_id, libro_id, fecha_prestamo, estado) VALUES
+(1, 1, '2024-11-01', 'prestado'),
+(2, 2, '2024-11-10', 'prestado');

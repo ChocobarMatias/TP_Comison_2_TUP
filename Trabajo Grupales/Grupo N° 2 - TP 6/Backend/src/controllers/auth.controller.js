@@ -11,10 +11,8 @@ const SECRET_KEY = process.env.JWT_SECRET;
 //Registrarse
 const register = async (req, res) => {
   try {
-
     console.log("=== REGISTRO INICIADO ===");
     console.log("Body recibido:", req.body);
-
 
     const {
       usuario,
@@ -23,8 +21,7 @@ const register = async (req, res) => {
       nombreAlumno,
       curso,
       dni,
-      rol // ahora se puede recibir el rol
-
+      rol, // ahora se puede recibir el rol
     } = req.body;
 
     // Validación mínima
@@ -37,59 +34,61 @@ const register = async (req, res) => {
     // -----------------------------------------------------------
     // 1) INSERTAR USUARIO (ahora con rol)
     // -----------------------------------------------------------
-    //verificamos que no exista el suaurio o email o dni 
-    
+    //verificamos que no exista el suaurio o email o dni
+
     const sqlUsuario = `
-      INSERT INTO usuarios (nombre_usuario, contraseña, email, rol)
+      INSERT INTO usuarios (nombre_usuario, contrasena, email, rol)
       VALUES (?, ?, ?, ?)
     `;
 
-    db.query(sqlUsuario, [usuario, hash, email, rol || 'alumno'], (err, resultUsuario) => {
-      if (err) {
+    db.query(
+      sqlUsuario,
+      [usuario, hash, email, rol || "alumno"],
+      (err, resultUsuario) => {
+        if (err) {
+          return res.status(500).json({
+            message: "Error al registrar usuario",
+            error: err.message,
+          });
+        }
 
+        const usuarioId = resultUsuario.insertId;
 
-        return res.status(500).json({ 
-          message: "Error al registrar usuario", 
-          error: err.message 
-
-        });
-      }
-
-      const usuarioId = resultUsuario.insertId;
-
-      // -----------------------------------------------------------
-      // 2) INSERTAR ALUMNO ASOCIADO
-      // -----------------------------------------------------------
-      const sqlAlumno = `
+        // -----------------------------------------------------------
+        // 2) INSERTAR ALUMNO ASOCIADO
+        // -----------------------------------------------------------
+        const sqlAlumno = `
         INSERT INTO alumnos (nombre, curso, dni, usuario_id)
         VALUES (?, ?, ?, ?)
       `;
 
-      db.query(
-        sqlAlumno,
-        [nombreAlumno, curso, dni, usuarioId],
-        (errAlumno, resultAlumno) => {
-          if (errAlumno) {
-            return res.status(500).json({
-              message: "El usuario se creó pero no se pudo registrar el alumno",
-              error: errAlumno.message
+        db.query(
+          sqlAlumno,
+          [nombreAlumno, curso, dni, usuarioId],
+          (errAlumno, resultAlumno) => {
+            if (errAlumno) {
+              return res.status(500).json({
+                message:
+                  "El usuario se creó pero no se pudo registrar el alumno",
+                error: errAlumno.message,
+              });
+            }
+
+            return res.status(201).json({
+              message: "Registro exitoso (usuario + alumno)",
+              usuario_id: usuarioId,
+              alumno_id: resultAlumno.insertId,
             });
           }
-
-          return res.status(201).json({
-            message: "Registro exitoso (usuario + alumno)",
-            usuario_id: usuarioId,
-            alumno_id: resultAlumno.insertId
-          });
-        }
-      );
-    });
-
+        );
+      }
+    );
   } catch (error) {
-    return res.status(500).json({ message: "Error interno", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error interno", error: error.message });
   }
 };
-
 
 //Iniciar sesion
 const login = (req, res) => {
@@ -97,7 +96,7 @@ const login = (req, res) => {
     const { usuario, contraseña } = req.body;
 
     const consulta =
-      "SELECT usuario_id, contraseña, nombre_usuario, email, rol FROM usuarios WHERE nombre_usuario = ?";
+      "SELECT usuario_id, contrasena, nombre_usuario, email, rol FROM usuarios WHERE nombre_usuario = ?";
 
     db.query(consulta, [usuario], async (err, results) => {
       if (err) {
@@ -109,7 +108,7 @@ const login = (req, res) => {
       }
 
       const id_usuario = results[0].usuario_id;
-      const hash = results[0].contraseña;
+      const hash = results[0].contrasena;
       const nombre_usuario = results[0].nombre_usuario;
       const email = results[0].email;
       const rol = results[0].rol;
@@ -122,23 +121,21 @@ const login = (req, res) => {
         //creacion del token para iniciar la sesion
 
         const token = jwt.sign(
-          { id_usuario: id_usuario, nombre_usuario: usuario,rol: rol },
+          { id_usuario: id_usuario, nombre_usuario: usuario, rol: rol },
           SECRET_KEY,
           { expiresIn: "1h" }
         );
 
-        return res
-          .status(200)
-          .json({ 
-            message: "Usuario logueado con exito", 
-            token: token,
-            user: {
-              id: id_usuario,
-              nombre_usuario: nombre_usuario,
-              email: email,
-              rol: rol
-            }
-          });
+        return res.status(200).json({
+          message: "Usuario logueado con exito",
+          token: token,
+          user: {
+            id: id_usuario,
+            nombre_usuario: nombre_usuario,
+            email: email,
+            rol: rol,
+          },
+        });
       }
     });
   } catch (error) {
@@ -188,7 +185,7 @@ const cambioPasswordRecuperado = async (req, res) => {
     // Hashear la nueva contraseña usando la función del utils
     const hashedPassword = await hashPassword(contraseña);
 
-    const consulta = "UPDATE usuarios SET contraseña = ? WHERE usuario_id = ?";
+    const consulta = "UPDATE usuarios SET contrasena = ? WHERE usuario_id = ?";
 
     db.query(consulta, [hashedPassword, decoded.id], (err, result) => {
       if (err) {
