@@ -10,6 +10,12 @@ import ClientesList from "../pages/clientes/ClientesList";
 import ClientesCreate from "../pages/clientes/ClientesCreate";
 import ClientesEdit from "../pages/clientes/ClientesEdit";
 
+
+// SERVICIOS
+import ServiciosList from "../pages/servicios/ServiciosList";
+import ServiciosCreate from "../pages/servicios/ServiciosCreate";
+import ServiciosEdit from "../pages/servicios/ServiciosEdit";
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -56,6 +62,13 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/servicios" element={<ServiciosList />} 
+        />
+        <Route path="/servicios/nuevo" element={<ServiciosCreate />} />
+        <Route path="/servicios/editar/:id" element={<ServiciosEdit />} />
+
+
 
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
