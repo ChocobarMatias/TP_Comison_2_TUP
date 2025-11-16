@@ -30,7 +30,7 @@ const loginAdmin = async (req, res) => {
     const passwordValida = await bcrypt.compare(password, administrador.contra);
     if (!passwordValida) return res.status(401).json({ error: "Usuario o Contraseña incorrecta" });
     const token = jwt.sign(
-      { id: administrador.id, email: administrador.email, nombre: administrador.nombre },
+      { id: administrador.id, email: administrador.email, nombre: administrador.nombre, admin: true },
       process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET,
       { expiresIn: "3h"}
     );

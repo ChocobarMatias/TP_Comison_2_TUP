@@ -13,11 +13,13 @@ function NavBar() {
       const part = token.split('.')[1];
       return JSON.parse(atob(part));
     } catch (e) {
+      console.log(e);
       return null;
     }
   }
   const storedToken = localStorage.getItem('tokenSocio') || localStorage.getItem('tokenAdmin');
-    const userPayload = decodeToken(storedToken);
+  const userPayload = decodeToken(storedToken);
+
   const userEmail = userPayload?.email || null;
 
   useEffect(() => {
@@ -62,9 +64,9 @@ function NavBar() {
 
           {open && (
             <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg py-2 z-20 transform origin-top-right animate-scale-in">
-              <div className="px-4 py-3 border-b">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-medium">{userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}</div>
+              <div className="border-b pb-3 ps-1">
+                <div className="flex items-center gap-2">
+                  <div className="h-10 w-10 aspect-square rounded-full bg-blue-600 text-white flex items-center justify-center font-medium">{userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}</div>
                   <div>
                     <div className="text-sm font-semibold text-gray-800">{userPayload?.nombre || userEmail || 'Usuario'}</div>
                     {userEmail && <div className="text-xs text-gray-500">{userEmail}</div>}
