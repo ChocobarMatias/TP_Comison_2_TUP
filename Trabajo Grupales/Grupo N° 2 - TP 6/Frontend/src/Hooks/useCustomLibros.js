@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../Services/Api";
-import { useAuthStore } from "../Store/UseAuthStore";
+
 
 const useCustomLibros = () => {
   const [libros, setLibros] = useState([]);
@@ -41,8 +41,7 @@ const useCustomLibros = () => {
       //enviar token al backend
       await api.post("/libros/crear", nuevoLibro, {
         headers: {
-          Authorization: token,
-          usuario : usuario.rol
+          Authorization: token
         },
       });
       setError(null);
