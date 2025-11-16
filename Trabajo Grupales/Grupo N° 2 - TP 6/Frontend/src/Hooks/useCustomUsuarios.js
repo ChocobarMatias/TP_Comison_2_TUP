@@ -5,8 +5,8 @@ const useCustomUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem("token");
 
-  
   const obtenerUsuarios = async () => {
     setLoading(true);
     try {
@@ -21,12 +21,11 @@ const useCustomUsuarios = () => {
     }
   };
 
- 
   const traerUsuarioPorId = async (id) => {
     setLoading(true);
     try {
       const response = await api.get(`/usuarios/${id}`);
-      setUsuarios([response.data]); 
+      setUsuarios([response.data]);
       setError(null);
     } catch (err) {
       setError(err);
@@ -40,7 +39,11 @@ const useCustomUsuarios = () => {
   const crearUsuario = async (nuevoUsuario) => {
     setLoading(true);
     try {
-      await api.post("/usuarios/crear", nuevoUsuario);
+      await api.post("/usuarios/crear", nuevoUsuario, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setError(null);
     } catch (err) {
       setError(err);
@@ -51,11 +54,14 @@ const useCustomUsuarios = () => {
     }
   };
 
-  
   const eliminarUsuario = async (id) => {
     setLoading(true);
     try {
-      await api.delete(`/usuarios/eliminar/${id}`);
+      await api.delete(`/usuarios/eliminar/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setUsuarios(usuarios.filter((u) => u.usuario_id !== id));
       setError(null);
     } catch (err) {
@@ -67,11 +73,14 @@ const useCustomUsuarios = () => {
     }
   };
 
-  
   const editarUsuario = async (id, usuarioActualizado) => {
     setLoading(true);
     try {
-      await api.put(`/usuarios/editar/${id}`, usuarioActualizado);
+      await api.put(`/usuarios/editar/${id}`, usuarioActualizado, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setError(null);
     } catch (err) {
       setError(err);
@@ -82,7 +91,6 @@ const useCustomUsuarios = () => {
     }
   };
 
- 
   useEffect(() => {
     obtenerUsuarios();
   }, []);

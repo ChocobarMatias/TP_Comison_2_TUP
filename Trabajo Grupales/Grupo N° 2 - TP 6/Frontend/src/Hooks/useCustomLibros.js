@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import api from "../Services/Api";
+import { useAuthStore } from "../Store/UseAuthStore";
 
 const useCustomLibros = () => {
   const [libros, setLibros] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const token = localStorage.getItem("token");
   const obtenerLibros = async () => {
     setLoading(true);
     try {
@@ -37,7 +38,13 @@ const useCustomLibros = () => {
   const crearLibro = async (nuevoLibro) => {
     setLoading(true);
     try {
-      await api.post("/libros/crear", nuevoLibro);
+      //enviar token al backend
+      await api.post("/libros/crear", nuevoLibro, {
+        headers: {
+          Authorization: token,
+          usuario : usuario.rol
+        },
+      });
       setError(null);
     } catch (err) {
       setError(err);
@@ -51,7 +58,11 @@ const useCustomLibros = () => {
   const eliminarLibro = async (id) => {
     setLoading(true);
     try {
-      await api.delete(`/libros/eliminar/${id}`);
+      await api.delete(`/libros/eliminar/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setLibros(libros.filter((lib) => lib.libro_id !== id));
       setError(null);
     } catch (err) {
@@ -66,7 +77,11 @@ const useCustomLibros = () => {
   const editarLibro = async (id, libroActualizado) => {
     setLoading(true);
     try {
-      await api.put(`/libros/editar/${id}`, libroActualizado);
+      await api.put(`/libros/editar/${id}`, libroActualizado, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setError(null);
     } catch (err) {
       setError(err);

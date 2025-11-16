@@ -6,6 +6,7 @@ const useCustomAlumnos = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem("token");
 
   const obtenerAlumnos = async () => {
     setLoading(true);
@@ -48,7 +49,11 @@ const useCustomAlumnos = () => {
   const crearAlumno = async (nuevoAlumno) => {
     setLoading(true);
     try {
-      await api.post("/alumnos/crear", nuevoAlumno);
+      await api.post("/alumnos/crear", nuevoAlumno, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setError(null);
     } catch (err) {
       setError(err);
@@ -62,11 +67,17 @@ const useCustomAlumnos = () => {
   const eliminarAlumno = async (id) => {
     setLoading(true);
     try {
-      await api.delete(`/alumnos/eliminar/${id}`);
+      await api.delete(`/alumnos/eliminar/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       // Si tienes alumnos en data.alumnos, actualiza solo esa parte
       setData((prev) => ({
         ...prev,
-        alumnos: prev.alumnos ? prev.alumnos.filter((al) => al.alumno_id !== id) : [],
+        alumnos: prev.alumnos
+          ? prev.alumnos.filter((al) => al.alumno_id !== id)
+          : [],
       }));
       setError(null);
     } catch (err) {
@@ -81,7 +92,11 @@ const useCustomAlumnos = () => {
   const editarAlumno = async (id, alumnoActualizado) => {
     setLoading(true);
     try {
-      await api.put(`/alumnos/editar/${id}`, alumnoActualizado);
+      await api.put(`/alumnos/editar/${id}`, alumnoActualizado, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setError(null);
     } catch (err) {
       setError(err);

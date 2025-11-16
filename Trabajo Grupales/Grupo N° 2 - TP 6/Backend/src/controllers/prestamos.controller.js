@@ -16,7 +16,9 @@ const getAll = (req, res) => {
 
   db.query(consulta, (err, rows) => {
     if (err) {
-      return res.status(500).json({ message: err.message || "Error al obtener los préstamos" });
+      return res
+        .status(500)
+        .json({ message: err.message || "Error al obtener los préstamos" });
     }
 
     return res.json(rows);
@@ -31,7 +33,9 @@ const getById = (req, res) => {
 
   db.query(consulta, [id], (err, rows) => {
     if (err) {
-      return res.status(500).json({ message: err.message || "Error al buscar el préstamo" });
+      return res
+        .status(500)
+        .json({ message: err.message || "Error al buscar el préstamo" });
     }
 
     if (!rows.length) {
@@ -49,34 +53,64 @@ const create = (req, res) => {
 
   // Validaciones básicas
   if (!alumno_id || !libro_id || !fecha_prestamo) {
-    return res.status(400).json({ 
-      message: "Los campos alumno_id, libro_id y fecha_prestamo son obligatorios" 
+    return res.status(400).json({
+      message:
+        "Los campos alumno_id, libro_id y fecha_prestamo son obligatorios",
     });
   }
 
-  const consulta =
-    "INSERT INTO prestamos (alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado) VALUES (?, ?, ?, ?, ?)";
+  // Verificar que el alumno existe
+  const verificarAlumno = "SELECT alumno_id FROM alumnos WHERE alumno_id = ?";
 
-  db.query(
-    consulta,
-    [
-      alumno_id,
-      libro_id,
-      fecha_prestamo,
-      fecha_devolucion || null,
-      estado || "prestado",
-    ],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({message: err.message || "Error al crear el préstamo"});
+  db.query(verificarAlumno, [alumno_id], (errAlumno, resultsAlumno) => {
+    if (errAlumno) {
+      return res.status(500).json({ message: "Error al verificar alumno" });
+    }
+
+    if (!resultsAlumno.length) {
+      return res.status(404).json({ message: "El alumno no existe" });
+    }
+
+    // Verificar que el libro existe
+    const verificarLibro = "SELECT libro_id FROM libros WHERE libro_id = ?";
+
+    db.query(verificarLibro, [libro_id], (errLibro, resultsLibro) => {
+      if (errLibro) {
+        return res.status(500).json({ message: "Error al verificar libro" });
       }
 
-      return res.status(201).json({ 
-        message: "Préstamo creado con éxito",
-        prestamo_id: result.insertId 
-      });
-    }
-  );
+      if (!resultsLibro.length) {
+        return res.status(404).json({ message: "El libro no existe" });
+      }
+
+      // Si ambas validaciones pasaron, crear el préstamo
+      const consulta =
+        "INSERT INTO prestamos (alumno_id, libro_id, fecha_prestamo, fecha_devolucion, estado) VALUES (?, ?, ?, ?, ?)";
+
+      db.query(
+        consulta,
+        [
+          alumno_id,
+          libro_id,
+          fecha_prestamo,
+          fecha_devolucion || null,
+          estado || "prestado",
+        ],
+        (err, result) => {
+          if (err) {
+            return res
+              .status(500)
+              .json({ message: err.message || "Error al crear el préstamo" });
+          }
+
+          return res.status(201).json({
+            message: "Préstamo creado con éxito",
+            prestamo_id: result.insertId,
+          });
+        }
+      );
+    });
+  });
 };
 
 // Actualizar un préstamo
@@ -88,8 +122,9 @@ const update = (req, res) => {
 
   // Validaciones básicas
   if (!alumno_id || !libro_id || !fecha_prestamo) {
-    return res.status(400).json({ 
-      message: "Los campos alumno_id, libro_id y fecha_prestamo son obligatorios" 
+    return res.status(400).json({
+      message:
+        "Los campos alumno_id, libro_id y fecha_prestamo son obligatorios",
     });
   }
 
@@ -108,7 +143,9 @@ const update = (req, res) => {
     ],
     (err, result) => {
       if (err) {
-        return res.status(500).json({ message: err.message || "Error al actualizar el préstamo" });
+        return res
+          .status(500)
+          .json({ message: err.message || "Error al actualizar el préstamo" });
       }
 
       if (result.affectedRows === 0) {
@@ -128,7 +165,9 @@ const remove = (req, res) => {
 
   db.query(consulta, [id], (err, result) => {
     if (err) {
-      return res.status(500).json({ message: err.message || "Error al eliminar el préstamo" });
+      return res
+        .status(500)
+        .json({ message: err.message || "Error al eliminar el préstamo" });
     }
 
     if (result.affectedRows === 0) {
@@ -144,5 +183,5 @@ module.exports = {
   getById,
   create,
   update,
-  remove
-}
+  remove,
+};

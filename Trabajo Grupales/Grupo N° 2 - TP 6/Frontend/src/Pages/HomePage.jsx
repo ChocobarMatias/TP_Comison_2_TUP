@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import useCustomLibros from "../Hooks/useCustomLibros";
-import { crearNuevoPrestamo, obtenerTodosLosPrestamos } from "../Hooks/CustomPrestamos";
+import {
+  crearNuevoPrestamo,
+  obtenerTodosLosPrestamos,
+} from "../Hooks/CustomPrestamos";
 import Navbar from "../Components/Common/Navbar";
 import Swal from "sweetalert2";
 import "../Styles/HomePage/Home.css";
@@ -44,13 +47,13 @@ const HomePage = () => {
     try {
       const allPrestamos = await obtenerTodosLosPrestamos();
       console.log("📚 Todos los préstamos:", allPrestamos);
-      
+
       // Filtrar por el alumno logueado
       const prestamosFiltrados = allPrestamos.filter(
         (p) => p.alumno_id === parseInt(alumnoId)
       );
       console.log("🔍 Préstamos del alumno", alumnoId, ":", prestamosFiltrados);
-      
+
       setPrestamosAlumno(prestamosFiltrados);
     } catch (error) {
       console.error("❌ Error al cargar préstamos del alumno:", error);
@@ -86,7 +89,6 @@ const HomePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
 
     // Validar que los campos obligatorios estén completos
     if (
@@ -149,7 +151,6 @@ const HomePage = () => {
     <>
       <Navbar />
       <div className="container" style={{ marginTop: "80px" }}>
-        
         {/* SECCIÓN DE MIS PRÉSTAMOS */}
         <div style={{ marginBottom: "50px" }}>
           <h2>Mis Préstamos</h2>
@@ -178,16 +179,24 @@ const HomePage = () => {
                         {p.libro_autor && (
                           <>
                             <br />
-                            <small className="text-muted">{p.libro_autor}</small>
+                            <small className="text-muted">
+                              {p.libro_autor}
+                            </small>
                           </>
                         )}
                       </td>
                       <td>{p.fecha_prestamo.slice(0, 10)}</td>
-                      <td>{p.fecha_devolucion ? p.fecha_devolucion.slice(0, 10) : "—"}</td>
+                      <td>
+                        {p.fecha_devolucion
+                          ? p.fecha_devolucion.slice(0, 10)
+                          : "—"}
+                      </td>
                       <td>
                         <span
                           className={`badge ${
-                            p.estado === "prestado" ? "bg-warning" : "bg-success"
+                            p.estado === "prestado"
+                              ? "bg-warning"
+                              : "bg-success"
                           }`}
                         >
                           {p.estado}

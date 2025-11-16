@@ -11,7 +11,7 @@ import "../Styles/Login/Login.css";
 const Login = () => {
   const [data, setData] = useState({
     usuario: "",
-    contraseña: "",
+    contrasena: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ const Login = () => {
     e.preventDefault();
     setError(null);
 
-    if (!data.usuario || !data.contraseña) {
+    if (!data.usuario || !data.contrasena) {
       setError("Por favor, completa todos los campos");
       return;
     }
@@ -122,8 +122,8 @@ const Login = () => {
                   <Form.Label>Contraseña</Form.Label>
                   <Form.Control
                     type="password"
-                    name="contraseña"
-                    value={data.contraseña}
+                    name="contrasena"
+                    value={data.contrasena}
                     onChange={handleChange}
                     placeholder="Ingresa tu contraseña"
                     disabled={loading}

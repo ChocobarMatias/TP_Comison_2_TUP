@@ -14,8 +14,10 @@ const register = async (req, res) => {
     console.log("=== REGISTRO INICIADO ===");
     console.log("Body recibido:", req.body);
 
+    // Aceptar tanto "contrasena" como "contraseña"
     const {
       usuario,
+      contrasena,
       contraseña,
       email,
       nombreAlumno,
@@ -24,13 +26,15 @@ const register = async (req, res) => {
       rol, // ahora se puede recibir el rol
     } = req.body;
 
+    // Usar contraseña o contrasena (la que venga)
+    const passwordValue = contrasena || contraseña;
+
     // Validación mínima
-    if (!usuario || !contraseña || !email || !nombreAlumno || !dni) {
+    if (!usuario || !passwordValue || !email || !nombreAlumno || !dni) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
-    const hash = await hashPassword(contraseña);
-
+    const hash = await hashPassword(passwordValue);
     // -----------------------------------------------------------
     // 1) INSERTAR USUARIO (ahora con rol)
     // -----------------------------------------------------------
@@ -46,6 +50,7 @@ const register = async (req, res) => {
       [usuario, hash, email, rol || "alumno"],
       (err, resultUsuario) => {
         if (err) {
+          console.error("Error insertar usuario:", err);
           return res.status(500).json({
             message: "Error al registrar usuario",
             error: err.message,
@@ -67,11 +72,19 @@ const register = async (req, res) => {
           [nombreAlumno, curso, dni, usuarioId],
           (errAlumno, resultAlumno) => {
             if (errAlumno) {
-              return res.status(500).json({
-                message:
-                  "El usuario se creó pero no se pudo registrar el alumno",
-                error: errAlumno.message,
+              console.error("Error insertar alumno:", errAlumno);
+
+              // Si el DNI ya existe o hay otro error, eliminar el usuario creado
+              const sqlDeleteUsuario =
+                "DELETE FROM usuarios WHERE usuario_id = ?";
+              db.query(sqlDeleteUsuario, [usuarioId], () => {
+                return res.status(500).json({
+                  message:
+                    "Error al registrar alumno. Verifica que el DNI no esté duplicado",
+                  error: errAlumno.message,
+                });
               });
+              return;
             }
 
             return res.status(201).json({
@@ -84,6 +97,7 @@ const register = async (req, res) => {
       }
     );
   } catch (error) {
+    console.error("Error en registro:", error);
     return res
       .status(500)
       .json({ message: "Error interno", error: error.message });
@@ -93,7 +107,24 @@ const register = async (req, res) => {
 //Iniciar sesion
 const login = (req, res) => {
   try {
-    const { usuario, contraseña } = req.body;
+    // Aceptar tanto "contrasena" como "contraseña"
+    const { usuario, contrasena, contraseña } = req.body;
+    const passwordValue = contrasena || contraseña;
+
+    console.log(
+      "Intento de login para usuario:",
+      usuario,
+      "contraseña:",
+      passwordValue
+    );
+
+    // Validar que ambos campos estén presentes
+    if (!usuario || !passwordValue) {
+      return res.status(400).json({
+        message: "Usuario y contraseña son obligatorios",
+        recibido: { usuario, passwordValue },
+      });
+    }
 
     const consulta =
       "SELECT usuario_id, contrasena, nombre_usuario, email, rol FROM usuarios WHERE nombre_usuario = ?";
@@ -113,7 +144,7 @@ const login = (req, res) => {
       const email = results[0].email;
       const rol = results[0].rol;
 
-      const esValida = await comparePassword(String(contraseña), String(hash));
+      const esValida = await comparePassword(String(passwordValue), String(hash));
 
       if (!esValida) {
         return res.status(401).json({ message: "Contraseña incorrecta" });
@@ -185,7 +216,7 @@ const cambioPasswordRecuperado = async (req, res) => {
     // Hashear la nueva contraseña usando la función del utils
     const hashedPassword = await hashPassword(contraseña);
 
-    const consulta = "UPDATE usuarios SET contrasena = ? WHERE usuario_id = ?";
+    const consulta = "UPDATE usuarios SET contraseña = ? WHERE usuario_id = ?";
 
     db.query(consulta, [hashedPassword, decoded.id], (err, result) => {
       if (err) {
