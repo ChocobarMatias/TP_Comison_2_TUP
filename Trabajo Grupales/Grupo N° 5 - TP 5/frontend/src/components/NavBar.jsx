@@ -1,15 +1,26 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSocioStore } from "../stores/socios.store";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
+
 function NavBar() {
+  const token = useSocioStore((state) => state.token);
+  const logout = useSocioStore((state) => state.logout);
   const [open, setOpen] = useState(false);
+
+  const [usuario, setUsuario] = useState(null)
+  const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const ref = useRef();
   const menuRef = useRef();
 
+
   // obtener email/nombre desde token si existe
-    function decodeToken(token) {
+  function decodeToken(token) {
     if (!token) return null;
     try {
       const part = token.split('.')[1];
@@ -19,10 +30,18 @@ function NavBar() {
       return null;
     }
   }
-  const storedToken = localStorage.getItem('tokenSocio') || localStorage.getItem('tokenAdmin');
-  const userPayload = decodeToken(storedToken);
+  //const storedToken = localStorage.getItem('tokenSocio') || localStorage.getItem('tokenAdmin');
+  //const userPayload = decodeToken(storedToken);
 
-  const userEmail = userPayload?.email || null;
+  //const userEmail = userPayload?.email || null;
+
+
+   useEffect(() => {
+    const usuario = decodeToken(token)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUsuario(usuario || null);
+    
+  },[token])
 
   useEffect(() => {
     function handleClick(e) {
@@ -33,9 +52,11 @@ function NavBar() {
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
+
   function handleLogout() {
     localStorage.removeItem('tokenSocio');
     localStorage.removeItem('tokenAdmin');
+    logout()
     navigate('/');
   }
 
@@ -62,6 +83,9 @@ function NavBar() {
               </svg>
             </button>
 
+
+        <div className="relative" >
+
             {menuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg py-2 z-20">
                 <Link to="/actividades-hoy" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Actividades Hoy</Link>
@@ -73,9 +97,10 @@ function NavBar() {
           </div>
 
           <div className="relative" ref={ref}>
+
           <button type="button" onClick={() => setOpen(!open)} className="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-100">
             <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-medium">
-              {userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}
+              {usuario?.email?.charAt(0)?.toUpperCase()}
             </div>
             <span className="hidden sm:inline text-gray-700">Cuenta</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
@@ -84,13 +109,13 @@ function NavBar() {
           </button>
 
           {open && (
-            <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg py-2 z-20 transform origin-top-right animate-scale-in">
+            <div className="absolute right-0 mt-2 w-fit bg-white border rounded shadow-lg py-2 z-20 transform origin-top-right animate-scale-in">
               <div className="border-b pb-3 ps-1">
                 <div className="flex items-center gap-2">
-                  <div className="h-10 w-10 aspect-square rounded-full bg-blue-600 text-white flex items-center justify-center font-medium">{userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}</div>
-                  <div>
-                    <div className="text-sm font-semibold text-gray-800">{userPayload?.nombre || userEmail || 'Usuario'}</div>
-                    {userEmail && <div className="text-xs text-gray-500">{userEmail}</div>}
+                  <div className="h-10 w-10 aspect-square rounded-full bg-blue-600 text-white flex items-center justify-center font-medium">{usuario?.email?.charAt(0)?.toUpperCase()}</div>
+                  <div className="flex flex-col px-2">
+                    <span>{usuario?.email}</span>
+                    <span className="text-xs">{usuario?.admin ? 'Administrador' : 'Socio'}</span>
                   </div>
                 </div>
               </div>

@@ -3,9 +3,10 @@ import { useCallback, useEffect, useState } from "react";
 import CrearReserva from "./CrearReserva";
 import axios from "axios";
 import {toast} from 'react-toastify'
+import { useSocioStore } from "../stores/socios.store";
 
 function PanelReservas() {
-
+    const token = useSocioStore((state) => state.getSocio())
     const [reservas, setReservas] = useState(null);
     const [reservaSeleccionada, setReservaSeleccionada] = useState(null)
     const [abrir, setAbrir] = useState(false);
@@ -36,7 +37,11 @@ function PanelReservas() {
 
     const handleEliminar = async () => {
         try {
-            const { data } = await axios.delete(`${import.meta.env.VITE_BACKEND}reservas/${reservaSeleccionada?.id}`)
+            const { data } = await axios.delete(`${import.meta.env.VITE_BACKEND}reservas/${reservaSeleccionada?.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             toast(data?.mensaje || "Reserva eliminada")
             await getReservas()
         } catch (error) {

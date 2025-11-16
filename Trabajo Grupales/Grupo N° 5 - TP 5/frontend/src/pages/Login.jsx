@@ -1,9 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSocioStore } from "../stores/socios.store";
+import { toast } from "react-toastify";
 
 function Login() {
     const [role, setRole] = useState("socio"); // 'socio' | 'admin'
-    const isSocio = role === "socio";
+    const loginSocio = useSocioStore((state) => state.login)
+    const isAdmin = useSocioStore((state) => state.isAdmin())
+    const socioToken = useSocioStore((state) => state.token)
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -11,6 +15,15 @@ function Login() {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (socioToken) {
+            if (isAdmin) navigate('/admin')
+            else navigate('/actividades-hoy')
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -37,13 +50,18 @@ function Login() {
             } else {
                 // Guardar token en localStorage con clave diferente según rol
                 const token = data.token || data?.Token || data?.accessToken || null;
-                const storageKey = role === "admin" ? "tokenAdmin" : "tokenSocio";
-                if (token) localStorage.setItem(storageKey, token);
+                //const storageKey = role === "admin" ? "tokenAdmin" : "tokenSocio";
+                // if (token && role === "socio") loginSocio(token) 
+                // if (token && role === "admin") loginAdmin(token)
+                //localStorage.setItem(storageKey, token);
+                if (token) loginSocio(token) 
 
                 // Redirigir según rol
                 if (role === "admin") {
+                    toast("Bienvenido")
                     navigate('/admin');
                 } else {
+                    toast("Bienvenido")
                     navigate('/actividades-hoy');
                 }
             }
@@ -58,19 +76,19 @@ function Login() {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
             <h1 className="text-4xl font-extrabold text-center mb-10 text-gray-800 tracking-wide">Logueo del gimnasio</h1>
-            <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
-                <div className="flex justify-center mb-6">
+            <div className="flex flex-col w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+                <div className="grid grid-cols-2 mb-6">
                     <button
                         type="button"
                         onClick={() => setRole("socio")}
-                        className={"px-4 py-2 rounded-l-lg font-medium " + (isSocio ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700")}
+                        className={"cursor-pointer px-4 py-2 rounded-l-lg font-medium " + (role === "socio" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700")}
                     >
                         Socio
                     </button>
                     <button
                         type="button"
                         onClick={() => setRole("admin")}
-                        className={"px-4 py-2 rounded-r-lg font-medium " + (!isSocio ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700")}
+                        className={"cursor-pointer px-4 py-2 rounded-r-lg font-medium " + (role === "admin" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700")}
                     >
                         Admin
                     </button>
@@ -89,7 +107,7 @@ function Login() {
                             name="usuario"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder={isSocio ? "tuemail@gym.com" : "admin@gym.com"}
+                            placeholder={role === "socio" ? "tuemail@gym.com" : "admin@gym.com"}
                             className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                     </div>
@@ -117,11 +135,12 @@ function Login() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="bg-blue-600 text-white font-semibold py-2 rounded-lg mt-4 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60"
+                        className="cursor-pointer bg-blue-600 text-white font-semibold py-2 rounded-lg mt-4 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60"
                     >
                         {loading ? "Iniciando..." : "Iniciar Sesión"}
                     </button>
                 </form>
+                <Link to={'/reset-solicitud'} className="mx-auto text-center mt-4">¿Olvidaste tu contraseña?</Link>
             </div>
         </div>
     )
