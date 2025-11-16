@@ -219,7 +219,7 @@ const cambioPasswordRecuperado = async (req, res) => {
     // Hashear la nueva contraseña usando la función del utils
     const hashedPassword = await hashPassword(contraseña);
 
-    const consulta = "UPDATE usuarios SET contraseña = ? WHERE usuario_id = ?";
+    const consulta = "UPDATE usuarios SET contrasena = ? WHERE usuario_id = ?";
 
     db.query(consulta, [hashedPassword, decoded.id], (err, result) => {
       if (err) {
