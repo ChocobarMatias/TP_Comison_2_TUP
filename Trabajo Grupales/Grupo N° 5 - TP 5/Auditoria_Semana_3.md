@@ -36,10 +36,17 @@ los archivos en routes no eran uniformes
 ## 2) SOLUCIONES IMPLEMENTADAS + NUEVO AGREGADO
 
 ### ✅ Soluciones aplicadas a problemas detectados
-- …
+- Se corrigieron rutas de require
+- Se corrigieron errores de sintaxis en bcrypt
+- Se corrigieron rutas en middlewares
+- Se agregó la lógica faltante para el reset de contraseña
+- Se agregó nodemon a las dependencias
+- Se unificaron los archivos en controllers y routes para mantener uniformidad
 
 ### ✅ Nuevos requerimientos de Semana 2 agregados
-- …
+- Se agrego por completo el frontend
+- Se incorporó prisma
+
 
 ---
 
