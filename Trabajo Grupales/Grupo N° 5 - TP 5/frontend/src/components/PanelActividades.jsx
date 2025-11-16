@@ -19,7 +19,6 @@ function PanelActividades() {
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}actividades`)
         setActividades(data.consulta)
-        console.log(data);
       } catch (error) {
         console.log(error);
       }

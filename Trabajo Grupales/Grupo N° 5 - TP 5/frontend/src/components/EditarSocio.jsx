@@ -1,10 +1,15 @@
-function EditarSocio ({cerrar, editar, socio}) {
+import axios from "axios";
+import { toast } from "react-toastify";
 
-    const handleSubmit = (e) => {
+function EditarSocio ({cerrar, socio, getSocios, token}) {
+    console.log(token);
+    console.log(socio);
+    const handleSubmit = async(e) => {
         e.preventDefault();
 
-        const nombre = e.target.nombre.value;
-        const email = e.target.email.value;
+        const apellido = e.target.apellidoSocio.value;
+        const nombre = e.target.nombreSocio.value;
+        const email = e.target.emailSocio.value;
 
         if (!nombre || !email) {
             alert("Todos los campos son obligatorios");
@@ -12,12 +17,24 @@ function EditarSocio ({cerrar, editar, socio}) {
         }
 
         const socioEditado = {
-            id: socio.id,
-            nombre,
-            email
+            apellidoSocio: apellido, 
+            nombreSocio: nombre, 
+            emailSocio: email
         };
 
-        editar(socioEditado);
+        //editar(socioEditado);
+        try {
+            await axios.put(`${import.meta.env.VITE_BACKEND}socios/actualizar/${socio.idSocio}`, socioEditado, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            toast("Socio actualizado con éxito")
+            getSocios()
+        }
+        catch (error) {
+            console.log(error);
+        }
         cerrar();
     };
 
@@ -31,13 +48,18 @@ function EditarSocio ({cerrar, editar, socio}) {
 
                 <form action="" onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div>
+                        <label htmlFor="" className="font-medium text-gray-700">Apellido</label>
+                        <input type="text" name="apellidoSocio" defaultValue={socio.apellidoSocio}
+                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"/>
+                    </div>
+                    <div>
                         <label htmlFor="" className="font-medium text-gray-700">Nombre</label>
-                        <input type="text" name="nombre" defaultValue={socio.nombre}
+                        <input type="text" name="nombreSocio" defaultValue={socio.nombreSocio}
                         className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"/>
                     </div>
                     <div>
                         <label htmlFor="" className="font-medium text-gray-700">Email</label>
-                        <input type="email" name="email" defaultValue={socio.email}
+                        <input type="email" name="emailSocio" defaultValue={socio.emailSocio}
                         className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"/>
                     </div>
                     <div className="flex justify-end gap-3 mt-4">

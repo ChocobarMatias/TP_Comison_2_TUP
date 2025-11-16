@@ -1,11 +1,15 @@
-function CrearSocio({ cerrar, crear }) {
+import axios from "axios";
+import { toast } from "react-toastify";
 
-    const handleSubmit = (e) => {
+function CrearSocio({ cerrar, token, getSocios }) {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const nombre = e.target.nombre.value;
-        const email = e.target.email.value;
-        const password = e.target.value;
+        const apellido = e.target.apellidoSocio.value;
+        const nombre = e.target.nombreSocio.value;
+        const email = e.target.emailSocio.value;
+        const password = e.target.contraSocio.value;
 
         if (!nombre || !email || !password) {
         alert("Todos los campos son obligatorios");
@@ -13,15 +17,28 @@ function CrearSocio({ cerrar, crear }) {
         }
 
         const nuevoSocio = {
-            nombre,
-            email,
-            password
+            apellidoSocio: apellido,
+            nombreSocio: nombre,
+            emailSocio: email,
+            contraSocio: password
         };
+        try {
+            await axios.post(`${import.meta.env.VITE_BACKEND}socios/crear`, nuevoSocio, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            toast("Socio creado con éxito")
+            await getSocios()
+            cerrar();
+        } catch (error) {
+            toast("Hubo un error en la creacion, verifique el email y largos de nombre y apellido")
+            console.log(error);
+        }
 
 
-
-        crear(nuevoSocio);
-        cerrar();
+        
+        
     };
 
     return (
@@ -36,12 +53,21 @@ function CrearSocio({ cerrar, crear }) {
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
                 <div>
+                    <label className="font-medium text-gray-700">Apellido</label>
+                    <input
+                    type="text"
+                    name="apellidoSocio"
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    placeholder="Pérez"
+                    />
+                </div>
+                <div>
                     <label className="font-medium text-gray-700">Nombre</label>
                     <input
                     type="text"
-                    name="nombre"
+                    name="nombreSocio"
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ej: Juan Pérez"
+                    placeholder="Juan"
                     />
                 </div>
 
@@ -49,7 +75,7 @@ function CrearSocio({ cerrar, crear }) {
                     <label className="font-medium text-gray-700">Email</label>
                     <input
                     type="email"
-                    name="email"
+                    name="emailSocio"
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     placeholder="correo@gmail.com"
                     />
@@ -59,8 +85,8 @@ function CrearSocio({ cerrar, crear }) {
                     <label className="font-medium text-gray-700">Contraseña</label>
                     <input
                     type="password"
-                    name="password"
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    name="contraSocio"
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 placeholder:text-neutral-200"
                     placeholder="••••••"
                     />
                 </div>

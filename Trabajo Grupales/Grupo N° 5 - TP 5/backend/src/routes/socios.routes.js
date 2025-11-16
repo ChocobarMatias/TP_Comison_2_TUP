@@ -10,15 +10,19 @@ const {
   reactivarSocio,
   loginSocio,
   recuperarPassword,
-  createSocio
+  createSocio,
+  getSociosAdmin,
+  eliminarSocio
 } = require("../controllers/socios.controller");
 
 
 router.post("/login", loginSocio);
 router.post("/recuperar", recuperarPassword);
-router.post("/crear", createSocio);
+router.post("/crear", verificarTokenAdmin, createSocio);
+router.delete("/eliminar/:id", verificarTokenAdmin, eliminarSocio);
 
 router.get("/", getSocios);
+router.get("/getAll", verificarTokenAdmin, getSociosAdmin);
 router.get("/:id", verificarToken, getSocio);
 router.put("/actualizar/:id", verificarTokenAdmin, updateSocio);
 router.put("/darBaja/:id",verificarTokenAdmin, darBajaSocio);
