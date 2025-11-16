@@ -1,0 +1,8 @@
+[
+    { "id": 1, "socio": "Juan Pérez", "actividad": "Yoga", "fecha": "2025-02-01" },
+    { "id": 2, "socio": "Ana López", "actividad": "Spinning", "fecha": "2025-02-03" },
+    { "id": 3, "socio": "Juan Pérez", "actividad": "boxeo", "fecha": "2025-02-01" },
+    { "id": 4, "socio": "Ana López", "actividad": "cross", "fecha": "2025-02-03" },
+    { "id": 5, "socio": "Juan Pérez", "actividad": "pilares", "fecha": "2025-02-01" },
+    { "id": 6, "socio": "Ana López", "actividad": "fierro", "fecha": "2025-02-03" }
+]

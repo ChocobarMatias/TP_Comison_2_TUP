@@ -16,6 +16,54 @@ const getActividades = async (req, res) => {
    }
 }
 
+const getActividadesHoy = async (req, res) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Convertimos a YYYY-MM-DD porque la columna es DATE
+    const hoy = today.toISOString().slice(0, 10);
+
+    try {
+        const actividades = await prisma.actividades.findMany({
+            select: {
+                id: true,
+                nombre: true,
+                cupo_maximo: true,
+                reservas: {
+                    where: {
+                        fecha: new Date(hoy) 
+                    },
+                    select: { id: true }
+                }
+            },
+            orderBy: { nombre: "asc" }
+        });
+
+        const resultado = actividades.map(a => {
+            const cuposReservados = a.reservas.length;
+
+            return {
+                id: a.id,
+                nombre: a.nombre,
+                cupo_maximo: a.cupo_maximo,
+                cupos_reservados: cuposReservados,
+                cupos_disponibles: a.cupo_maximo - cuposReservados
+            };
+        });
+
+        return res.status(200).json({
+            message: "Actividades del día traídas con éxito",
+            resultado
+        });
+
+    } catch (error) {
+        console.error("Error al traer actividades", error);
+        return res.status(500).json({ error: "Error al traer actividades" });
+    }
+};
+
+
+
 const CreateAtividades = async(req, res) => {
     
     try{
@@ -71,7 +119,7 @@ const deleteActividades = async (req, res) => {
     }
 }
 
-module.exports = {getActividades, CreateAtividades, updateActividades, deleteActividades}
+module.exports = {getActividades, getActividadesHoy, CreateAtividades, updateActividades, deleteActividades}
 
 
 

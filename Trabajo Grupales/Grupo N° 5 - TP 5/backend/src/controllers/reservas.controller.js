@@ -14,9 +14,11 @@ const getReservas = async (req, res) => {
 
 //Crer una reserca
 const addReserva = async (req, res) => {
-    const { socio_id, actividad_id, fecha, hora } = req.body
+    const { socio_id, actividad_id } = req.body
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
 
-    if (!socio_id || !actividad_id || !fecha) {
+    if (!socio_id || !actividad_id) {
         return res.status(400).send({ mensaje: "Faltan datos obligatorios" })
     }
 
@@ -25,7 +27,7 @@ const addReserva = async (req, res) => {
             where: { id: Number(actividad_id)},
             include: {
                 reservas: {
-                    where: {fecha: new Date(fecha)}
+                    where: {fecha: hoy}
                 }
             }
         });
@@ -48,7 +50,7 @@ const addReserva = async (req, res) => {
             data: {
                 socio_id: Number(socio_id),
                 actividad_id: Number(actividad_id),
-                fecha: new Date(fecha),
+                fecha: hoy,
             }
         })
 
