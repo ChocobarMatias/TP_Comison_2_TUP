@@ -18,6 +18,16 @@ const getSocios = async (req, res) => {
   }
 };
 
+const getSociosAdmin = async (req, res) => {
+  try {
+    const socios = await prisma.socios.findMany();
+    res.status(200).json({ message: "Socios traidos con exito", socios });
+  } catch (error) {
+    console.log("Error al traer los socios", error);
+    res.status(500).json({ error: "Error al traer los socios" });
+  }
+};
+
 const getSocio = async (req, res) => {
   const id = req.params.id;
   try {
@@ -54,12 +64,25 @@ const createSocio = async (req, res) => {
   }
 };
 
+const eliminarSocio = async (req, res) => {
+  const id = req.params.id;
+  try {
+    await prisma.socios.delete({
+      where: { idSocio: parseInt(id) },
+    });
+    res.status(200).json({ message: "Socio eliminado con exito" });
+  } catch (error) {
+    console.log("Error al eliminar el socio", error);
+    res.status(500).json({ error: "Error al eliminar el socio" });
+  }
+};
+
 const updateSocio = async (req, res) => {
   const id = req.params.id;
-  const { nombreSocio, apellidoSocio, emailSocio, contraSocio } = req.body;
+  const { nombreSocio, apellidoSocio, emailSocio } = req.body;
 
-  let salt = await bcrypt.genSalt(10);
-  let contraEncrip = await bcrypt.hash(contraSocio, salt);
+  //let salt = await bcrypt.genSalt(10);
+  //let contraEncrip = await bcrypt.hash(contraSocio, salt);
 
   try {
     await prisma.socios.update({
@@ -68,7 +91,7 @@ const updateSocio = async (req, res) => {
         nombreSocio: nombreSocio,
         apellidoSocio: apellidoSocio,
         emailSocio: emailSocio,
-        contraSocio: contraEncrip,
+        //contraSocio: contraEncrip,
       },
     });
     res.status(201).json({ message: "Socio actualizado con exito" });
@@ -114,7 +137,6 @@ const reactivarSocio = async (req, res) => {
 
 const loginSocio = async (req, res) => {
   const { email, password } = req.body;
-  console.log("Login request body:", req.body);
 
   try {
     if (!email || !password || email.length === 0 || password.length === 0) {
@@ -224,12 +246,14 @@ const resetPassword = async (req, res) => {
 
 module.exports = {
   getSocios,
+  getSociosAdmin,
   getSocio,
   createSocio,
   updateSocio,
   darBajaSocio,
   reactivarSocio,
   loginSocio,
+  eliminarSocio,
   recuperarPassword,
   resetPassword
 };

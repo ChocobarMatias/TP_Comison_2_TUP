@@ -10,6 +10,7 @@ import ResetSolicitud from "./pages/ResetSolicitud"
 import ActividadesHoy from "./pages/ActividadesHoy"
 import ProtectedRouteAdmin from "./components/ProtectedRouteAdmin";
 import ProtectedRoute from "./components/ProtectedRoute"
+import Layout from "./components/Layout"
 
 function App() {
 
@@ -18,14 +19,16 @@ function App() {
       <div className="min-h-screen flex flex-col">
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/actividades" element={<Actividades />} />
-        <Route path="/actividades-hoy" element={<ProtectedRoute><ActividadesHoy /></ProtectedRoute>} />
-        <Route path="/cambiar-contrasena" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
-        <Route path="/mis-actividades" element={<ProtectedRoute><MisActividades /></ProtectedRoute>} />
-        <Route path="/reservas" element={<ProtectedRoute><Reservas /></ProtectedRoute>} />
         <Route path="/reset-solicitud" element={<ResetSolicitud />} />
         <Route path="/reset-contrasena" element={<ResetPassword />} />
-        <Route path="/admin" element={<ProtectedRouteAdmin><Admin /></ProtectedRouteAdmin>} />
+        <Route element={<Layout />}>
+          <Route path="/actividades" element={<ProtectedRoute><Actividades /></ProtectedRoute>} />
+          <Route path="/reservar" element={<ProtectedRoute><ActividadesHoy /></ProtectedRoute>} />
+          <Route path="/cambiar-contrasena" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+          <Route path="/mis-actividades" element={<ProtectedRoute><MisActividades /></ProtectedRoute>} />
+          <Route path="/reservas" element={<ProtectedRoute><Reservas /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRouteAdmin><Admin /></ProtectedRouteAdmin>} />
+        </Route>
       </Routes>
       </div>
     </>

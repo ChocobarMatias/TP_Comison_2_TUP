@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useSocioStore } from "../stores/socios.store";
 
 function PanelActividades() {
-    const token = useSocioStore((state) => state.getSocio())
+    const token = useSocioStore((state) => state.getToken())
     const [actividades, setActividades] = useState(null);
     const [abrir, setAbrir] = useState(false);
     const [editar, setEditar] = useState(false);
@@ -19,7 +19,6 @@ function PanelActividades() {
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}actividades`)
         setActividades(data.consulta)
-        console.log(data);
       } catch (error) {
         console.log(error);
       }

@@ -1,7 +1,9 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useSocioStore } from "../stores/socios.store";
 
 function ReservarClase({ id_socio, actividad, getActividades, closeModal }) {
+    const token = useSocioStore((state) => state.getToken())
 
     const handleReserva = async () => {
         
@@ -9,8 +11,13 @@ function ReservarClase({ id_socio, actividad, getActividades, closeModal }) {
             socio_id: id_socio,
             actividad_id: actividad.id
         }
+        console.log(dataForDB);
         try {
-            const {data} = await axios.post(`${import.meta.env.VITE_BACKEND}reservas/`, dataForDB)
+            const {data} = await axios.post(`${import.meta.env.VITE_BACKEND}reservas/`, dataForDB, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             console.log(data);
             await getActividades()
             toast.success(data?.mensaje || "Reserva realizada con 2exito")

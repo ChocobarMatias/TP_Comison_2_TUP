@@ -1,26 +1,51 @@
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import EditarSocio from "./EditarSocio"
 import CrearSocio from "./CrearSocio"
-import sociosData from "../data/socios.json";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-function PanelSocios() {
+function PanelSocios({token}) {
 
-    const [socios, setSocios] = useState(sociosData);
+    const [socios, setSocios] = useState(null);
+    const [eliminar, setEliminar] = useState(false);
     const [abrir, setAbrir] = useState(false);
     const [abrirEditar, setAbrirEditar] = useState(false);
     const [socioActual, setSocioActual] = useState(null);
 
-    const handleCrear = (nuevoSocio) => {
-        nuevoSocio.id = socios.length + 1;
-        setSocios([...socios, nuevoSocio]);
-    };
+    const getSocios = useCallback(async () => {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}socios/getAll`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }})
+        
+        setSocios(data.socios)
+      } catch (error) {
+        console.log(error);
+      }
+    },[token])
 
-    const handleEliminar = (id) => {
-        const confirmacion = confirm("Seguro que queres eliminar este socio?");
-        if (!confirmacion) return;
+  
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getSocios()
+  }, [getSocios])
 
-        const nuevaLista = socios.filter((s) => s.id !== id);
-        setSocios(nuevaLista);
+
+
+    const handleEliminar = async () => {
+        try {
+            await axios.delete(`${import.meta.env.VITE_BACKEND}socios/eliminar/${socioActual.idSocio}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            toast("Socio eliminado con exito");
+            getSocios();
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
 
     const handleEditar = (socio) => {
@@ -28,12 +53,30 @@ function PanelSocios() {
         setAbrirEditar(true);
     };
 
-    const handleGuardarEditado = (socioEditado) => {
-        const nuevaLista = socios.map((s) =>
-        s.id === socioEditado.id ? socioEditado : s
-        );
-        setSocios(nuevaLista);
-    };
+    const handleAlataBaja = async (socio) => {
+        try {
+            if (socio?.activo) {
+                await axios.put(`${import.meta.env.VITE_BACKEND}socios/darBaja/${socio.idSocio}`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                toast("Socio dado de baja");
+            } else {
+                await axios.put(`${import.meta.env.VITE_BACKEND}socios/reactivar/${socio.idSocio}`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                toast("Socio reactivado");
+            }
+            getSocios();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
     return (
         <div className="bg-white shadow-xl rounded-2xl p-8 max-w-5xl mx-auto">
 
@@ -53,21 +96,32 @@ function PanelSocios() {
             <thead className="bg-gray-200 text-gray-700">
                 <tr>
                 <th className="px-4 py-3">ID</th>
+                <th className="px-4 py-3">Apellido</th>
                 <th className="px-4 py-3">Nombre</th>
                 <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Estado</th>
                 <th className="px-4 py-3 text-center">Acciones</th>
                 </tr>
             </thead>
 
             <tbody>
-                {socios.map((socio) => (
-                <tr key={socio.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3">{socio.id}</td>
-                    <td className="px-4 py-3">{socio.nombre}</td>
-                    <td className="px-4 py-3">{socio.email}</td>
+                {socios?.map((socio) => (
+                <tr key={socio.id+socio.nombreSocio} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-3">{socio.idSocio}</td>
+                    <td className="px-4 py-3">{socio.apellidoSocio}</td>
+                    <td className="px-4 py-3">{socio.nombreSocio}</td>
+                    <td className="px-4 py-3">{socio.emailSocio}</td>
+                    <td className="px-4 py-3">{socio.activo ? "ok" : "baja"}</td>
 
                     <td className="px-4 py-3">
                     <div className="flex justify-center gap-3">
+
+                        <button
+                        onClick={() => handleAlataBaja(socio)}
+                        className={`${socio?.activo ? 'bg-pink-700' : 'bg-green-600'} text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition`}
+                        >
+                        {socio.activo ? 'Baja' : 'Alta'}
+                        </button>
 
                         <button
                         onClick={() => handleEditar(socio)}
@@ -77,7 +131,10 @@ function PanelSocios() {
                         </button>
 
                         <button
-                        onClick={() => handleEliminar(socio.id)}
+                        onClick={() => {
+                            setSocioActual(socio);
+                            setEliminar(true);
+                        }}
                         className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
                         >
                         Eliminar
@@ -95,18 +152,48 @@ function PanelSocios() {
         {/* Modal crear */}
         {abrir && (
             <CrearSocio
+            token={token}
             cerrar={() => setAbrir(false)}
-            crear={handleCrear}
+            getSocios={getSocios}
             />
         )}
 
         {/* Modal editar */}
         {abrirEditar && (
             <EditarSocio
+            token={token}
             socio={socioActual}
             cerrar={() => setAbrirEditar(false)}
-            editar={handleGuardarEditado}
+            getSocios={getSocios}
             />
+        )}
+
+                 {eliminar && socioActual && (
+            <div className="fixed inset-0 bg-black/50" onClick={() => setEliminar(false)}>
+            <div className="bg-white p-6 rounded-lg max-w-md mx-auto mt-40 shadow-lg" onClick={(e) => e.stopPropagation()}>
+                <h2 className="text-xl font-semibold mb-4">Confirmar eliminación</h2>
+                <p className="mb-6">¿Estás seguro de que deseas eliminar este socio/a <strong>{socioActual?.nombreSocio + " " + socioActual.apellidoSocio}</strong>?</p>
+                <div className="flex justify-end space-x-4">
+                <button
+                    onClick={() => setEliminar(false)}
+                    className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                >
+                    Cancelar
+                </button>
+                <button
+                    onClick={() => {
+                        // Aquí deberías llamar a la función para eliminar la reserva
+                        handleEliminar()
+                        setEliminar(false);
+                    }}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                >
+                    Eliminar
+                </button>
+                </div>
+
+                </div>
+            </div>
         )}
 
     </div>

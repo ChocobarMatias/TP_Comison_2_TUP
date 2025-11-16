@@ -35,7 +35,7 @@ export const useSocioStore = create()(
         return true
       },
 
-      getSocio: () => {
+      getToken: () => {
         if (!get().isTokenValid()) return null
         return get().token
       },

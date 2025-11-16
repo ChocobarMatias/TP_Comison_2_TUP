@@ -6,7 +6,7 @@ import {toast} from 'react-toastify'
 import { useSocioStore } from "../stores/socios.store";
 
 function PanelReservas() {
-    const token = useSocioStore((state) => state.getSocio())
+    const token = useSocioStore((state) => state.getToken())
     const [reservas, setReservas] = useState(null);
     const [reservaSeleccionada, setReservaSeleccionada] = useState(null)
     const [abrir, setAbrir] = useState(false);
@@ -16,7 +16,6 @@ function PanelReservas() {
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}reservas`)
         setReservas(data)
-        console.log(data);
       } catch (error) {
         console.log(error);
       }
@@ -30,10 +29,7 @@ function PanelReservas() {
 
 
 
-    const handleCrear = (nuevaReserva) => {
-        nuevaReserva.id = reservas.length + 1;
-        setReservas([...reservas, nuevaReserva]);
-    };
+   
 
     const handleEliminar = async () => {
         try {
@@ -104,7 +100,8 @@ function PanelReservas() {
         {abrir && (
             <CrearReserva
             cerrar={() => setAbrir(false)}
-            crear={handleCrear}
+            token={token}
+            getReservas={getReservas}
             />
         )}
         {eliminar && reservaSeleccionada && (

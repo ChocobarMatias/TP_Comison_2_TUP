@@ -2,9 +2,10 @@ import { useState } from "react"
 import PanelSocios from "../components/PanelSocios";
 import PanelActividades from "../components/PanelActividades";
 import PanelReservas from "../components/PanelReservas";
+import { useSocioStore } from "../stores/socios.store";
 
 function Admin() {
-
+    const token = useSocioStore((state) => state.getToken())
     const [tabActiva, setTabActiva] = useState("socios");
 
     return (
@@ -48,11 +49,11 @@ function Admin() {
                 </div>
 
 
-                {tabActiva === "socios" && (<PanelSocios />)}
+                {tabActiva === "socios" && (<PanelSocios token={token}/>)}
 
-        {tabActiva === "actividades" && (<PanelActividades/>)}
+        {tabActiva === "actividades" && (<PanelActividades token={token}/>)}
 
-        {tabActiva === "reservas" && (<PanelReservas/>)}
+        {tabActiva === "reservas" && (<PanelReservas token={token}/>)}
 
         </div>
         </>
