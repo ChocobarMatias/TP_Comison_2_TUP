@@ -139,6 +139,13 @@ const Registro = () => {
               {loading ? 'Registrando...' : 'Registrarme'}
             </button>
           </form>
+          <button
+            type="button"
+            className="btn btn-link w-100 mt-2"
+            onClick={() => navigate('/login')}
+          >
+            Volver al login
+          </button>
         </div>
       </div>
     </div>
