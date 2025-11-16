@@ -185,7 +185,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\antog\\OneDrive\\Escritorio\\Programacion4\\trabajos-practicos\\trabajos-practicos\\TP_Comison_2_TUP\\Trabajo Grupales\\Grupo N° 4 - TP 4\\backend\\src\\generated\\prisma",
+      "value": "C:\\UTN\\UTN2025\\tpc2\\trabajos-practicos\\TP_Comison_2_TUP\\Trabajo Grupales\\Grupo N° 4 - TP 4\\backend\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -199,11 +199,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\antog\\OneDrive\\Escritorio\\Programacion4\\trabajos-practicos\\trabajos-practicos\\TP_Comison_2_TUP\\Trabajo Grupales\\Grupo N° 4 - TP 4\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\UTN\\UTN2025\\tpc2\\trabajos-practicos\\TP_Comison_2_TUP\\Trabajo Grupales\\Grupo N° 4 - TP 4\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
+    "rootEnvPath": "../../../.env",
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
