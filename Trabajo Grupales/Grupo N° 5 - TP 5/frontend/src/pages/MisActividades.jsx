@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavBar from "../components/NavBar";
 
 function MisActividades() {
   const [reservas, setReservas] = useState([]);
@@ -91,6 +92,8 @@ function MisActividades() {
   }, []);
 
   return (
+    <>
+    <NavBar />
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
@@ -119,6 +122,7 @@ function MisActividades() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
