@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model comedores {
+  id             Int       @id @default(autoincrement())
+  nombre         String    @db.VarChar(100)
+  direccion      String?   @db.VarChar(150)
+  contacto       String?   @db.VarChar(100)
+  telefono       String?   @db.VarChar(50)
+  fecha_registro DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model donadores {
+  id         Int       @id @default(autoincrement())
+  nombre     String    @db.VarChar(100)
+  apellido   String    @db.VarChar(100)
+  contacto   String    @db.VarChar(100)
+  deleted_at DateTime? @db.Timestamp(0)
+}
+
+model entregas {
+  id             Int       @id @default(autoincrement())
+  id_donador     Int
+  id_producto    Int
+  id_comedor     Int
+  cantidad       Int
+  fecha_donacion DateTime? @default(now()) @db.Timestamp(0)
+  observaciones  String?   @db.VarChar(255)
+  deleted_at     DateTime? @db.Timestamp(0)
+
+  @@index([id_comedor], map: "fk_id_comedor")
+  @@index([id_donador], map: "fk_id_donador")
+  @@index([id_producto], map: "fk_id_producto")
+}
+
+model productos {
+  id_producto Int     @id @default(autoincrement())
+  nombre      String  @db.VarChar(100)
+  descripcion String? @db.VarChar(255)
+  categoria   String? @db.VarChar(100)
+  cantidad    Int?
+}
+
+model usuarios {
+  idUsuario         Int    @id @default(autoincrement())
+  correoUsuario     String @unique(map: "correoUsuario") @db.VarChar(100)
+  contrase_aUsuario String @map("contraseñaUsuario") @db.VarChar(15)
+}

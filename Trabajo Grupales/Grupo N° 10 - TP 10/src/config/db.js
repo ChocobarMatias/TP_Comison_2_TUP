@@ -4,8 +4,8 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const pool = mysql2.createPool({
-    host: 'localhost',
-    port: Number(process.env.MYSQL_PORT) || 3306,
+    host:'localhost',
+    port: Number(process.env.MYSQL_PORT),
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASS,
     database: process.env.MYSQL_DATABASE,
@@ -16,21 +16,6 @@ const pool = mysql2.createPool({
     
 });
 
-
-const connection = mysql2.createConnection({
-    host: 'localhost',
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASS,
-    database: process.env.MYSQL_DATABASE,
-})
-
-pool.connect((error)=>{
-  if (error) {
-    console.error("error de conexion a la base de datos: ", error)
-    return;
-  }
-  console.log("Conexion a la base da datos exitosa")
-})
 
 export default pool;
 

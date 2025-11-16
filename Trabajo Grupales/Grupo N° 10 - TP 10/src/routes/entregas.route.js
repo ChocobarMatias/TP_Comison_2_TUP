@@ -5,7 +5,7 @@ import {
   getOneEntrega,
   postEntrega,
   putEntrega,
-} from '../controllers/entregas.controller';
+} from '../controllers/entregas.controller.js';
 
 const route = Router();
 

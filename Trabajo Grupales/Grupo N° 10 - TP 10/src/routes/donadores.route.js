@@ -5,7 +5,7 @@ import {
   putDonadores,
   deleteDonadores,
   getOneDonador,
-} from '../controllers/donadores.controller';
+} from '../controllers/donadores.controller.js';
 
 const route = Router();
 

@@ -18,68 +18,56 @@ Describir brevemente lo encontrado al abrir el proyecto:
 
 Errores detectados (bugs, warnings, import fallidos, rutas rotas, etc.)
 
-Punto de entrada duplicado: Existen dos archivos (index.js y app.js) que inicializan un servidor de Express de forma independiente. Ambos importan y configuran rutas, creando confusión sobre cuál es el verdadero punto de entrada.
+Punto de entrada duplicado: Se detectaron dos archivos (index.js y app.js en la raíz) que inicializaban un servidor de Express, creando confusión sobre el punto de entrada real.
 
-Revisión de package.json: Se confirma que el script dev (node --watch index.js) solo ejecuta index.js, por lo que app.js funciona como "código muerto" o zombie.
+Acoplamiento Fuerte de la Base de Datos: Los controladores importaban la conexión mysql2 (db) directamente.
 
-Acoplamiento Fuerte de la Base de Datos: Los controladores (ej. src/controllers/usuarios.js, src/controllers/recuperoPass.js) importan la conexión mysql2 (db) directamente desde config/db.js.
-
-Uso de SQL Crudo (Raw SQL): Toda la lógica de negocio está mezclada con sentencias SQL manuales (ej. db.query("SELECT * FROM usuarios..."), db.query("INSERT INTO...")). Esto acopla fuertemente la aplicación a mysql2, dificulta el mantenimiento y es propenso a errores de sintaxis SQL.
-
-Lógica de Migración Obsoleta: El archivo routes/migration.route.js revela un intento manual de crear la base de datos y las tablas a través de endpoints API, una práctica que es insegura y no estándar.
+Uso de SQL Crudo (Raw SQL): Toda la lógica de negocio estaba mezclada con sentencias SQL manuales (db.query(...)), acoplando la aplicación a mysql2.
 
 Faltantes respecto a Semana 1 (carpetas vacías, componentes incompletos, etc.)
 
-(Este apartado depende de lo que haya entregado el grupo anterior, pero el principal "faltante" es la correcta implementación de una capa de abstracción de datos como un ORM).
+Ausencia de arquitectura de proyecto (TP2): El grupo anterior no implementó la estructura de carpetas solicitada en la Semana 2. El proyecto carecía de una carpeta src y la lógica estaba desorganizada en la raíz.
 
 Problemas de estructura, naming, uso de git o dependencias
 
-Estructura de carpetas duplicada y caótica: Se detectan múltiples carpetas con propósitos similares, lo que genera confusión.
+Estructura de carpetas duplicada y caótica: Se detectaron múltiples carpetas con propósitos similares en la raíz (routes/ vs src/routes/, utils/ vs src/utils/).
 
-routes/ (en la raíz) vs. src/routes/
+Duplicación de Utilidades: Se encontraron múltiples archivos para la misma función (ej. dos servicios de email, dos archivos de hash de contraseñas).
 
-config/ (en la raíz) vs. src/config/
+Naming inconsistente: (ej. Middleware/ vs middlewares/).
 
-utils/ (en la raíz) vs. src/utils/
-
-Duplicación de Utilidades: Se encontraron múltiples archivos que cumplen la misma función, creando confusión sobre cuál debe usarse. Ejemplos:
-
-src/utils/hash.js (con bcrypt) vs. utils/hashPass.js (con bcryptjs).
-
-src/services/email.js (servicio genérico) vs. utils/serivicoDeEmail.js (servicio específico con plantillas HTML).
-
-Naming inconsistente: Existen carpetas duplicadas con diferencias de mayúsculas/minúsculas (ej. Middleware/ y middlewares/).
-
-Dependencias: El proyecto lista mysql2 como dependencia principal para la conexión a la base de datos, confirmando la falta de un ORM.
-
-Este apartado debe completarse ANTES de modificar el código.
+Este apartado describe el estado en que se recibió el proyecto ANTES de cualquier modificación.
 
 2) SOLUCIONES IMPLEMENTADAS + NUEVO AGREGADO (Semana 3)
 
 ✅ Soluciones aplicadas a problemas detectados
 
-Centralización del Servidor: Se definió index.js como el único punto de entrada del servidor. Se eliminó el archivo app.js para evitar duplicidad y confusión.
+Re-estructuración de la Arquitectura (Resolución de TP2): Antes de iniciar con la migración a Prisma, se solucionó la deuda técnica del TP2, implementando la arquitectura correcta:
 
-Consolidación de Estructura: Se unificó la estructura del proyecto. Se decidió trabajar sobre las carpetas raíz (/routes, /config, /utils) y se eliminaron las carpetas duplicadas bajo el directorio /src.
+Se creó la carpeta src/ para albergar toda la lógica de la aplicación.
 
-Unificación de Utilidades: Se eliminaron los archivos de utilidades duplicados. Se estandarizó el uso de utils/hashPass.js (para bcryptjs) y utils/serivicoDeEmail.js (para nodemailer), eliminando src/utils/hash.js y src/services/email.js.
+Se definió index.js (global) como el único responsable de levantar el servidor (app.listen()).
 
-Limpieza de Rutas Obsoletas: Se eliminó el archivo routes/migration.route.js y su controlador asociado, ya que la introspección de la base de datos ahora es manejada por Prisma.
+Se creó src/app.js como el "cerebro" de la aplicación, donde se configura Express, cors y los middlewares globales.
+
+Se centralizó el enrutamiento creando src/routes/index.js, que actúa como "distribuidor" principal hacia las rutas específicas (ej. donadores.route.js, productos.route.js).
+
+Consolidación de Estructura: Se eliminaron todas las carpetas y archivos duplicados de la raíz (app.js, config/, utils/ de la raíz, etc.).
+
+Unificación de Utilidades: Se eliminaron los archivos de utilidades duplicados, dejando una única fuente de verdad para el hasheo y el envío de correos.
 
 ✅ Nuevos requerimientos de Semana 3 agregados
 
 Implementación de Prisma ORM (Backend):
 
-Introspección de BD: Se utilizó el ong.sql provisto para levantar la base de datos en MySQL. Posteriormente, se ejecutó npx prisma db pull para introspectar la estructura y generar todos los modelos (usuarios, donadores, productos, comedores, entregas) en el archivo prisma/schema.prisma.
+Introspección de BD: Se utilizó el ong.sql para levantar la BD en MySQL. Se ejecutó npx prisma db pull para introspectar la estructura y generar todos los modelos (usuarios, donadores, productos, comedores, entregas) en prisma/schema.prisma.
 
-Generación del Cliente: Se ejecutó npx prisma generate para crear el cliente de Prisma en node_modules/@prisma/client.
+Generación del Cliente: Se ejecutó npx prisma generate para crear el cliente de Prisma.
 
-Conexión Centralizada: Se creó el archivo config/prisma.js, que exporta una instancia única de PrismaClient. Este archivo reemplaza funcionalmente al obsoleto config/db.js (que usaba mysql2).
+Conexión Centralizada: Se creó src/config/prisma.js (ahora dentro de src/), que exporta la instancia única de PrismaClient para reemplazar al antiguo config/db.js.
 
-Refactorización Completa de Controladores: Se reescribieron todos los controladores (ej. usuarios.js, recuperoPass.js, donadores.controller.js, etc.) para eliminar por completo las consultas SQL crudas (db.query). En su lugar, toda la lógica de acceso a datos ahora utiliza los métodos del cliente Prisma (ej. prisma.usuarios.findUnique(), prisma.donantes.findMany(), prisma.productos.create(), prisma.entregas.update()).
+Refactorización Completa de Controladores: Se reescribieron todos los controladores (en src/controllers/) para eliminar las consultas db.query() y utilizar los métodos del cliente Prisma (ej. prisma.usuarios.findUnique(), prisma.donantes.findMany()).
 
 Observaciones finales (opcional)
 
 (Completar por el alumno: Comentarios sobre el flujo de trabajo, dificultades o acuerdos del equipo).
-
-
