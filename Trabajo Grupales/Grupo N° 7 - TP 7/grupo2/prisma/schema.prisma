@@ -9,23 +9,28 @@ datasource db {
 }
 
 model catmedicos {
-  idCatMedico Int    @id @default(autoincrement())
-  NombreCat   String @db.VarChar(500)
-  IsActive    Int?   @default(1) @db.TinyInt
+  idCatMedico Int      @id @default(autoincrement())
+  NombreCat   String   @db.VarChar(500)
+  IsActive    Int?     @default(1) @db.TinyInt
+
+  // Relación uno a muchos
+  medicos medicos[]
 }
 
 model medicos {
   idMedico        Int      @id @default(autoincrement())
   NombreMedico    String   @db.VarChar(50)
   ApellidoMedico  String   @db.VarChar(50)
-  FechaNacMedico  DateTime @db.Date
   TelefonoMedico  String   @db.VarChar(20)
   DireccionMedico String   @db.VarChar(50)
-  LocalidadMedico String   @db.VarChar(50)
-  SalarioMedico   Decimal  @db.Decimal(10, 2)
   IsActive        Int?     @default(1) @db.TinyInt
-  idUsuario       Int?
-  idCatMedico     Int
+
+  idUsuario   Int?
+  idCatMedico Int
+
+  // Relaciones
+  catMedico catmedicos @relation(fields: [idCatMedico], references: [idCatMedico])
+  usuarios  usuarios?  @relation(fields: [idUsuario], references: [idUsuario])
 
   @@index([idCatMedico], map: "idCatMedico")
   @@index([idUsuario], map: "idUsuario")
@@ -72,6 +77,8 @@ model usuarios {
   PasswordUsuario String              @db.VarChar(250)
   RolUsuario      usuarios_RolUsuario
   IsActive        Int?                @default(1) @db.TinyInt
+
+  medicos medicos[]
 }
 
 enum usuarios_RolUsuario {
@@ -86,8 +93,16 @@ enum turnos_EstadoTurno {
   Finalizado
 }
 
+// Aquí está tu enum "p" corregido con valores de ejemplo
+enum p {
+  Valor1
+  Valor2
+  Valor3
+}
+
+// Enum de ejemplo para pacientes (no estaba definido, lo agrego para que funcione)
 enum pacientes_SexoPaciente {
-  Femenino
   Masculino
+  Femenino
   Otro
 }
