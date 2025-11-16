@@ -5,8 +5,6 @@ function ReservarClase({ id_socio, actividad, getActividades, closeModal }) {
 
     const handleReserva = async () => {
         
-        console.log(id_socio);
-        console.log(actividad);
         const dataForDB = {
             socio_id: id_socio,
             actividad_id: actividad.id
@@ -21,11 +19,6 @@ function ReservarClase({ id_socio, actividad, getActividades, closeModal }) {
             console.log(error, "error");
             toast.error(error?.response?.data?.error || "Hubo un error")
         }
-        
-        
-
-      
-        
     };
 
     return (
@@ -36,8 +29,6 @@ function ReservarClase({ id_socio, actividad, getActividades, closeModal }) {
             <h2 className="text-xl font-bold mb-4 text-gray-800">
             ¿Desea reservar una clase para <strong>{actividad.nombre}</strong>?
             </h2>
-
-            
 
                     <button
                     type="button"

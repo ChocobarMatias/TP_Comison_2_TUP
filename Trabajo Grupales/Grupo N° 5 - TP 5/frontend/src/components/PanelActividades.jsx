@@ -1,37 +1,51 @@
 import { useState } from "react";
-import actividadesData from "../data/actividades.json";
 import CrearActividad from "./CrearActividad";
 import EditarActividad from "./EditarActividad";
+import { useCallback } from "react";
+import { useEffect } from "react";
+import axios from 'axios';
+import { toast } from "react-toastify";
 
 function PanelActividades() {
 
-    const [actividades, setActividades] = useState(actividadesData);
+    const [actividades, setActividades] = useState(null);
     const [abrir, setAbrir] = useState(false);
     const [editar, setEditar] = useState(false);
+    const [eliminar, setEliminar] = useState(false);
     const [actividadActual, setActividadActual] = useState(null);
 
-    const handleCrear = (nuevaActividad) => {
-        nuevaActividad.id = actividades.length + 1;
-        setActividades([...actividades, nuevaActividad]);
-    };
+      const getActividades = useCallback(async () => {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}actividades`)
+        setActividades(data.consulta)
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    },[])
 
-    const handleEliminar = (id) => {
-        const c = confirm("Queres eliminar esta actividad?");
-        if (!c) return;
+  
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getActividades()
+  }, [getActividades])
 
-        setActividades(actividades.filter(a => a.id !== id));
-    };
 
     const handleEditar = (actividad) => {
         setActividadActual(actividad);
         setEditar(true);
     };
 
-    const handleGuardarEditado = (actividadEditada) => {
-        const nuevaLista = actividades.map(a =>
-        a.id === actividadEditada.id ? actividadEditada : a
-        );
-        setActividades(nuevaLista);
+     const handleEliminar = async () => {
+        try {
+            const { data } = await axios.delete(`${import.meta.env.VITE_BACKEND}actividades/${actividadActual?.id}`)
+            toast(data?.message || "Actividad eliminada")
+            await getActividades()
+            setActividadActual(null)
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.error || "Hubo un error")
+        }
     };
 
 
@@ -59,11 +73,11 @@ function PanelActividades() {
             </thead>
 
             <tbody>
-                {actividades.map((actividad) => (
+                {actividades?.map((actividad) => (
                 <tr key={actividad.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3">{actividad.id}</td>
                     <td className="px-4 py-3">{actividad.nombre}</td>
-                    <td className="px-4 py-3">{actividad.cupo}</td>
+                    <td className="px-4 py-3">{actividad.cupo_maximo}</td>
 
                     <td className="px-4 py-3">
                     <div className="flex justify-center gap-3">
@@ -76,7 +90,11 @@ function PanelActividades() {
                         </button>
 
                         <button
-                        onClick={() => handleEliminar(actividad.id)}
+                        onClick={() => {
+                            setActividadActual(actividad)
+                            setEliminar(true)}
+
+                        }
                         className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
                         >
                         Eliminar
@@ -95,16 +113,46 @@ function PanelActividades() {
         {abrir && (
             <CrearActividad
             cerrar={() => setAbrir(false)}
-            crear={handleCrear}
+            getActividades={getActividades}
+            //crear={handleCrear}
             />
         )}
 
         {editar && (
             <EditarActividad
             actividad={actividadActual}
+            getActividades={getActividades}
+            setActividadActual={() => setActividadActual(null)}
             cerrar={() => setEditar(false)}
-            editar={handleGuardarEditado}
             />
+        )}
+
+         {eliminar && actividadActual && (
+            <div className="fixed inset-0 bg-black/50" onClick={() => setEliminar(false)}>
+            <div className="bg-white p-6 rounded-lg max-w-md mx-auto mt-40 shadow-lg" onClick={(e) => e.stopPropagation()}>
+                <h2 className="text-xl font-semibold mb-4">Confirmar eliminación</h2>
+                <p className="mb-6">¿Estás seguro de que deseas eliminar esta reserva {actividadActual?.id}?</p>
+                <div className="flex justify-end space-x-4">
+                <button
+                    onClick={() => setEliminar(false)}
+                    className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                >
+                    Cancelar
+                </button>
+                <button
+                    onClick={() => {
+                        // Aquí deberías llamar a la función para eliminar la reserva
+                        handleEliminar()
+                        setEliminar(false);
+                    }}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                >
+                    Eliminar
+                </button>
+                </div>
+
+                </div>
+            </div>
         )}
     </div>
     );

@@ -4,7 +4,7 @@ import { CgGym } from "react-icons/cg";
 import ReservarClase from "../components/ReservarClase";
 
 export default function ActividadesHoy() {
-  const idSocio = 1
+  const idSocio = 3
   const [actividades, setActividades] = useState(null)
   const [actividad, setActividad] = useState(null)
   const [showModal, setShowModal]  = useState(false)
