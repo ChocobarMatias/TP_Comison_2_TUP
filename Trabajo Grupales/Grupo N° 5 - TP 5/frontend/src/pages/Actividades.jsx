@@ -28,12 +28,12 @@ function Actividades() {
                         <span className="font-semibold">{item.cupo_maximo}</span>
                         </p>
                         {/*Boton para hacer reserva*/}
-                        <button
+                        {/* <button
                         className="bg-blue-600 text-white w-full py-2 rounded-lg font-medium 
                         hover:bg-blue-700 transition-all duration-200 shadow hover:shadow-lg"
                         >
                         Reservar
-                        </button>
+                        </button> */}
                     </div>
                     ))}
 

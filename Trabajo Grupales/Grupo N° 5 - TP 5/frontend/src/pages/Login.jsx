@@ -28,6 +28,7 @@ function Login() {
             // Manejo robusto del body (puede ser vacío o no-JSON)
             const text = await resp.text();
             let data = {};
+            // eslint-disable-next-line no-unused-vars
             try { data = text ? JSON.parse(text) : {}; } catch (err) { data = { message: text || `HTTP ${resp.status}` }; }
 
             if (!resp.ok) {
@@ -43,10 +44,11 @@ function Login() {
                 if (role === "admin") {
                     navigate('/admin');
                 } else {
-                    navigate('/actividades');
+                    navigate('/actividades-hoy');
                 }
             }
         } catch (err) {
+            console.log(err);
             setError("Error de red o servidor");
         } finally {
             setLoading(false);
