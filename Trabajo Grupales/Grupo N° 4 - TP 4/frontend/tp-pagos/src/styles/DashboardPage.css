@@ -1,0 +1,81 @@
+.dash-container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.dash-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.dash-subtitle {
+  color: #aaa;
+  margin-bottom: 2rem;
+}
+
+/* 📌 Grilla de estadísticas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.stat-card h3 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: bold;
+  color: #646cff;
+}
+
+/* 📌 Texto sección */
+.dash-section-title {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+/* 📌 Grilla del menú */
+.menu-grid {
+  display: flex;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.menu-card {
+  display: flex-wrap;
+  background: #181818;
+  padding: 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid #333;
+  transition: 0.2s ease-in-out;
+  color: white;
+}
+
+.menu-card:hover {
+  transform: translateY(-4px);
+  border-color: #646cff;
+  box-shadow: 0 0 12px #646cff55;
+}
+
+.menu-card h3 {
+  margin-bottom: 8px;
+  color: #646cff;
+}
+
+.menu-card p {
+  color: #ccc;
+}
