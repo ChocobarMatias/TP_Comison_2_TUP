@@ -1,23 +1,38 @@
-function CrearActividad({cerrar, crear}) {
-    const handleSubmit = (e) => {
+import axios from "axios";
+import { useState } from "react";
+import {toast} from 'react-toastify';
+import LoadingSpinner from "./LoadingSpinner";
+
+function CrearActividad({cerrar, getActividades}) {
+    const [loading, setLoading] = useState(false)
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true)
         const nombre = e.target.nombre.value;
-        const cupo = e.target.cupo.value;
+        const cupo_maximo = e.target.cupo.value;
 
-        if (!nombre || !cupo) {
-        alert("Todos los campos son obligatorios");
-        return;
+        if (!nombre || !cupo_maximo) {
+            setLoading(false)
+            return toast("Todos los campos son obligatorios");
         }
 
         const nuevaActividad = {
         nombre,
-        cupo: Number(cupo)
+        cupo_maximo: Number(cupo_maximo)
         };
-
-        crear(nuevaActividad);
-        cerrar();
+        try {
+            await axios.post(`${import.meta.env.VITE_BACKEND}actividades`, nuevaActividad);
+            toast("Actividad creada con exito");
+            await getActividades()
+            cerrar();
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false)
+        }
     };
+    
     return(
         <div
         className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center"
@@ -35,6 +50,7 @@ function CrearActividad({cerrar, crear}) {
             <div>
                 <label className="font-medium text-gray-700">Nombre</label>
                 <input
+                required
                 type="text"
                 name="nombre"
                 className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
@@ -44,6 +60,7 @@ function CrearActividad({cerrar, crear}) {
             <div>
                 <label className="font-medium text-gray-700">Cupo máximo</label>
                 <input
+                required
                 type="number"
                 name="cupo"
                 className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
@@ -61,9 +78,10 @@ function CrearActividad({cerrar, crear}) {
 
                 <button
                 type="submit"
+                disabled={loading}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                 >
-                Crear
+                {loading ? <LoadingSpinner /> : 'Crear'}
                 </button>
             </div>
 
