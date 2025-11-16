@@ -2,9 +2,11 @@ import axios from "axios"
 import { useCallback, useEffect, useState } from "react"
 import { CgGym } from "react-icons/cg";
 import ReservarClase from "../components/ReservarClase";
+import { useSocioStore } from "../stores/socios.store";
 
 export default function ActividadesHoy() {
-  const idSocio = 3
+  const idSocio = useSocioStore((state) => state.getIdSocio())
+  const isAdmin = useSocioStore((state) => state.isAdmin())
   const [actividades, setActividades] = useState(null)
   const [actividad, setActividad] = useState(null)
   const [showModal, setShowModal]  = useState(false)
@@ -40,8 +42,9 @@ export default function ActividadesHoy() {
                     {actividades?.map((item) => (
                     <div
                         key={item.id}
-                        className="relative bg-white rounded-xl shadow-md p-6 flex border border-transparent flex-col items-center text-center overflow-clip hover:border-black duration-200 cursor-pointer"
+                        className={`${isAdmin ? '' : 'cursor-pointer'} relative bg-white rounded-xl shadow-md p-6 flex border border-transparent flex-col items-center text-center overflow-clip hover:border-black duration-200`}
                         onClick={() => {
+                          if(isAdmin) return
                           setShowModal(true)
                           setActividad(item)}}
                     >

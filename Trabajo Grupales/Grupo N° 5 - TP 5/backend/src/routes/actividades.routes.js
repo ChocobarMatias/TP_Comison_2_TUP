@@ -8,8 +8,8 @@ const {getActividades, CreateAtividades, updateActividades, deleteActividades, g
 
 router.get("/", getActividades)
 router.get("/hoy", getActividadesHoy)
-router.post("/", CreateAtividades);
-router.put("/:id", updateActividades);
-router.delete("/:id", deleteActividades)
+router.post("/", verificarTokenAdmin, CreateAtividades);
+router.put("/:id", verificarTokenAdmin, updateActividades);
+router.delete("/:id", verificarTokenAdmin, deleteActividades)
 
 module.exports = router

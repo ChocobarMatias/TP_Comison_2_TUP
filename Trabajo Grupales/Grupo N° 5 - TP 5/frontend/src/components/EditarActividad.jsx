@@ -3,7 +3,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import LoadingSpinner from "./LoadingSpinner";
 
-function EditarActividad({ cerrar, actividad, getActividades,setActividadActual }) {
+
+function EditarActividad({ cerrar, actividad, getActividades,setActividadActual, token }) {
+
     const [loading, setLoading] = useState(false)
 
     if (!actividad) return null;
@@ -27,7 +29,11 @@ function EditarActividad({ cerrar, actividad, getActividades,setActividadActual 
         };
 
         try {
-            const { data } = await axios.put(`${import.meta.env.VITE_BACKEND}actividades/${actividad.id}`, actividadEditada);
+            const { data } = await axios.put(`${import.meta.env.VITE_BACKEND}actividades/${actividad.id}`, actividadEditada, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             console.log(data);
             toast(data?.message || 'Actividad editada exitosamente')
             cerrar();

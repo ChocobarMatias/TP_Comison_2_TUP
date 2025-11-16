@@ -3,7 +3,9 @@ import { useState } from "react";
 import {toast} from 'react-toastify';
 import LoadingSpinner from "./LoadingSpinner";
 
-function CrearActividad({cerrar, getActividades}) {
+
+function CrearActividad({cerrar, getActividades, token}) {
+
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (e) => {
@@ -22,7 +24,11 @@ function CrearActividad({cerrar, getActividades}) {
         cupo_maximo: Number(cupo_maximo)
         };
         try {
-            await axios.post(`${import.meta.env.VITE_BACKEND}actividades`, nuevaActividad);
+            await axios.post(`${import.meta.env.VITE_BACKEND}actividades`, nuevaActividad, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             toast("Actividad creada con exito");
             await getActividades()
             cerrar();

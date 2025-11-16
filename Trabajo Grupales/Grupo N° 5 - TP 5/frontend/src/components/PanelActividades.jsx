@@ -5,9 +5,10 @@ import { useCallback } from "react";
 import { useEffect } from "react";
 import axios from 'axios';
 import { toast } from "react-toastify";
+import { useSocioStore } from "../stores/socios.store";
 
 function PanelActividades() {
-
+    const token = useSocioStore((state) => state.getSocio())
     const [actividades, setActividades] = useState(null);
     const [abrir, setAbrir] = useState(false);
     const [editar, setEditar] = useState(false);
@@ -38,7 +39,11 @@ function PanelActividades() {
 
      const handleEliminar = async () => {
         try {
-            const { data } = await axios.delete(`${import.meta.env.VITE_BACKEND}actividades/${actividadActual?.id}`)
+            const { data } = await axios.delete(`${import.meta.env.VITE_BACKEND}actividades/${actividadActual?.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             toast(data?.message || "Actividad eliminada")
             await getActividades()
             setActividadActual(null)
@@ -114,6 +119,7 @@ function PanelActividades() {
             <CrearActividad
             cerrar={() => setAbrir(false)}
             getActividades={getActividades}
+            token={token}
             //crear={handleCrear}
             />
         )}
@@ -122,6 +128,7 @@ function PanelActividades() {
             <EditarActividad
             actividad={actividadActual}
             getActividades={getActividades}
+            token={token}
             setActividadActual={() => setActividadActual(null)}
             cerrar={() => setEditar(false)}
             />

@@ -141,7 +141,7 @@ const loginSocio = async (req, res) => {
       return res.status(401).json({ error: "Usuario o Contraseña incorrecta" });
     }
     const token = jwt.sign(
-      { id: socio.idSocio, email: socio.emailSocio },
+      { id: socio.idSocio, email: socio.emailSocio, admin: false },
       process.env.JWT_SECRET,
       { expiresIn: "3h"}
     );
