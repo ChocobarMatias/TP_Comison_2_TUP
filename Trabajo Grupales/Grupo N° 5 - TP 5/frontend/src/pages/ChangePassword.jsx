@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavBar from "../components/NavBar";
 
 // Versión simplificada y con estilo similar a Login.jsx.
 // Código intencionalmente sencillo (apto para un junior).
@@ -93,6 +94,8 @@ function ChangePassword() {
   }
 
   return (
+    <>
+    <NavBar />
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 relative">
       <button onClick={goBack} className="absolute left-4 top-8 text-sm text-blue-600 hover:underline flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -128,6 +131,7 @@ function ChangePassword() {
         </form>
       </div>
     </div>
+    </>
   );
 }
 

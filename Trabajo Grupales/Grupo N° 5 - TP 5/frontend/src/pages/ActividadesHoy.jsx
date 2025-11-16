@@ -2,7 +2,11 @@ import axios from "axios"
 import { useCallback, useEffect, useState } from "react"
 import { CgGym } from "react-icons/cg";
 import ReservarClase from "../components/ReservarClase";
+
 import { useSocioStore } from "../stores/socios.store";
+
+
+import NavBar from "../components/NavBar";
 
 export default function ActividadesHoy() {
   const idSocio = useSocioStore((state) => state.getIdSocio())
@@ -30,6 +34,7 @@ export default function ActividadesHoy() {
 
   return (
             <>
+            <NavBar />
             <div className="min-h-screen bg-gray-100 px-6 py-10">
                 {/* Título */}
                 <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-10">

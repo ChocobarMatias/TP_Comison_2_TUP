@@ -1,13 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocioStore } from "../stores/socios.store";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+
 
 function NavBar() {
   const token = useSocioStore((state) => state.token);
   const logout = useSocioStore((state) => state.logout);
   const [open, setOpen] = useState(false);
+
   const [usuario, setUsuario] = useState(null)
   const navigate = useNavigate();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const ref = useRef();
+  const menuRef = useRef();
 
 
   // obtener email/nombre desde token si existe
@@ -26,12 +35,23 @@ function NavBar() {
 
   //const userEmail = userPayload?.email || null;
 
+
    useEffect(() => {
     const usuario = decodeToken(token)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setUsuario(usuario || null);
     
   },[token])
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    }
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
 
   function handleLogout() {
     localStorage.removeItem('tokenSocio');
@@ -54,8 +74,30 @@ function NavBar() {
     <header className="w-full bg-white shadow py-3">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
         <div className="text-lg font-bold text-gray-800">Gimnasio</div>
+        <div className="relative flex items-center gap-3">
+          <div className="relative" ref={menuRef}>
+            <button type="button" onClick={() => setMenuOpen(!menuOpen)} className="px-3 py-1 rounded hover:bg-gray-100 flex items-center gap-2">
+              <span className="hidden sm:inline text-gray-700">Menú</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" />
+              </svg>
+            </button>
+
 
         <div className="relative" >
+
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg py-2 z-20">
+                <Link to="/actividades-hoy" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Actividades Hoy</Link>
+                <Link to="/actividades" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Actividades</Link>
+                <Link to="/mis-actividades" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Mis Actividades</Link>
+                <Link to="/cambiar-contrasena" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Cambiar contraseña</Link>
+              </div>
+            )}
+          </div>
+
+          <div className="relative" ref={ref}>
+
           <button type="button" onClick={() => setOpen(!open)} className="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-100">
             <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-medium">
               {usuario?.email?.charAt(0)?.toUpperCase()}
@@ -95,6 +137,7 @@ function NavBar() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </header>
   );
