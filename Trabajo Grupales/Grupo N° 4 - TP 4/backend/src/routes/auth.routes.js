@@ -5,16 +5,16 @@ const {
   register,
   login,
   me,
-  requestPasswordReset,
-  resetPassword,
+//   requestPasswordReset,
+//   resetPassword,
 } = require('../controllers/auth.controller');
 
 const { authRequired } = require('../middlewares/auth.middleware');
 
 router.post('/register', register);
 router.post('/login', login);
-router.get('/me', authRequired, me);
-router.post('/password/request-reset', requestPasswordReset);
-router.post('/password/reset', resetPassword);
+router.get('/me', authRequired, me);   // 👈 ESTA ES LA QUE FALLA
+// router.post('/password/request-reset', requestPasswordReset);
+// router.post('/password/reset', resetPassword);
 
-module.exports = router;
+module.exports = router;
