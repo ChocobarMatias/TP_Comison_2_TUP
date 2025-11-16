@@ -1,10 +1,8 @@
 import actividades from "../data/actividades.json"
-import NavBar from "../components/NavBar"
 
 function Actividades() {
     return (
         <>
-            <NavBar />
             <div className="min-h-screen bg-gray-100 px-6 py-10">
                 {/* Título */}
                 <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-10">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../components/NavBar";
+import { useSocioStore } from "../stores/socios.store";
 
 function MisActividades() {
   const [reservas, setReservas] = useState([]);
@@ -8,16 +8,9 @@ function MisActividades() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const socioId = useSocioStore((state) => state.getIdSocio());
+  const isAdmin = useSocioStore((state) => state.isAdmin());
 
-  function decodeToken(token) {
-    if (!token) return null;
-    try {
-      const part = token.split('.')[1];
-      return JSON.parse(atob(part));
-    } catch (e) {
-      return null;
-    }
-  }
 
   function formatDate(dateStr) {
     if (!dateStr) return 'Sin fecha';
@@ -31,6 +24,7 @@ function MisActividades() {
     try {
       return new Date(dateStr).toLocaleDateString();
     } catch (e) {
+      console.log(e);
       return dateStr;
     }
   }
@@ -41,20 +35,6 @@ function MisActividades() {
       setLoading(true);
       setError('');
 
-      const token = localStorage.getItem('tokenSocio');
-      if (!token) {
-        setError('Debes iniciar sesión como socio para ver tus actividades.');
-        setLoading(false);
-        return;
-      }
-
-      const payload = decodeToken(token);
-      const socioId = payload?.id;
-      if (!socioId) {
-        setError('Token inválido. Iniciá sesión de nuevo.');
-        setLoading(false);
-        return;
-      }
 
       try {
         const resReservas = await fetch('http://localhost:8080/api/reservas');
@@ -81,6 +61,7 @@ function MisActividades() {
         }
       } catch (err) {
         if (mounted) {
+          console.log(err);
           setError('Error al cargar tus actividades');
           setLoading(false);
         }
@@ -89,11 +70,10 @@ function MisActividades() {
 
     load();
     return () => { mounted = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <>
-    <NavBar />
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
@@ -108,9 +88,9 @@ function MisActividades() {
           {!loading && !error && reservas.length === 0 && (
             <div className="text-gray-600">No tenés actividades reservadas.</div>
           )}
-
-          <ul className="space-y-3">
-            {reservas.map((r) => (
+          {isAdmin ? <div>No tienen reservas, eres un administrador</div>
+          :<ul className="space-y-3">
+            {reservas?.map((r) => (
               <li key={r.id} className="flex items-center justify-between p-3 border rounded hover:shadow">
                 <div>
                   <div className="font-semibold text-gray-800">{actividadesMap[r.actividad_id]?.nombre || `Actividad ${r.actividad_id}`}</div>
@@ -118,11 +98,10 @@ function MisActividades() {
                 </div>
               </li>
             ))}
-          </ul>
+          </ul>}
         </div>
       </div>
     </div>
-    </>
   );
 }
 

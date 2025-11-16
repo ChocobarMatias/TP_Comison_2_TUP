@@ -114,7 +114,6 @@ const reactivarSocio = async (req, res) => {
 
 const loginSocio = async (req, res) => {
   const { email, password } = req.body;
-  console.log("Login request body:", req.body);
 
   try {
     if (!email || !password || email.length === 0 || password.length === 0) {

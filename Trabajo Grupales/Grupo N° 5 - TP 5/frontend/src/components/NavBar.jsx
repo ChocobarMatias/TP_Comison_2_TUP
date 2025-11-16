@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSocioStore } from "../stores/socios.store";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -7,11 +5,12 @@ import { useNavigate, Link } from "react-router-dom";
 
 function NavBar() {
   const token = useSocioStore((state) => state.token);
+  const isAdmin = useSocioStore((state) => state.isAdmin());
   const logout = useSocioStore((state) => state.logout);
   const [open, setOpen] = useState(false);
 
   const [usuario, setUsuario] = useState(null)
-  const navigate = useNavigate();
+
 
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -46,7 +45,10 @@ function NavBar() {
   useEffect(() => {
     function handleClick(e) {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+      if (menuRef.current && !menuRef.current.contains(e.target)) { 
+        setMenuOpen(false)
+        setOpen(false)
+      };
     }
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
@@ -54,8 +56,6 @@ function NavBar() {
 
 
   function handleLogout() {
-    localStorage.removeItem('tokenSocio');
-    localStorage.removeItem('tokenAdmin');
     logout()
     navigate('/');
   }
@@ -70,12 +70,17 @@ function NavBar() {
     setOpen(false);
   }
 
+  function goToAdmin() {
+    navigate('/admin');
+    setOpen(false);
+  }
+
   return (
     <header className="w-full bg-white shadow py-3">
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <div className="text-lg font-bold text-gray-800">Gimnasio</div>
+      <div className="w-full md:px-8 mx-auto px-4 flex items-center justify-between">
+        <Link to="/" className="text-lg font-bold text-gray-800">Gimnasio</Link>
         <div className="relative flex items-center gap-3">
-          <div className="relative" ref={menuRef}>
+          <div className="relative flex" ref={menuRef}>
             <button type="button" onClick={() => setMenuOpen(!menuOpen)} className="px-3 py-1 rounded hover:bg-gray-100 flex items-center gap-2">
               <span className="hidden sm:inline text-gray-700">Menú</span>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
@@ -88,10 +93,9 @@ function NavBar() {
 
             {menuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg py-2 z-20">
-                <Link to="/actividades-hoy" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Actividades Hoy</Link>
+                <Link to="/reservar" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Reservar</Link>
                 <Link to="/actividades" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Actividades</Link>
                 <Link to="/mis-actividades" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Mis Actividades</Link>
-                <Link to="/cambiar-contrasena" onClick={() => setMenuOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Cambiar contraseña</Link>
               </div>
             )}
           </div>
@@ -120,6 +124,11 @@ function NavBar() {
                 </div>
               </div>
 
+              {isAdmin && <button onClick={goToAdmin} className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm3 4h6v2H7V7zm0 4h4v2H7v-2z"/></svg>
+                Administración
+              </button>}
+
               <button onClick={goToMisActividades} className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm3 4h6v2H7V7zm0 4h4v2H7v-2z"/></svg>
                 Mis actividades
@@ -137,6 +146,7 @@ function NavBar() {
             </div>
           )}
         </div>
+      </div>
       </div>
       </div>
     </header>

@@ -18,7 +18,7 @@ function Login() {
     useEffect(() => {
         if (socioToken) {
             if (isAdmin) navigate('/admin')
-            else navigate('/actividades-hoy')
+            else navigate('/reservar')
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -62,7 +62,7 @@ function Login() {
                     navigate('/admin');
                 } else {
                     toast("Bienvenido")
-                    navigate('/actividades-hoy');
+                    navigate('/reservar');
                 }
             }
         } catch (err) {
@@ -75,8 +75,9 @@ function Login() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
-            <h1 className="text-4xl font-extrabold text-center mb-10 text-gray-800 tracking-wide">Logueo del gimnasio</h1>
+            <h1 className="text-4xl font-extrabold text-center mb-10 text-gray-800 tracking-wide">Ingresa al gimnasio</h1>
             <div className="flex flex-col w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+            <p className="text-center pb-1">Elíge el tipo de cuenta</p>
                 <div className="grid grid-cols-2 mb-6">
                     <button
                         type="button"

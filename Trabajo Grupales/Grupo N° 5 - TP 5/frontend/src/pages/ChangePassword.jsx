@@ -1,27 +1,25 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import NavBar from "../components/NavBar";
+import { useSocioStore } from "../stores/socios.store";
+import { toast } from "react-toastify";
 
-// Versión simplificada y con estilo similar a Login.jsx.
-// Código intencionalmente sencillo (apto para un junior).
+
 function ChangePassword() {
+  const token = useSocioStore((state) => state.getToken())
+  const logout = useSocioStore((state) => state.logout)
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const navigate = useNavigate();
 
-  function goBack() {
-    navigate('/actividades');
-  }
 
   function decodeToken(token) {
     try {
       const part = token.split(".")[1];
       return JSON.parse(atob(part));
     } catch (e) {
+      console.log(e);
       return null;
     }
   }
@@ -40,7 +38,6 @@ function ChangePassword() {
       return;
     }
 
-    const token = localStorage.getItem('tokenSocio');
     if (!token) {
       setError('No estás logueado como Socio');
       return;
@@ -83,10 +80,12 @@ function ChangePassword() {
       }
 
       setSuccess('Contraseña cambiada. Iniciá sesión de nuevo.');
-      localStorage.removeItem('tokenSocio');
-      setTimeout(() => navigate('/'), 1000);
+      toast("Contraseña cambiada con exito, por favor vuelva a conectarse")
+      logout()
+      //setTimeout(() => navigate('/'), 1000);
 
     } catch (err) {
+      console.log(err);
       setError('Error de red');
     } finally {
       setLoading(false);
@@ -94,17 +93,10 @@ function ChangePassword() {
   }
 
   return (
-    <>
-    <NavBar />
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 relative">
-      <button onClick={goBack} className="absolute left-4 top-8 text-sm text-blue-600 hover:underline flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Volver
-      </button>
+    <div className="bg-gray-100 px-4 relative flex-1 flex justify-center pt-12">
 
-      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+
+      <div className="w-full h-fit max-w-md bg-white shadow-xl rounded-2xl p-8">
         <h2 className="text-lg font-semibold text-gray-700 mb-6 text-center">Cambiar contraseña</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col">
@@ -131,7 +123,6 @@ function ChangePassword() {
         </form>
       </div>
     </div>
-    </>
   );
 }
 
