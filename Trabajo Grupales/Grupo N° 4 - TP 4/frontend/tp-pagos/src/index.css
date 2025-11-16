@@ -108,4 +108,7 @@ tr:hover td {
   background: #c09214;
 }
 
-.btn-dange
+.btn-danger {
+  background: #ff4d4d;
+  color: white;
+}
