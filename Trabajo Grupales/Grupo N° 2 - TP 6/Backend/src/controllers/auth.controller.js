@@ -144,7 +144,10 @@ const login = (req, res) => {
       const email = results[0].email;
       const rol = results[0].rol;
 
-      const esValida = await comparePassword(String(passwordValue), String(hash));
+      const esValida = await comparePassword(
+        String(passwordValue),
+        String(hash)
+      );
 
       if (!esValida) {
         return res.status(401).json({ message: "Contraseña incorrecta" });
