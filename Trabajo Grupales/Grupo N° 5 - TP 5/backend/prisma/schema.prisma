@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model actividades {
+  id          Int        @id @default(autoincrement())
+  nombre      String     @db.VarChar(100)
+  cupo_maximo Int
+  reservas    reservas[]
+}
+
+model reservas {
+  id           Int         @id @default(autoincrement())
+  socio_id     Int
+  actividad_id Int
+  fecha        DateTime    @db.Date
+  socios       socios      @relation(fields: [socio_id], references: [idSocio], onDelete: Cascade, onUpdate: NoAction, map: "reservas_ibfk_1")
+  actividades  actividades @relation(fields: [actividad_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "reservas_ibfk_2")
+
+  @@unique([socio_id, actividad_id, fecha], map: "UQ_reserva_unica")
+  @@index([actividad_id], map: "actividad_id")
+}
+
+model socios {
+  idSocio        Int        @id @default(autoincrement())
+  nombreSocio    String     @db.VarChar(100)
+  apellidoSocio  String     @db.VarChar(100)
+  emailSocio     String     @unique(map: "emailSocio") @db.VarChar(150)
+  contraSocio    String     @db.VarChar(255)
+  activo         Boolean?   @default(true)
+  fecha_creacion DateTime?  @default(now()) @db.Timestamp(0)
+  reservas       reservas[]
+}
+
+model administradores {
+  id             Int       @id @default(autoincrement())
+  nombre         String    @db.VarChar(100)
+  apellido       String    @db.VarChar(100)
+  email          String    @unique(map: "email") @db.VarChar(150)
+  contra         String    @db.VarChar(255)
+  activo         Boolean?  @default(true)
+  fecha_creacion DateTime? @default(now()) @db.Timestamp(0)
+}
