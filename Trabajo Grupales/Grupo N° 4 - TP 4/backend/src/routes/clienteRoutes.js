@@ -9,6 +9,11 @@ const {
   eliminarCliente
 } = require("../controllers/clienteController");
 
+const { obtenerPlanesPorCliente } = require("../controllers/planpagoController");
+
+
+router.get("/:id/planes", obtenerPlanesPorCliente);
+
 router.get("/", obtenerClientes);
 router.get("/:id", obtenerClientePorId);
 router.post("/", crearCliente);
