@@ -16,6 +16,11 @@ import ServiciosList from "../pages/servicios/ServiciosList";
 import ServiciosCreate from "../pages/servicios/ServiciosCreate";
 import ServiciosEdit from "../pages/servicios/ServiciosEdit";
 
+// PLANES
+import PlanesList from "../pages/planes/PlanesList";
+import PlanesCreate from "../pages/planes/PlanesCreate";
+import PlanesCuotas from "../pages/planes/PlanesCuotas";
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -62,13 +67,57 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
-
-        <Route path="/servicios" element={<ServiciosList />} 
+        {/* 📌 Rutas del módulo Servicios */}
+        <Route 
+          path="/servicios"
+          element={
+            <ProtectedRoute>
+              <ServiciosList />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/servicios/nuevo" element={<ServiciosCreate />} />
-        <Route path="/servicios/editar/:id" element={<ServiciosEdit />} />
+        <Route 
+          path="/servicios/nuevo"
+          element={
+            <ProtectedRoute>
+              <ServiciosCreate />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/servicios/editar/:id"
+          element={
+            <ProtectedRoute>
+              <ServiciosEdit />
+            </ProtectedRoute>
+          }
+        />
 
-
+        {/* 📌 Rutas del módulo Planes */}
+        <Route 
+          path="/planes"
+          element={
+            <ProtectedRoute>
+              <PlanesList />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/planes/nuevo"
+          element={
+            <ProtectedRoute>
+              <PlanesCreate />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/planes/:id/cuotas"
+          element={
+            <ProtectedRoute>
+              <PlanesCuotas />
+            </ProtectedRoute>
+          }
+        />
 
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
