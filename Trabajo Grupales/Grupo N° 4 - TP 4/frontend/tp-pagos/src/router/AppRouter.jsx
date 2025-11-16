@@ -9,7 +9,7 @@ import ProtectedRoute from "../proteccionRutas/ProtectedRoute";
 import ClientesList from "../pages/clientes/ClientesList";
 import ClientesCreate from "../pages/clientes/ClientesCreate";
 import ClientesEdit from "../pages/clientes/ClientesEdit";
-
+import ClientePlanes from "../pages/clientes/ClientesPlanes";
 
 // SERVICIOS
 import ServiciosList from "../pages/servicios/ServiciosList";
@@ -25,13 +25,12 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        
         {/* Publicas */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
 
         {/* Privadas */}
-        <Route 
+        <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
@@ -41,7 +40,7 @@ export default function AppRouter() {
         />
 
         {/* 📌 Rutas del módulo Clientes */}
-        <Route 
+        <Route
           path="/clientes"
           element={
             <ProtectedRoute>
@@ -50,7 +49,7 @@ export default function AppRouter() {
           }
         />
 
-        <Route 
+        <Route
           path="/clientes/nuevo"
           element={
             <ProtectedRoute>
@@ -59,7 +58,7 @@ export default function AppRouter() {
           }
         />
 
-        <Route 
+        <Route
           path="/clientes/editar/:id"
           element={
             <ProtectedRoute>
@@ -67,8 +66,17 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/clientes/:id/planes" // ⭐⭐ RUTA QUE FALTABA
+          element={
+            <ProtectedRoute>
+              <ClientePlanes />
+            </ProtectedRoute>
+          }
+        />
         {/* 📌 Rutas del módulo Servicios */}
-        <Route 
+        <Route
           path="/servicios"
           element={
             <ProtectedRoute>
@@ -76,7 +84,7 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
-        <Route 
+        <Route
           path="/servicios/nuevo"
           element={
             <ProtectedRoute>
@@ -84,7 +92,7 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
-        <Route 
+        <Route
           path="/servicios/editar/:id"
           element={
             <ProtectedRoute>
@@ -94,7 +102,7 @@ export default function AppRouter() {
         />
 
         {/* 📌 Rutas del módulo Planes */}
-        <Route 
+        <Route
           path="/planes"
           element={
             <ProtectedRoute>
@@ -102,7 +110,7 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
-        <Route 
+        <Route
           path="/planes/nuevo"
           element={
             <ProtectedRoute>
@@ -110,7 +118,7 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
-        <Route 
+        <Route
           path="/planes/:id/cuotas"
           element={
             <ProtectedRoute>
@@ -121,7 +129,6 @@ export default function AppRouter() {
 
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
-
       </Routes>
     </BrowserRouter>
   );

@@ -129,3 +129,26 @@ exports.obtenerCuotasPorPlan = async (req, res) => {
     res.status(500).json({ error: "Error en obtenerCuotasPorPlan" });
   }
 };
+
+// =======================================
+// GET /clientes/:id/planes
+// =======================================
+exports.obtenerPlanesPorCliente = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const planes = await prisma.planes_pago.findMany({
+      where: { cliente_id: Number(id) },
+      include: {
+        servicios: true,
+        cuotas: true,
+      },
+    });
+
+    res.json(planes);
+
+  } catch (error) {
+    console.error("Error en obtenerPlanesPorCliente:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
