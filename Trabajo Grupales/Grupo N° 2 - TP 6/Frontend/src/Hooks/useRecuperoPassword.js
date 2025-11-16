@@ -2,7 +2,7 @@ import api from '../Services/Api';
 
 
 export const funcionRecuperoPassword = async (email) => {
-    const response = await api.post('/auth/recupero_password', { email });
+    const response = await api.post('/auth/recuperar-password', { email });
     return response.data;
 }
 
