@@ -66,3 +66,26 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Error en login' });
   }
 };
+
+exports.me = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Token invÃ¡lido" });
+    }
+
+    const user = await prisma.users.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, email: true, createdAt: true }
+    });
+
+    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+    res.json({ user });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en /me" });
+  }
+};

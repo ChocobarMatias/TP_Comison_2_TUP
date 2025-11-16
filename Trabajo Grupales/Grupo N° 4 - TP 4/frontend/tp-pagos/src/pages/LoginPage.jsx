@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginRequest } from "../services/authService";
 import { useAuthStore } from "../store/useAuthStore";
 
 export default function LoginPage() {
@@ -24,15 +23,10 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     try {
-      const res = await loginRequest(form);
-      const token = res.data.token;
-
-      login(token); // guardamos el token en Zustand
-
-      navigate("/dashboard"); // redirige
-
+      await login(form); // ✅ Zustand maneja loginRequest y token
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Error en el login");
     }
