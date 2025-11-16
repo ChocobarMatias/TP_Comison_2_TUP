@@ -5,40 +5,39 @@ const { comparePassword } = require('../utils/hash.utils');
 require('dotenv').config();
 
 const loginUsuario = async (req, res) => {
-  const { nombre, password } = req.body; // "nombre" = email o username real
+  const { email, password } = req.body;
 
   try {
-    // Buscar usuario por MailUsuario
+    // Buscar usuario por el mail real en la BD
     const usuario = await prisma.usuarios.findUnique({
-      where: { MailUsuario: nombre }
+      where: { MailUsuario: email }
     });
 
-    // No existe o está inactivo
     if (!usuario || usuario.IsActive !== 1) {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
-    // Comparar contraseña hasheada
+    // Comparación de contraseña hasheada
     const isValid = await comparePassword(password, usuario.PasswordUsuario);
 
     if (!isValid) {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
-    // Crear token JWT
+    // Generar token
     const token = jwt.sign(
       {
         id: usuario.idUsuario,
-        username: usuario.MailUsuario,
-        rol: usuario.RolUsuario,
+        email: usuario.MailUsuario,
+        rol: usuario.RolUsuario
       },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Inicio de sesión exitoso",
-      token,
+      token
     });
 
   } catch (error) {
