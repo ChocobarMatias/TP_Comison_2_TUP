@@ -19,6 +19,8 @@ app.use(morgan('dev'));
 // todas las rutas bajo /api
 app.use('/api', routes);
 
+
+
 // 404 al final
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 
