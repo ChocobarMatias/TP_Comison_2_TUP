@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 
 const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
 
   try {
     if (!email || !password || email.length === 0 || password.length === 0) {
@@ -27,17 +26,15 @@ const loginAdmin = async (req, res) => {
     if (!administrador.activo) {
       return res.status(400).json({ error: "Usuario dado de baja" });
     }
-    //const passwordValida = await bcrypt.compare(password, socio.contraSocio);
-    const passwordValida = password === administrador.contra;
-    if (!passwordValida) {
-      return res.status(401).json({ error: "Usuario o Contraseña incorrecta" });
-    }
+    // Uso bcrypt.compare para validad la contraseña
+    const passwordValida = await bcrypt.compare(password, administrador.contra);
+    if (!passwordValida) return res.status(401).json({ error: "Usuario o Contraseña incorrecta" });
     const token = jwt.sign(
       { id: administrador.id, email: administrador.email, nombre: administrador.nombre },
-      process.env.JWT_SECRET_ADMIN,
+      process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET,
       { expiresIn: "3h"}
     );
-    //console.log("Login exitoso, token generado para:", socio.emailSocio);
+    // login exitoso
     return res.json({ token });
 
   }
