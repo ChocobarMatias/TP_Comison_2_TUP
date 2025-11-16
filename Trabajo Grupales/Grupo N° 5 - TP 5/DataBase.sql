@@ -52,4 +52,4 @@ INSERT INTO actividades (nombre, cupo_maximo) VALUES
 ('Kickboxing', 16);
 
 INSERT INTO administradores (nombre, apellido, email, contra) VALUES
-('Juan', 'Pérez', 'admin@admin.com', 'admin');
+('Juan', 'Pérez', 'admin@admin.com', '$2b$10$WI3MAvVrcXE/F9quYDOmvO3QKZaTrMXMZKT9qzj1.OOQSnQfiCNSq');
