@@ -21,6 +21,11 @@ import PlanesList from "../pages/planes/PlanesList";
 import PlanesCreate from "../pages/planes/PlanesCreate";
 import PlanesCuotas from "../pages/planes/PlanesCuotas";
 
+// CUOTAS
+import CuotasList from "../pages/cuotas/CuotasList";
+
+//DASHBOARD
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -31,7 +36,7 @@ export default function AppRouter() {
 
         {/* Privadas */}
         <Route
-          path="/dashboard"
+          path="/dashboard/resumen"
           element={
             <ProtectedRoute>
               <DashboardPage />
@@ -126,7 +131,14 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/cuotas"
+          element={
+            <ProtectedRoute>
+              <CuotasList />
+            </ProtectedRoute>
+          }
+        />
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

@@ -16,9 +16,14 @@ router.use('/clientes', require('./clienteRoutes'));
 router.use('/servicios', require('./servicioRoutes'));
 
 // Pagos
-router.use("/planes-pago", require("./planpagoRoutes"));
+router.use("/planes-pago", require("./planPagoRoutes"));
 
 router.use("/cuotas", require("./cuotaRoutes"));
 
+router.use("/dashboard", require("./dashboardRoutes"));
+
+router.use("/cuotas", require("./cuotaRoutes"));
+
+router.use("/cuotas", require("./cuotaRoutes"));
 
 module.exports = router;

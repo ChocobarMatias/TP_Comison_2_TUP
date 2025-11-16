@@ -26,7 +26,7 @@ export default function LoginPage() {
   
     try {
       await login(form); // ✅ Zustand maneja loginRequest y token
-      navigate("/dashboard");
+      navigate("/dashboard/resumen"); // Redirigir al dashboard después del login
     } catch (err) {
       setError(err.response?.data?.error || "Error en el login");
     }
