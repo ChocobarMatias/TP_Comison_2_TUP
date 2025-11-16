@@ -44,6 +44,11 @@ export default function ClientesList() {
         ]}
         actions={[
           {
+            label: "Ver Planes",
+            to: (c) => `/clientes/${c.id}/planes`,
+            variant: "info",
+          },
+          {
             label: "Editar",
             to: (c) => `/clientes/editar/${c.id}`,
             variant: "warning",
@@ -63,7 +68,10 @@ export default function ClientesList() {
           onConfirm={confirmarEliminar}
         >
           ¿Seguro que deseas eliminar al cliente{" "}
-          <strong>{clienteSeleccionado.nombre} {clienteSeleccionado.apellido}</strong>?
+          <strong>
+            {clienteSeleccionado.nombre} {clienteSeleccionado.apellido}
+          </strong>
+          ?
         </Modal>
       )}
     </div>

@@ -15,3 +15,7 @@ export const createPlan = (data) =>
 
 export const pagarCuota = (idCuota) =>
   api.put(`/cuotas/${idCuota}/pagar`);
+
+
+export const getPlanesByCliente = (clienteId) =>
+  api.get(`/clientes/${clienteId}/planes`);
