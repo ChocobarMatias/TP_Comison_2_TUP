@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 // 📋 Obtener todas las categorías activas
 const getAllCatMedicos = async (req, res) => {
   try {
-    const categorias = await prisma.catMedicos.findMany({
+    const categorias = await prisma.catmedicos.findMany({
       where: {
         IsActive: 1
       }

@@ -11,11 +11,11 @@ export const crearUsuario = async (usuario) => {
 };
 
 export const actualizarUsuario = async (id, usuario) => {
-  const { data } = await api.put(`/usuarios/editar/${id}`, usuario);
+  const { data } = await api.put(`/usuarios/actualizar/${id}`, usuario);
   return data;
 };
 
 export const eliminarUsuario = async (id) => {
-  const { data } = await api.delete(`/usuarios/borrar/${id}`);
+  const { data } = await api.delete(`/usuarios/eliminar/${id}`);
   return data;
 };

@@ -11,18 +11,22 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const { user, token } = await loginRequest(mail, password);
+  try {
+    const response = await loginRequest(mail, password);
+    console.log("RESPUESTA LOGIN DESDE LOGINPAGE ->", response);
 
-      setAuth(user, token);
+    const { user, token } = response;
 
-      navigate("/home");
-    } catch (error) {
-      alert("Credenciales incorrectas");
-    }
-  };
+    setAuth(user, token);
+
+    navigate("/home");
+  } catch (error) {
+    alert("Credenciales incorrectas");
+  }
+};
+
 
   return (
     <div style={{ width: "300px", margin: "50px auto" }}>

@@ -36,28 +36,33 @@ const getOneTurno = async (req, res) => {
 
 // Crear un nuevo turno
 const crearTurno = async (req, res) => {
-  const { FechaRequeridaTurno, HorarioRequeridoTurno, EstadoTurno, idPaciente, idMedico } = req.body;
+  console.log("🔥 BODY RECIBIDO:", req.body);
+  const { FechaRequeridaTurno, HorarioRequeridoTurno, idPaciente, idMedico } = req.body;
+
+  if (!FechaRequeridaTurno || !HorarioRequeridoTurno || !idPaciente || !idMedico) {
+    return res.status(400).json({ message: "Faltan datos obligatorios" });
+  }
 
   try {
     const nuevoTurno = await prisma.turnos.create({
-      data: {
-        FechaRequeridaTurno: new Date(FechaRequeridaTurno),
-        HorarioRequeridoTurno: new Date(HorarioRequeridoTurno),
-        EstadoTurno,
-        idPaciente: Number(idPaciente),
-        idMedico: Number(idMedico)
-      }
-    });
+  data: {
+    FechaRequeridaTurno: new Date(FechaRequeridaTurno),
+    HorarioRequeridoTurno: new Date(HorarioRequeridoTurno),
+    EstadoTurno: "Pendiente",
+    idPaciente: Number(idPaciente),
+    idMedico: Number(idMedico),
+  },
+});
 
-    res.status(201).json({
-      message: 'Turno creado exitosamente',
-      turno: nuevoTurno
-    });
+
+    res.status(201).json({ message: "Turno creado", turno: nuevoTurno });
   } catch (error) {
-    console.error('Error al crear el turno:', error);
-    res.status(500).json({ message: 'Error al crear el turno' });
+    console.error("Error al crear el turno:", error);
+    res.status(500).json({ message: "Error al crear el turno" });
   }
 };
+
+
 
 
 // Actualizar un turno

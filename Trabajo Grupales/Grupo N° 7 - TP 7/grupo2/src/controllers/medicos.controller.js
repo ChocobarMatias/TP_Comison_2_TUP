@@ -1,21 +1,56 @@
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 
-// 📋 Obtener todos los médicos activos
-const getAllMedicos = async (req, res) => {
+// 📌 Obtener médicos por categoría
+const getMedicosPorCategoria = async (req, res) => {
+  console.log("➡️ Entró a getMedicosPorCategoria");
+
+  const id = Number(req.params.idCat);
+  console.log("🟦 ID recibido:", id);
+
   try {
     const medicos = await prisma.medicos.findMany({
       where: {
+        idCatMedico: id,
         IsActive: 1
       },
       include: {
-        catMedicos: true, // incluye la categoría médica
-        usuarios: true    // incluye datos del usuario vinculado (si existe)
+        catMedico: true,
+        usuarios: true
       }
     });
+
+    if (!medicos || medicos.length === 0) {
+      // Devolver array vacío en vez de objeto de error
+      return res.status(200).json([]);
+    }
+
+    // Enviar solo el array directamente
+    res.status(200).json(medicos);
+
+  } catch (error) {
+    console.error("❌ ERROR:", error);
+    return res.status(500).json({
+      ok: false,
+      message: "Error al obtener médicos por categoría",
+      error: error.message
+    });
+  }
+};
+
+// 📋 Obtener todos los médicos
+const getAllMedicos = async (req, res) => {
+  try {
+    const medicos = await prisma.medicos.findMany({
+      where: { IsActive: 1 },
+      include: {
+        catMedico: true,
+        usuarios: true
+      }
+    });
+
     res.status(200).json(medicos);
   } catch (error) {
-    console.error('Error al obtener médicos:', error);
     res.status(500).json({ message: 'Error al obtener los médicos' });
   }
 };
@@ -24,164 +59,143 @@ const getAllMedicos = async (req, res) => {
 const mostrarMedicosInactivos = async (req, res) => {
   try {
     const medicosInactivos = await prisma.medicos.findMany({
-      where: {
-        IsActive: 0
-      },
+      where: { IsActive: 0 },
       include: {
-        catMedicos: true,
+        catMedico: true,
         usuarios: true
       }
     });
+
     if (medicosInactivos.length === 0) {
       return res.status(404).json({ message: 'No hay médicos inactivos' });
     }
+
     res.status(200).json(medicosInactivos);
+
   } catch (error) {
-    console.error('Error al obtener médicos inactivos:', error);
     res.status(500).json({ message: 'Error al obtener los médicos inactivos' });
   }
 };
 
-// 📋 Obtener un médico por ID
+// 📋 Obtener un médico
 const getOneMedico = async (req, res) => {
-  const id = req.params.id;
+  const id = Number(req.params.id);
   try {
     const medico = await prisma.medicos.findUnique({
-      where: { idMedico: Number(id) },
+      where: { idMedico: id },
       include: {
-        catMedicos: true,
+        catMedico: true,
         usuarios: true
       }
     });
+
     if (!medico) {
       return res.status(404).json({ message: 'Médico no encontrado' });
     }
+
     res.status(200).json(medico);
+
   } catch (error) {
-    console.error('Error al obtener el médico:', error);
     res.status(500).json({ message: 'Error al obtener el médico' });
   }
 };
 
-// 🆕 Crear un nuevo médico
+// Crear médico
 const crearMedico = async (req, res) => {
-  const {
-    NombreMedico,
-    ApellidoMedico,
-    FechaNacMedico,
-    TelefonoMedico,
-    DireccionMedico,
-    LocalidadMedico,
-    SalarioMedico,
-    idUsuario,
-    idCatMedico
-  } = req.body;
+  const data = req.body;
 
   try {
     const nuevoMedico = await prisma.medicos.create({
       data: {
-        NombreMedico,
-        ApellidoMedico,
-        FechaNacMedico: new Date(FechaNacMedico),
-        TelefonoMedico,
-        DireccionMedico,
-        LocalidadMedico,
-        SalarioMedico: Number(SalarioMedico),
-        idUsuario: idUsuario ? Number(idUsuario) : null,
-        idCatMedico: Number(idCatMedico)
+        NombreMedico: data.NombreMedico,
+        ApellidoMedico: data.ApellidoMedico,
+       
+        TelefonoMedico: data.TelefonoMedico || "0000-000000",
+        DireccionMedico: data.DireccionMedico || "Sin Dirección",
+        IsActive: 1,
+        idUsuario: data.idUsuario ? Number(data.idUsuario) : null,
+        idCatMedico: Number(data.idCatMedico)
       }
     });
-    res.status(201).json({ message: 'Médico creado exitosamente', medico: nuevoMedico });
+
+    res.status(201).json(nuevoMedico);
   } catch (error) {
-    console.error('Error al crear el médico:', error);
-    res.status(500).json({ message: 'Error al crear el médico' });
+    console.error("❌ ERROR al crear médico:", error);
+    res.status(500).json({ message: "Error al crear médico", error: error.message });
   }
 };
 
-// ✏️ Actualizar médico
+
+// Actualizar médico
 const updateMedico = async (req, res) => {
-  const id = req.params.id;
-  const {
-    NombreMedico,
-    ApellidoMedico,
-    FechaNacMedico,
-    TelefonoMedico,
-    DireccionMedico,
-    LocalidadMedico,
-    SalarioMedico,
-    IsActive,
-    idUsuario,
-    idCatMedico
-  } = req.body;
+  const id = Number(req.params.id);
+  const data = req.body;
 
   try {
     const medicoActualizado = await prisma.medicos.update({
-      where: { idMedico: Number(id) },
+      where: { idMedico: id },
       data: {
-        NombreMedico,
-        ApellidoMedico,
-        FechaNacMedico: new Date(FechaNacMedico),
-        TelefonoMedico,
-        DireccionMedico,
-        LocalidadMedico,
-        SalarioMedico: Number(SalarioMedico),
-        IsActive,
-        idUsuario: idUsuario ? Number(idUsuario) : null,
-        idCatMedico: Number(idCatMedico)
+        ...data,
+        FechaNacMedico: new Date(data.FechaNacMedico),
+        SalarioMedico: Number(data.SalarioMedico),
+        idUsuario: data.idUsuario ? Number(data.idUsuario) : null,
+        idCatMedico: Number(data.idCatMedico)
       }
     });
-    res.status(200).json({ message: 'Médico actualizado exitosamente', medico: medicoActualizado });
+
+    res.status(200).json(medicoActualizado);
+
   } catch (error) {
-    console.error('Error al actualizar el médico:', error);
-    res.status(500).json({ message: 'Error al actualizar el médico' });
+    res.status(500).json({ message: 'Error al actualizar médico' });
   }
 };
 
-// ❌ Eliminar físicamente un médico
+// Eliminar físico
 const deleteMedico = async (req, res) => {
-  const id = req.params.id;
+  const id = Number(req.params.id);
   try {
-    await prisma.medicos.delete({
-      where: { idMedico: Number(id) }
-    });
-    res.status(200).json({ message: 'Médico eliminado exitosamente' });
+    await prisma.medicos.delete({ where: { idMedico: id } });
+    res.status(200).json({ message: 'Médico eliminado' });
+
   } catch (error) {
-    console.error('Error al eliminar el médico:', error);
-    res.status(500).json({ message: 'Error al eliminar el médico' });
+    res.status(500).json({ message: 'Error al eliminar médico' });
   }
 };
 
-// 🚫 Desactivar (baja lógica)
+// Baja lógica
 const logicDeleteMedico = async (req, res) => {
-  const id = req.params.id;
+  const id = Number(req.params.id);
   try {
-    const medicoDesactivado = await prisma.medicos.update({
-      where: { idMedico: Number(id) },
+    const medico = await prisma.medicos.update({
+      where: { idMedico: id },
       data: { IsActive: 0 }
     });
-    res.status(200).json({ message: 'Médico desactivado exitosamente', medico: medicoDesactivado });
+
+    res.status(200).json(medico);
+
   } catch (error) {
-    console.error('Error al desactivar el médico:', error);
-    res.status(500).json({ message: 'Error al desactivar el médico' });
+    res.status(500).json({ message: 'Error al desactivar médico' });
   }
 };
 
-// ✅ Activar médico
+// Activar médico
 const activarMedico = async (req, res) => {
-  const id = req.params.id;
+  const id = Number(req.params.id);
   try {
-    const medicoActivado = await prisma.medicos.update({
-      where: { idMedico: Number(id) },
+    const medico = await prisma.medicos.update({
+      where: { idMedico: id },
       data: { IsActive: 1 }
     });
-    res.status(200).json({ message: 'Médico activado exitosamente', medico: medicoActivado });
+
+    res.status(200).json(medico);
+
   } catch (error) {
-    console.error('Error al activar el médico:', error);
-    res.status(500).json({ message: 'Error al activar el médico' });
+    res.status(500).json({ message: 'Error al activar médico' });
   }
 };
 
 module.exports = {
+  getMedicosPorCategoria,
   getAllMedicos,
   mostrarMedicosInactivos,
   getOneMedico,

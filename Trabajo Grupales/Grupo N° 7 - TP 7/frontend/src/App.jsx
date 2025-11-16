@@ -1,64 +1,77 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import './App.css';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import HomePage from './pages/HomePage';
 import MainUsuarios from "./components/MainUsuarios";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import HomePage from "./pages/HomePage";
-import AdminRoute from "./proteccionRutas/AdminRoute";
-import ProtectedRoute from "./proteccionRutas/ProtectedRoute";
-import RoleBasedRoute from "./proteccionRutas/RoleBasedRoute";
-
-
-
-
-
-
-
-
+import Navbar from './components/Navbar';
+import AgregarMedAdmin from './components/AgregarMedAdimn';
+import ProtectedRoute from './proteccionRutas/ProtectedRoute';
+import AdminRoute from './proteccionRutas/AdminRoute';
+import { useAuthStore } from "./store/useAuthStore";
+import MisTurnos from './components/MisTurnos';
 function App() {
-
-
+  window.useAuthStore = useAuthStore;
   return (
     <>
       <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        
+        <Navbar />
 
-        <Route 
-    path="/home" 
-    element={
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    }
-  />
+        <Routes>
+          {/* 👇 HOME protegido */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
 
-  {/* SOLO ADMIN */}
-  <Route
-    path="/usuarios"
-    element={
-      <AdminRoute>
-        <MainUsuarios />
-      </AdminRoute>
-    }
-  />
 
-  {/* EJEMPLO ROLE-BASED */}
-  <Route
-    path="/turnos"
-    element={
-      <RoleBasedRoute allowedRoles={["Admin", "Medico"]}>
-        <TurnosPage />
-      </RoleBasedRoute>
-    }
-  />
-        
-       
-      </Routes>
-    </BrowserRouter>
+          <Route
+  path="/mis-turnos"
+  element={
+    <ProtectedRoute>
+      <MisTurnos />
+    </ProtectedRoute>
+  }
+/>
+
+
+
+ 
+
+          {/* 👇 Página inicial redirige al login */}
+          <Route path="/" element={<LoginPage />} />
+
+          {/* Login / Registro libres */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+
+          {/* 👇 RUTA SOLO ADMIN */}
+          <Route
+            path="/admin-med"
+            element={
+              <AdminRoute>
+                <AgregarMedAdmin />
+              </AdminRoute>
+            }
+          />
+
+          {/* Gestión de usuarios, también solo admin */}
+          <Route
+            path="/usuarios"
+            element={
+              <AdminRoute>
+                <MainUsuarios />
+              </AdminRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

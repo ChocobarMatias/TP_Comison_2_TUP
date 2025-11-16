@@ -5,10 +5,10 @@ const { comparePassword } = require('../utils/hash.utils');
 require('dotenv').config();
 
 const loginUsuario = async (req, res) => {
+    console.log("BODY LOGIN →", req.body);
   const { email, password } = req.body;
 
   try {
-    // Buscar usuario por el mail real en la BD
     const usuario = await prisma.usuarios.findUnique({
       where: { MailUsuario: email }
     });
@@ -17,27 +17,56 @@ const loginUsuario = async (req, res) => {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
-    // Comparación de contraseña hasheada
     const isValid = await comparePassword(password, usuario.PasswordUsuario);
 
     if (!isValid) {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
-    // Generar token
+    // ⭐ BUSCAR PACIENTE SI EL USUARIO ES PACIENTE
+    let paciente = null;
+
+    if (usuario.RolUsuario === "Paciente") {
+      paciente = await prisma.pacientes.findFirst({
+        where: { idUsuario: usuario.idUsuario }
+      });
+
+      // Si no existe lo creo automáticamente
+      if (!paciente) {
+        paciente = await prisma.pacientes.create({
+          data: {
+            NombrePaciente: "Sin nombre",
+            ApellidoPaciente: "Sin apellido",
+            FechaNacPaciente: new Date(),
+            TelefonoPaciente: "000000",
+            DireccionPaciente: "Sin dirección",
+            SexoPaciente: "Otro",
+            idUsuario: usuario.idUsuario
+          }
+        });
+      }
+    }
+
     const token = jwt.sign(
       {
         id: usuario.idUsuario,
         email: usuario.MailUsuario,
-        rol: usuario.RolUsuario
+        rol: usuario.RolUsuario,
+        idPaciente: paciente ? paciente.idPaciente : null
       },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+      { expiresIn: "1h" }
     );
 
     res.status(200).json({
       message: "Inicio de sesión exitoso",
-      token
+      token,
+      user: {
+        id: usuario.idUsuario,
+        email: usuario.MailUsuario,
+        rol: usuario.RolUsuario,
+        idPaciente: paciente ? paciente.idPaciente : null
+      }
     });
 
   } catch (error) {
@@ -45,5 +74,6 @@ const loginUsuario = async (req, res) => {
     return res.status(500).json({ message: "Error en el servidor" });
   }
 };
+
 
 module.exports = { loginUsuario };

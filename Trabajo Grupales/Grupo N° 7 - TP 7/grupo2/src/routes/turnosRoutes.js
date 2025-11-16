@@ -16,7 +16,7 @@ const {
 router.get('/todos', getAllTurnos);
 
 // Obtener un turno por ID
-router.get('/:id', getOneTurno);
+
 
 // Crear un turno
 router.post('/crear', crearTurno);
@@ -25,12 +25,12 @@ router.post('/crear', crearTurno);
 router.put('/actualizar/:id', updateTurno);
 
 // Eliminar un turno
-router.delete('/eliminar/:id', deleteTurno);
+router.delete('/:id', deleteTurno);
 
 // Listar turnos por médico
 router.get('/por-medico/:idMedico', getTurnosPorMedico);
 
 // Listar turnos por paciente
 router.get('/por-paciente/:idPaciente', getTurnosPorPaciente);
-
+router.get('/:id', getOneTurno);
 module.exports = router;
