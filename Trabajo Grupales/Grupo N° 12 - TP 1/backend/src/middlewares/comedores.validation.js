@@ -7,7 +7,6 @@ export const validarCrearComedor = [
   campoTelefono('telefono'),
 ];
 
-// Como tu UPDATE siempre setea los 4 campos, mejor exigirlos todos
 export const validarActualizarComedor = [
   campoTexto('nombre'),
   campoTexto('direccion', { min: 3, max: 150 }),

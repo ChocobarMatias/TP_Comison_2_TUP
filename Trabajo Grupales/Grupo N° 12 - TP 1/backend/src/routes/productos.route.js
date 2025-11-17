@@ -4,25 +4,14 @@ import {
   validarCrearProducto,
   validarActualizarProducto,
 } from '../validations/productos.validation.js';
-import { validarId } from '../validations/common.validation.js';
 import { validateRequest } from '../middlewares/validateRequest.js';
 
 const router = Router();
 
 router.get('/', getProductos);
-
-router.get('/:id', validarId, validateRequest, getProductoId);
-
+router.get('/:id', getProductoId);
 router.post('/', validarCrearProducto, validateRequest, createProducto);
-
-router.put(
-  '/:id',
-  validarId,
-  validarActualizarProducto,
-  validateRequest,
-  updateProducto
-);
-
-router.delete('/:id', validarId, validateRequest, deleteProducto);
+router.put('/:id', validarActualizarProducto, validateRequest, updateProducto);
+router.delete('/:id', deleteProducto);
 
 export default router;

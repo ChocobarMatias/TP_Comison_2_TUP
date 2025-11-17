@@ -6,7 +6,6 @@ export const errorHandler = (err, req, res, _next) => {
     message: err.message || 'Ocurrió un error inesperado en el servidor',
   };
 
-  // Solo mostrar stack en desarrollo
   if (process.env.NODE_ENV === 'development' && err.stack) {
     body.stack = err.stack;
   }
