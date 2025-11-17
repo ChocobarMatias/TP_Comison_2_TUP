@@ -6,4 +6,27 @@
     font-style: normal;
     font-weight: 100 700;
     font-display: swap;
+}@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. VARIABLES GLOBALES */
+@import url('./styles/variables.css');
+
+/* 3. TEMAS */
+/* Puedes comentar o descomentar para probar el tema oscuro por defecto */
+@import url('./styles/themes/light.css');
+@import url('./styles/themes/dark.css'); */
+
+/* 4. ESTILOS BASE Y FUENTES */
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    /* Aplicar la clase light-theme por defecto, si estás usando temas */
+    /* Puedes aplicar light-theme a un <div> envolvente en App.jsx si prefieres */
 }
+
+/* Ejemplo de cómo usar una variable de color de fondo en todo el body */
+/* body {
+    background-color: var(--color-background-light);
+} */

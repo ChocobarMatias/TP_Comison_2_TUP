@@ -1,0 +1,15 @@
+
+
+:root {
+    --color-primary: #007bff; /* Azul de botones y enlaces */
+    --color-secondary: #6c757d; /* Gris secundario */
+    --color-success: #28a745;
+    --color-danger: #dc3545; /* Rojo de errores (como el 404) */
+    --color-background-light: #f8f9fa; /* Fondo claro general */
+    --color-text-dark: #343a40; /* Texto principal oscuro */
+}
+
+:root {
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --border-radius: 0.5rem;
+}
