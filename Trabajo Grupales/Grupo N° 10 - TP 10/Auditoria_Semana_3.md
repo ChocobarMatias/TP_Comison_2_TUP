@@ -75,3 +75,4 @@ Con el equipo decidimos dividir el trabajo para tratar de agilizar lo mas posibl
 
 Conflictos: 
 Emir Jorge tuvo un problema con su pc con el programa de oneDrive, el cual no le permitia modificar la carpeta por la seguridad de windows. Eso provoco que el no pudiece y traer y subir ningun cambio a al repositorio, por lo tanto tuvo que pasarle los archivos del frontEnd que el realizo a Julian Fernandez para que el subiera a su rama todo el frontEnd completo. No tuvo tiempo para poder solucionar el problema de su pc.
+Al Lider del grupo le llevo mas tiempo de lo esperado debido a la cantidad de archivos duplicados y a la inconsistencia de datos. 
