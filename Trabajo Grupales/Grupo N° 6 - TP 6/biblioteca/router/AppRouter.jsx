@@ -1,0 +1,28 @@
+// src/router/AppRouter.jsx
+import { Routes, Route } from "react-router-dom";
+import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import DashboardPage from "../pages/DashboardPage";
+import NotFoundPage from "../pages/NotFoundPage";
+import ProtectedRoute from "../proteccionRutas/ProtectedRoute";
+
+export default function AppRouter() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
+}
