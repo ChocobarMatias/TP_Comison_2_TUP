@@ -1,0 +1,13 @@
+/* src/styles/themes/dark.css */
+
+.dark-theme {
+    --color-primary: #66b3ff;
+    --color-danger: #ff6b6b;
+    --color-background-light: #1f2937; /* Fondo oscuro */
+    --color-text-dark: #f3f4f6; /* Texto claro */
+}
+
+.dark-theme body {
+    background-color: var(--color-background-light);
+    color: var(--color-text-dark);
+}

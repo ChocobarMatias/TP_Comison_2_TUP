@@ -1,34 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// src/App.jsx
+
+import ThemeToggle from './components/ThemeToggle';
+import React, { useState, useEffect } from 'react';
+import AppRouter from './router/AppRouter'; 
+// NO importamos Router aquí, ya que asumimos que está en main.jsx
 
 function App() {
-  const [count, setCount] = useState(0)
+    // 1. Inicializa el tema leyendo de localStorage o usando el valor por defecto
+    const [theme, setTheme] = useState(
+        localStorage.getItem('theme') || 'light-theme'
+    );
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs ">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    // 2. Efecto para aplicar la clase al elemento <html> (raíz del documento)
+    useEffect(() => {
+        const root = document.documentElement; // Elemento <html>
+
+        // Limpia las clases anteriores
+        root.classList.remove('light-theme', 'dark-theme', 'dark');
+        
+        // Aplica la clase del tema (light-theme o dark-theme)
+        root.classList.add(theme);
+
+        // Si el tema es oscuro, también añade la clase 'dark' que activa Tailwind
+        if (theme === 'dark-theme') {
+            root.classList.add('dark');
+        }
+
+        // Guarda la preferencia en localStorage
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    // 3. Función para alternar el tema
+    const toggleTheme = () => {
+        setTheme(prevTheme => 
+            prevTheme === 'light-theme' ? 'dark-theme' : 'light-theme'
+        );
+    };
+
+    return (
+        // El Router se asume que está en main.jsx.
+        // min-h-screen asegura que el contenedor principal cubra toda la altura.
+        <div className="min-h-screen">
+            <AppRouter />
+            {/* Botón flotante para alternar el tema */}
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+        </div>
+    );
 }
 
-export default App
+export default App;
