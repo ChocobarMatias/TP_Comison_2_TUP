@@ -1,24 +1,13 @@
 import express from 'express';
-import {
-  getAllComedores,
-  getUnComedor,
-  deleteUnComedor,
-  createNewComedor,
-  modificateComedor,
-} from '../controllers/comedores.controller.js';
-import {
-  validarCrearComedor,
-  validarActualizarComedor,
-} from '../validations/comedores.validation.js';
-import { validateRequest } from '../middlewares/validateRequest.js';
-import { validarId } from '../validations/common.validation.js';
+import { deleteUnComedor, getAllComedores, getUnComedor, createNewComedor, modificateComedor } from '../controllers/comedores.controller.js';
+import { verificarToken } from '../middleware/verificarToken.js';
 
-const router = express.Router();
+const route = express.Router();
 
-router.get('/', getAllComedores);
-router.get('/:id', validarId, validateRequest, getUnComedor); 
-router.delete('/:id', validarId, validateRequest, deleteUnComedor); 
-router.post('/', validarCrearComedor, validateRequest, createNewComedor);
-router.put('/:id', validarId, validarActualizarComedor, validateRequest, modificateComedor);
+route.get('/',verificarToken, getAllComedores);
+route.get('/:id',getUnComedor)
+route.delete('/:id',deleteUnComedor)
+route.post('/',createNewComedor)
+route.put('/:id',modificateComedor)
 
-export default router;
+export default route;
