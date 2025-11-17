@@ -138,6 +138,12 @@ INSERT INTO observaciones (idTurno, Comentario, FechaRegistro) VALUES
 (8, 'Evaluación de lesión en rodilla derecha. Se solicita resonancia magnética. Reposo relativo hasta resultados.', '2025-10-12 10:45:00'),
 (9, 'Paciente no asistió a la consulta programada. Se intentó contacto telefónico sin éxito.', '2025-10-14 16:30:00');
 
+
+ALTER TABLE turnos
+ADD CONSTRAINT unique_turno_medico_fecha_hora
+UNIQUE (idMedico, FechaRequeridaTurno, HorarioRequeridoTurno);
+
+
  * 
  * 
  * 

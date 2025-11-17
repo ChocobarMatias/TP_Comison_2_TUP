@@ -1,8 +1,8 @@
 # 🧾 Auditoría — Semana 3  
-### Grupo Nº: ___  
-### Tema asignado: ___  
+### Grupo Nº: 7  
+### Tema asignado: TP-7  
 ### Integrantes (Nombre completo + Legajo):
-- …
+- … Robles Enzo Ramiro - Legajo: 61164
 - …
 - …
 
@@ -12,11 +12,8 @@
 
 Describir brevemente lo encontrado al abrir el proyecto:
 
-- Errores detectados (bugs, warnings, import fallidos, rutas rotas, etc.)
-- Faltantes respecto a Semana 1 (carpetas vacías, componentes incompletos, etc.)
-- Problemas de estructura, naming, uso de git o dependencias
 
-> Este apartado debe completarse **ANTES** de modificar el código.
+Faltan los controllers y rutas necesarias para que ande el programa. Basicamente hay solo 3 controllers y 3 rutas de auth, categoriaMedico y ejemplo, siendo que ejemplo esta completamente vacio. Las tablas estan correctas. La carpeta grupo 7 tiene dentro otra carpeta llamada grupo 2, en lugar de que solo aparezca el tp que nos toca, como a las demas carpetas de los otros grupos.
 
 ---
 
