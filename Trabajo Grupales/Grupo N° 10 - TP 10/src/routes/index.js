@@ -9,8 +9,8 @@ import loginRoutes from "./login.route.js";
 import recuperoPassRoutes from "./recuperoPass.route.js";
 
 router.use("/usuario", usuariosRoutes)
-router.use("comedores",comedoresRoutes)
-router.use("/dondaroes",donadoresRoutes)
+router.use("/comedores",comedoresRoutes)
+router.use("/donadores",donadoresRoutes)
 router.use("/productos",productosRoutes)
 router.use("/entregas",entregasRoutes)
 router.use("/login",loginRoutes)
