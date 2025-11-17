@@ -1,67 +1,95 @@
-import db from '../config/db.js';
-// prueba Marcos
-export const getAllComedores = async (req, res) => {
-  const query = `SELECT * FROM comedores`;
+// 1. ¡Adiós 'pool', hola 'prisma'!
+import prisma from '../config/prisma.js';
 
+// GET Todos los Comedores (¡SOLO LOS ACTIVOS!)
+export const getAllComedores = async (req, res) => {
   try {
-    const [results] = await db.query(query);
-    res.json(results);
+    // ANTES: pool.query('SELECT * FROM comedores')
+    // AHORA: ¡Solo traemos los que NO están borrados!
+    const comedores = await prisma.comedores.findMany({
+      where: {
+        deleted_at: null, // ¡Respetamos el "soft delete"!
+      },
+    });
+    res.json({ status: 200, payload: comedores });
   } catch (err) {
     console.error('Error al obtener los comedores', err);
     res.status(500).json({ error: 'Error al obtener comedores' });
   }
 };
 
+// GET Un Comedor (¡SOLO SI ESTÁ ACTIVO!)
 export const getUnComedor = async (req, res) => {
-  const { id } = req.params;
-  const query = `SELECT * FROM comedores WHERE id = ?`;
-
   try {
-    const [results] = await db.query(query, [id]);
+    const idComedor = parseInt(req.params.id);
 
-    if (results.length === 0) {
-      return res.status(404).json({ error: 'Comedor no encontrado' });
+    // ANTES: pool.query('SELECT * FROM comedores WHERE id = ?')
+    // AHORA:
+    const comedor = await prisma.comedores.findFirst({
+      where: {
+        id: idComedor,
+        deleted_at: null, // ¡Respetamos el "soft delete"!
+      },
+    });
+
+    if (!comedor) {
+      return res.status(404).json({ error: 'Comedor no encontrado o eliminado' });
     }
 
-    res.json(results[0]);
+    res.json({ status: 200, payload: comedor });
   } catch (err) {
     console.error('Error al obtener el comedor', err);
     res.status(500).json({ error: 'Error al obtener el comedor' });
   }
 };
 
+// DELETE (¡Lógico!) Un Comedor
 export const deleteUnComedor = async (req, res) => {
-  const { id } = req.params;
-  const query = `DELETE FROM comedores WHERE id = ?`;
-
   try {
-    const [results] = await db.query(query, [id]);
+    const idComedor = parseInt(req.params.id);
 
-    if (results.length === 0) {
-      return res.status(404).json({ error: 'No fue posible dar de baja' });
-    }
+    // ANTES: pool.query('DELETE FROM comedores WHERE id = ?') ¡¡¡MAL!!!
+    // AHORA: ¡Usamos "soft delete" para MANTENER LA TRAZABILIDAD!
+    await prisma.comedores.update({
+      where: {
+        id: idComedor,
+      },
+      data: {
+        deleted_at: new Date(), // ¡Le ponemos la fecha de borrado!
+      },
+    });
 
-    res.json(results[0]);
+    res.json({ status: 200, payload: `El comedor fue dado de baja (lógicamente)` });
   } catch (err) {
     console.error('Error al dar de baja', err);
+    if (err.code === 'P2025') {
+      return res.status(404).json({ error: 'Comedor no encontrado' });
+    }
     res.status(500).json({ error: 'Error al dar de baja' });
   }
 };
 
+// POST (Crear) Un Comedor
 export const createNewComedor = async (req, res) => {
-  const { nombre, direccion, contacto, telefono } = req.body;
-
-  const query = `
-    INSERT INTO comedores (nombre, direccion, contacto, telefono)
-    VALUES (?, ?, ?, ?)
-  `;
-
   try {
-    const [result] = await db.query(query, [nombre, direccion, contacto, telefono]);
+    const { nombre, direccion, contacto, telefono } = req.body;
+
+    // ANTES: pool.query(`INSERT INTO comedores (...) VALUES (?, ?, ?, ?)`)
+    // AHORA:
+    const nuevoComedor = await prisma.comedores.create({
+      data: {
+        nombre,
+        direccion,
+        contacto,
+        telefono,
+        // 'deleted_at' es 'null' por defecto
+      },
+    });
 
     res.status(201).json({
+      status: 201,
       message: 'Comedor creado correctamente',
-      comedorId: result.insertId,
+      payload: nuevoComedor,
     });
   } catch (err) {
     console.error('Error al dar de alta', err);
@@ -69,28 +97,35 @@ export const createNewComedor = async (req, res) => {
   }
 };
 
+// PUT (Actualizar) Un Comedor
 export const modificateComedor = async (req, res) => {
-  const { id } = req.params;
-  const { nombre, direccion, contacto, telefono } = req.body;
-
-  const query = `
-    UPDATE comedores
-    SET nombre = ?, direccion = ?, contacto = ?, telefono = ?
-    WHERE id = ?
-  `;
-
   try {
-    const [result] = await db.query(query, [nombre, direccion, contacto, telefono, id]);
+    const idComedor = parseInt(req.params.id);
+    const { nombre, direccion, contacto, telefono } = req.body;
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Comedor no encontrado' });
-    }
+    // ANTES: pool.query(`UPDATE comedores SET ... WHERE id = ?`)
+    // AHORA:
+    const comedorActualizado = await prisma.comedores.update({
+      where: {
+        id: idComedor,
+      },
+      data: {
+        nombre,
+        direccion,
+        contacto,
+        telefono,
+      },
+    });
 
     res.status(200).json({
       message: 'Comedor modificado correctamente',
+      payload: comedorActualizado,
     });
   } catch (err) {
     console.error('Error al modificar el comedor', err);
+    if (err.code === 'P2025') {
+      return res.status(404).json({ message: 'Comedor no encontrado' });
+    }
     res.status(500).json({ error: 'Error al modificar el comedor' });
   }
 };
