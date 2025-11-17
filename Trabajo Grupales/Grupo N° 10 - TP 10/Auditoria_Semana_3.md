@@ -6,11 +6,11 @@ Tema asignado: Sistema de Gestión de Donaciones ONG
 
 Integrantes (Nombre completo + Legajo):
 
-... (Completar por el alumno)
+Bazan Marcos Facundo 61253
 
-... (Completar por el alumno)
+Fernandez Cesar Julian 61396
 
-... (Completar por el alumno)
+Jorge Emir 61604
 
 1) RELEVAMIENTO — Antes de comenzar a trabajar
 
@@ -70,4 +70,8 @@ Refactorización Completa de Controladores: Se reescribieron todos los controlad
 
 Observaciones finales (opcional)
 
-(Completar por el alumno: Comentarios sobre el flujo de trabajo, dificultades o acuerdos del equipo).
+Como realizamos el TP:
+Con el equipo decidimos dividir el trabajo para tratar de agilizar lo mas posible el tp y llegar a tiempo con la entrega. La division fue la siguiente el lider de grupo (Facundo Bazan) se hizo cargo de arreglar, modular y realizar las integraciones correspondientes al tp en el backEnd (que vimos que esta hecho un desastre). Los otros dos miembros del equipo (Julian Fernandez y Emir Jorge) se hicieron cargo de todo el frontEnd. Y la unificacion de todo lo hicimos en conjunto los 3.
+
+Conflictos: 
+Emir Jorge tuvo un problema con su pc con el programa de oneDrive, el cual no le permitia modificar la carpeta por la seguridad de windows. Eso provoco que el no pudiece y traer y subir ningun cambio a al repositorio, por lo tanto tuvo que pasarle los archivos del frontEnd que el realizo a Julian Fernandez para que el subiera a su rama todo el frontEnd completo. No tuvo tiempo para poder solucionar el problema de su pc.
