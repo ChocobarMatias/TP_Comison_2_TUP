@@ -1,59 +1,71 @@
-import db from "../config/db.js";
-import jsonwebtoken from "jsonwebtoken";
-import { comparePassword } from "../utils/hashPassword.js";
-import dotenv from "dotenv";
+// 1. ¡Hola 'prisma' y 'jsonwebtoken'!
+import prisma from '../config/prisma.js';
+import jsonwebtoken from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+// 2. ¡Importamos el comparador de contraseñas!
+// (Asumo que está en el mismo 'utils/hashPassword.js' que 'hashPassword')
+import { comparePassword } from '../utils/hashPassword.js';
 
 dotenv.config();
 
-export const loginUser = async (req, res) => {
+export const loginUsuario = async (req, res) => {
   try {
     const { correoUsuario, contraseñaUsuario } = req.body;
 
-    // 1. Validar que se recibieron ambos campos
+    // 1. Validar que los campos no estén vacíos
     if (!correoUsuario || !contraseñaUsuario) {
-      return res
-        .status(400)
-        .json({ error: "Correo y contraseña son requeridos" });
-    }
-    // 2. Buscar el usuario en la base de datos
-    const query = "SELECT * FROM usuarios WHERE correoUsuario = ?";
-    const [results] = await db.query(query, [correoUsuario]);
-
-    if (results.length === 0) {
-      return res.status(400).json({ error: "Credenciales inválidas" });
+      return res.status(400).json({ error: 'Correo y contraseña son requeridos' });
     }
 
-    const user = results[0];
+    // 2. Buscar al usuario en la BD (¡con Prisma!)
+    // ANTES: pool.query('SELECT * FROM usuarios WHERE correoUsuario = ?')
+    // AHORA:
+    const usuario = await prisma.usuarios.findUnique({
+      where: { correoUsuario },
+    });
 
-    // 3. Comparar la contraseña proporcionada con la almacenada
-    const compararContraseña = await comparePassword(
+    // 3. ¡¡¡CHECK DE SEGURIDAD 1!!!
+    // Si el usuario no existe, NO le decimos "Usuario no encontrado".
+    // ¿Por qué? ¡Para no darle pistas a los hackers!
+    if (!usuario) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+
+    // 4. Comparar la contraseña (¡con bcryptjs!)
+    // Comparamos la contraseña que mandó el usuario (ej: "1234")
+    // con el hash que SÍ está en la BD (ej: "$2a$10$...")
+    const esPasswordCorrecto = await comparePassword(
       contraseñaUsuario,
-      user.contraseñaUsuario
+      usuario.contraseñaUsuario
     );
 
-    if (!compararContraseña) {
-      return res.status(401).json({ error: "Credenciales inválidas" });
+    // 5. ¡¡¡CHECK DE SEGURIDAD 2!!!
+    // Si la contraseña es incorrecta, le damos el MISMO error genérico.
+    if (!esPasswordCorrecto) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // 4. Si todo es correcto, devolvemos el mensaje ed exito junto con el token JWT
-
+    // 6. ¡¡ÉXITO!! El usuario existe Y la clave es correcta.
+    // ¡Generamos el token! (Igual que en 'recuperoPass', pero para 'auth')
     const token = jsonwebtoken.sign(
-      { idUsuario: user.idUsuario, correoUsuario: user.correoUsuario },
+      {
+        idUsuario: usuario.idUsuario,
+        correoUsuario: usuario.correoUsuario,
+        purpose: 'auth', // ¡Un propósito diferente!
+      },
       process.env.SECRET_JWT,
-      { expiresIn: "1h" }
+      { expiresIn: '8h' } // ¡Le damos 8 horas!
     );
 
-    // user.token = token;
-    // delete user.contraseñaUsuario; // Eliminar la contraseña del objeto user antes de enviarlo
-    const payload = {
-      idUsuario: user.idUsuario,
-      correoUsuario: user.correoUsuario,
-      token: token,
-    };
-
-    res.status(200).json({ message: "Login exitoso", user: payload });
+    // 7. ¡Enviamos el token al frontend!
+    res.status(200).json({
+      status: 200,
+      message: 'Login exitoso',
+      token, // ¡El frontend guarda esto!
+    });
   } catch (error) {
-    console.error("Error en loginUser:", error);
-    res.status(500).json({ error: "Error en el proceso de login" });
+    console.error('Error en el login:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
