@@ -1,5 +1,3 @@
-
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 const NotFound = () => {
@@ -28,7 +26,6 @@ const NotFound = () => {
           Verifica la URL o regresa a la página principal.
         </p>
         
-        {/* Botón de navegación al inicio */}
         <Link 
           to="/" 
           className="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105"

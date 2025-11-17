@@ -1,12 +1,9 @@
 import prisma from '../config/DB.js';
 
 export const listar = async (req, res) => {
-    // const usuarioAutenticado = verificarToken(req, res); 
-    // if (!usuarioAutenticado) return; 
-
     try {
         const deportes = await prisma.deportes.findMany({
-            where: { activo: true }, // FILTRO: Solo activos
+            where: { activo: true }, 
             orderBy: { idDeporte: 'desc' }
         });
         res.json(deportes);
@@ -17,15 +14,12 @@ export const listar = async (req, res) => {
 };
 
 export const obtener = async (req, res) => {
-    // const usuarioAutenticado = verificarToken(req, res); 
-    // if (!usuarioAutenticado) return; 
-
     try {
         const { id } = req.params;
         const deporte = await prisma.deportes.findFirst({ 
             where: { 
-                idDeporte: Number(id), // idDeporte es la PK
-                activo: true           // FILTRO: Solo activo
+                idDeporte: Number(id), 
+                activo: true           
             }
         });
 
@@ -40,9 +34,6 @@ export const obtener = async (req, res) => {
 };
 
 export const crear = async (req, res) => {
-    // const usuarioAutenticado = verificarToken(req, res); 
-    // if (!usuarioAutenticado) return; 
-
     const { nombre, descripcion } = req.body;
     if (!nombre) {
         return res.status(400).json({ error: 'Nombre es requerido' });
@@ -66,9 +57,6 @@ export const crear = async (req, res) => {
 };
 
 export const actualizar = async (req, res) => {
-    // const usuarioAutenticado = verificarToken(req, res); 
-    // if (!usuarioAutenticado) return; 
-
     const { id } = req.params;
     const { nombre, descripcion } = req.body;
 
@@ -80,7 +68,7 @@ export const actualizar = async (req, res) => {
         const deporteActualizado = await prisma.deportes.updateMany({ 
             where: { 
                 idDeporte: Number(id), 
-                activo: true // Solo actualiza si está activo
+                activo: true 
             },
             data: {
                 nombre,
@@ -105,18 +93,15 @@ export const actualizar = async (req, res) => {
 };
 
 export const eliminar = async (req, res) => {
-    // const usuarioAutenticado = verificarToken(req, res); 
-    // if (!usuarioAutenticado) return; 
-    
     const { id } = req.params;
     try {
-        const result = await prisma.deportes.updateMany({ // <-- BORRADO LÓGICO
+        const result = await prisma.deportes.updateMany({
             where: { 
                 idDeporte: Number(id), 
-                activo: true // Solo desactiva si está activo
+                activo: true 
             },
             data: {
-                activo: false // Pone el campo activo en falso
+                activo: false 
             }
         });
 

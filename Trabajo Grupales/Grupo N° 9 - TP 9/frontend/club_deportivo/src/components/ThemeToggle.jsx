@@ -1,8 +1,7 @@
 import React from 'react';
-import { Sun, Moon } from 'lucide-react'; // Íconos de sol y luna
+import { Sun, Moon } from 'lucide-react';
 
 const ThemeToggle = ({ theme, toggleTheme }) => {
-    // Determina si el tema actual es oscuro
     const isDark = theme === 'dark-theme';
 
     return (
@@ -14,7 +13,6 @@ const ThemeToggle = ({ theme, toggleTheme }) => {
             aria-label={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
             title={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
         >
-            {/* Muestra el ícono de Sol si es oscuro, y el de Luna si es claro */}
             {isDark ? <Sun size={24} /> : <Moon size={24} />}
         </button>
     );

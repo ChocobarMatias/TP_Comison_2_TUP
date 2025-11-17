@@ -1,17 +1,14 @@
 import prisma from '../config/DB.js';
-import { hashPassword, comparePassword } from '../utils/hash.utils.js'; // Asumiendo que la ruta a tu utils es correcta
+import { hashPassword, comparePassword } from '../utils/hash.utils.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { sendEmail } from '../services/email.services.js'; // Asumiendo que la ruta a email.services.js es correcta
+import { sendEmail } from '../services/email.services.js'; 
 import dotenv from 'dotenv';
 
 dotenv.config();
 const secretKey = process.env.JWT_SECRET;
 
-// --- REGISTRO DE SOCIOS ---
-// (Esta función reemplaza a 'createSocio' de socios.controller.js)
 export const register = async (req, res) => {
-    // Los campos que NO están en tu schema (fecha_nac, direccion) se ignoran
     const { nombre, apellido, dni, telefono, email, contrasena } = req.body;
 
     if (!nombre || !apellido || !dni || !email || !contrasena) {
@@ -38,11 +35,9 @@ export const register = async (req, res) => {
                 email,
                 contrasena: hashedPassword, 
                 rol: 'socio'
-                // fecha_alta y created_at tienen @default(now()) en tu schema, se ponen solos.
             }
         });
 
-        // No devolvemos la contraseña
         const { contrasena: _, ...socioSinPass } = newSocio;
         res.status(201).json(socioSinPass);
 
@@ -52,8 +47,6 @@ export const register = async (req, res) => {
     }
 };
 
-// --- LOGIN DE SOCIOS ---
-// (Reemplaza a login.controller.js)
 export const login = async (req, res) => {
     const { email, contrasena } = req.body;
     if (!email || !contrasena) {
@@ -61,10 +54,10 @@ export const login = async (req, res) => {
     }
 
     try {
-        const user = await prisma.socios.findFirst({ // Usamos findFirst
+        const user = await prisma.socios.findFirst({ 
             where: { 
                 email: email,
-                activo: true // Usamos 'activo' (Boolean)
+                activo: true 
             }
         });
 
@@ -83,7 +76,7 @@ export const login = async (req, res) => {
         }
 
         const payload = {
-            id: user.idSocio, // <-- CORREGIDO: Usamos idSocio
+            id: user.idSocio, 
             email: user.email,
             rol: user.rol 
         };
@@ -98,7 +91,7 @@ export const login = async (req, res) => {
             message: 'Login exitoso',
             token,
             user: { 
-                id: user.idSocio, // <-- CORREGIDO: Usamos idSocio
+                id: user.idSocio, 
                 nombre: user.nombre, 
                 email: user.email, 
                 rol: user.rol 
@@ -110,7 +103,6 @@ export const login = async (req, res) => {
     }
 };
 
-// --- SOLICITAR RECUPERACIÓN DE CONTRASEÑA ---
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: 'Email es requerido' });
@@ -119,7 +111,7 @@ export const forgotPassword = async (req, res) => {
         const user = await prisma.socios.findFirst({
             where: { 
                 email: email, 
-                activo: true // Usamos 'activo'
+                activo: true 
             }
         });
 
@@ -130,17 +122,17 @@ export const forgotPassword = async (req, res) => {
 
         const resetToken = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-        const expireDate = new Date(Date.now() + 3600000); // 1 hora
+        const expireDate = new Date(Date.now() + 3600000); 
 
         await prisma.socios.update({
-            where: { idSocio: user.idSocio }, // <-- CORREGIDO: Usamos idSocio
+            where: { idSocio: user.idSocio }, 
             data: {
                 resetToken: hashedToken,
                 resetTokenExpires: expireDate
             }
         });
 
-        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`; // ¡Ajusta esta URL a tu frontend!
+        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`; 
 
         const subject = 'Recuperación de Contraseña - Club Deportivo';
         const htmlContent = `<p>Para resetear tu contraseña, haz clic en este enlace: <a href="${resetUrl}">Resetear Contraseña</a>. Expira en 1 hora.</p>`;
@@ -154,7 +146,6 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// --- RESETEAR CONTRASEÑA ---
 export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { nuevaContraseña } = req.body;
@@ -180,7 +171,7 @@ export const resetPassword = async (req, res) => {
         const hashedPassword = await hashPassword(nuevaContraseña);
 
         await prisma.socios.update({
-            where: { idSocio: user.idSocio }, // <-- CORREGIDO: Usamos idSocio
+            where: { idSocio: user.idSocio },
             data: {
                 contrasena: hashedPassword,
                 resetToken: null,

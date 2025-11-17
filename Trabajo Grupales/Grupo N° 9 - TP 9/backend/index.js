@@ -6,6 +6,7 @@ import deportesRoutes from "./routes/deportes.routes.js";
 import membresiasRoutes from "./routes/membresias.routes.js";
 import mailRoutes from "./routes/mail.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import pagosRoutes from "./routes/pagos.routes.js";
 
 dotenv.config();
 
@@ -13,14 +14,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rutas
 app.use("/api/socios", sociosRoutes);
 app.use("/api/deportes", deportesRoutes);
 app.use("/api/membresias", membresiasRoutes);
 app.use("/api/mail", mailRoutes);
 app.use("/api/auth", authRoutes);
-// Puerto
+app.use('/api/pagos', pagosRoutes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  console.log(`Servidor corriendo en puerto ${PORT}`);
 });
