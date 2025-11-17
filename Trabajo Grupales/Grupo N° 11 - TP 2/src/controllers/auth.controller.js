@@ -53,10 +53,6 @@ export const login = async (req, res) => {
     }
 }
 
-// ... [Código de register y login de Franco] ...
-
-// === PARTE DE GERMÁN: RECUPERACIÓN DE CONTRASEÑA (REQUISITO TP) ===
-
 const RESET_TOKEN_SECRET = process.env.JWT_SECRET;
 const EXPIRATION_TIME = '1h'; 
 
@@ -101,7 +97,7 @@ export const resetPassword = async (req, res) => {
             [userId, token]
         );
         
-        if (users.length === 0) return res.status(400).json({ message: 'Token inválido o expirado.' });
+        if (users.length === 0) return res.status(400).json({ message: 'Token  inválido o expirado.' });
 
         // 3. Hashear la NUEVA contraseña
         const hashedPassword = await hashPassword(newPassword);
