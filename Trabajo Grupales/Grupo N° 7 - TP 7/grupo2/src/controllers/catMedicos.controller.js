@@ -1,7 +1,7 @@
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 
-// 📋 Obtener todas las categorías activas
+
 const getAllCatMedicos = async (req, res) => {
   try {
     const categorias = await prisma.catmedicos.findMany({
@@ -16,7 +16,7 @@ const getAllCatMedicos = async (req, res) => {
   }
 };
 
-// 📋 Mostrar categorías inactivas
+
 const mostrarCatMedicosInactivos = async (req, res) => {
   try {
     const categoriasInactivas = await prisma.catMedicos.findMany({
@@ -34,7 +34,7 @@ const mostrarCatMedicosInactivos = async (req, res) => {
   }
 };
 
-// 📋 Obtener una categoría por ID
+
 const getOneCatMedico = async (req, res) => {
   const id = req.params.id;
   try {
@@ -53,7 +53,7 @@ const getOneCatMedico = async (req, res) => {
   }
 };
 
-// 🆕 Crear nueva categoría
+
 const crearCatMedico = async (req, res) => {
   const { NombreCat } = req.body;
   try {
@@ -69,7 +69,7 @@ const crearCatMedico = async (req, res) => {
   }
 };
 
-// ✏️ Actualizar categoría
+
 const updateCatMedico = async (req, res) => {
   const id = req.params.id;
   const { NombreCat, IsActive } = req.body;
@@ -85,7 +85,7 @@ const updateCatMedico = async (req, res) => {
   }
 };
 
-// ❌ Eliminar físicamente una categoría
+
 const deleteCatMedico = async (req, res) => {
   const id = req.params.id;
   try {
@@ -99,7 +99,7 @@ const deleteCatMedico = async (req, res) => {
   }
 };
 
-// 🚫 Desactivar (eliminación lógica)
+
 const logicDeleteCatMedico = async (req, res) => {
   const id = req.params.id;
   try {
@@ -114,7 +114,7 @@ const logicDeleteCatMedico = async (req, res) => {
   }
 };
 
-// ✅ Activar categoría
+
 const activarCatMedico = async (req, res) => {
   const id = req.params.id;
   try {

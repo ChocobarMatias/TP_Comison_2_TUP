@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/Turnos.css"; // Asegúrate de tener los estilos generales
+import "../styles/Turnos.css"; 
 
 const ModalTurno = ({ medico, onClose, onSubmit }) => {
   const [fecha, setFecha] = useState("");

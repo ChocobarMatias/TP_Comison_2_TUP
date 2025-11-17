@@ -23,7 +23,7 @@ const loginUsuario = async (req, res) => {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
-    // ⭐ BUSCAR PACIENTE SI EL USUARIO ES PACIENTE
+   
     let paciente = null;
 
     if (usuario.RolUsuario === "Paciente") {
@@ -31,7 +31,7 @@ const loginUsuario = async (req, res) => {
         where: { idUsuario: usuario.idUsuario }
       });
 
-      // Si no existe lo creo automáticamente
+    
       if (!paciente) {
         paciente = await prisma.pacientes.create({
           data: {

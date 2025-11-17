@@ -1,13 +1,13 @@
-const jwt = require('jsonwebtoken');// importa la biblioteca jsonwebtoken para manejar JWT
-const dotenv = require('dotenv');// importa la biblioteca dotenv para manejar variables de entorno
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
 const secretKey = process.env.JWT_SECRET;
 
-const verifyToken = (req, res, next) => { // middleware para verificar el token JWT en las solicitudes entrantes
+const verifyToken = (req, res, next) => { 
 
-    const autoheader = req.headers['authorization']; // obtiene el encabezado de autorización de la solicitud
+    const autoheader = req.headers['authorization']; 
 
     if(!secretKey){
         return res.status(500).json({message: 'Clave secreta no configurada en el servidor'});
@@ -17,15 +17,14 @@ const verifyToken = (req, res, next) => { // middleware para verificar el token 
         return res.status(401).json({message: 'Acceso denegado. No se proporcionó token.'});
     }
 
-    //[encabezado, token]
-    const tokenParts = autoheader.split(' '); // divide el encabezado en partes
+    const tokenParts = autoheader.split(' '); 
     if(tokenParts[0] !== 'Bearer' || !tokenParts[1]){
         return res.status(401).json({message: 'Acceso denegado. Formato de token inválido.'});
     }
 
-    const token = tokenParts[1]; // obtiene el token de la segunda parte
+    const token = tokenParts[1]; 
 
-    jwt.verify(token, secretKey, (err, decoded) => { // verifica el token usando la clave secreta
+    jwt.verify(token, secretKey, (err, decoded) => { 
         if(err){
 
           if(err.name === 'JsonWebTokenError'){
@@ -33,9 +32,9 @@ const verifyToken = (req, res, next) => { // middleware para verificar el token 
         }
             return res.status(500).json({message: 'Error al verificar el token.'});
         }   
-        req.user = decoded; // almacena la información del usuario decodificada en la solicitud
-        next(); // llama al siguiente middleware o ruta
+        req.user = decoded; 
+        next(); 
     });
 }
 
-module.exports = {verifyToken};// exporta el middleware para usarlo en otras partes de la aplicación
+module.exports = {verifyToken};

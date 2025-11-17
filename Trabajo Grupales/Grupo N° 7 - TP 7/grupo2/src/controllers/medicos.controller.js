@@ -1,7 +1,7 @@
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 
-// 📌 Obtener médicos por categoría
+
 const getMedicosPorCategoria = async (req, res) => {
   console.log("➡️ Entró a getMedicosPorCategoria");
 
@@ -21,11 +21,11 @@ const getMedicosPorCategoria = async (req, res) => {
     });
 
     if (!medicos || medicos.length === 0) {
-      // Devolver array vacío en vez de objeto de error
+      
       return res.status(200).json([]);
     }
 
-    // Enviar solo el array directamente
+    
     res.status(200).json(medicos);
 
   } catch (error) {
@@ -38,7 +38,7 @@ const getMedicosPorCategoria = async (req, res) => {
   }
 };
 
-// 📋 Obtener todos los médicos
+
 const getAllMedicos = async (req, res) => {
   try {
     const medicos = await prisma.medicos.findMany({
@@ -49,7 +49,7 @@ const getAllMedicos = async (req, res) => {
       }
     });
 
-    // Devolver directamente, Prisma ya pone null si no hay relación
+    
     res.status(200).json(medicos);
 
   } catch (error) {
@@ -60,7 +60,7 @@ const getAllMedicos = async (req, res) => {
 
 
 
-// 📋 Mostrar médicos inactivos
+
 const mostrarMedicosInactivos = async (req, res) => {
   try {
     const medicosInactivos = await prisma.medicos.findMany({
@@ -82,7 +82,7 @@ const mostrarMedicosInactivos = async (req, res) => {
   }
 };
 
-// 📋 Obtener un médico
+
 const getOneMedico = async (req, res) => {
   const id = Number(req.params.id);
   try {
@@ -105,7 +105,7 @@ const getOneMedico = async (req, res) => {
   }
 };
 
-// Crear médico
+
 const crearMedico = async (req, res) => {
   const data = req.body;
 
@@ -131,7 +131,7 @@ const crearMedico = async (req, res) => {
 };
 
 
-// Actualizar médico
+
 const updateMedico = async (req, res) => {
   const id = Number(req.params.id);
   const data = req.body;
@@ -155,7 +155,7 @@ const updateMedico = async (req, res) => {
   }
 };
 
-// Eliminar físico
+
 const deleteMedico = async (req, res) => {
   const id = Number(req.params.id);
   try {
@@ -167,7 +167,7 @@ const deleteMedico = async (req, res) => {
   }
 };
 
-// Baja lógica
+
 const logicDeleteMedico = async (req, res) => {
   const id = Number(req.params.id);
   try {
@@ -183,7 +183,7 @@ const logicDeleteMedico = async (req, res) => {
   }
 };
 
-// Activar médico
+
 const activarMedico = async (req, res) => {
   const id = Number(req.params.id);
   try {

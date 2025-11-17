@@ -10,6 +10,8 @@ import ProtectedRoute from './proteccionRutas/ProtectedRoute';
 import AdminRoute from './proteccionRutas/AdminRoute';
 import { useAuthStore } from "./store/useAuthStore";
 import MisTurnos from './components/MisTurnos';
+import ForgotPassword from './pages/FortgotPassword'
+import ResetPassword from './pages/ResetPassword'
 function App() {
   window.useAuthStore = useAuthStore;
   return (
@@ -18,7 +20,7 @@ function App() {
         <Navbar />
 
         <Routes>
-          {/* 👇 HOME protegido */}
+          
           <Route
             path="/home"
             element={
@@ -42,14 +44,16 @@ function App() {
 
  
 
-          {/* 👇 Página inicial redirige al login */}
+          
           <Route path="/" element={<LoginPage />} />
 
-          {/* Login / Registro libres */}
+          
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* 👇 RUTA SOLO ADMIN */}
+          
           <Route
             path="/admin-med"
             element={
@@ -59,7 +63,7 @@ function App() {
             }
           />
 
-          {/* Gestión de usuarios, también solo admin */}
+          
           <Route
             path="/usuarios"
             element={

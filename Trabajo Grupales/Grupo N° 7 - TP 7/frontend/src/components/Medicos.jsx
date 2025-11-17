@@ -5,7 +5,7 @@ import { getAllMedicos } from "../services/medicosServices";
 import { crearTurno } from "../services/turnosService";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
-import "../App.css"; // ✅ Importar estilos
+import "../App.css"; 
 
 const Medicos = ({ idCategoria, setIdCategoria }) => {
   const [medicos, setMedicos] = useState([]);
@@ -15,19 +15,19 @@ const Medicos = ({ idCategoria, setIdCategoria }) => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
 
-  // Traer todos los médicos al cargar
+  
   useEffect(() => {
     const fetchMedicos = async () => {
       setLoading(true);
       const data = await getAllMedicos();
       setAllMedicos(data);
-      setMedicos(data); // Inicialmente mostrar todos
+      setMedicos(data); 
       setLoading(false);
     };
     fetchMedicos();
   }, []);
 
-  // Filtrar por categoría cuando cambie
+  
   useEffect(() => {
     if (!idCategoria) {
       setMedicos(allMedicos);

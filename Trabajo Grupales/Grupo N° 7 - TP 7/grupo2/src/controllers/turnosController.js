@@ -2,7 +2,7 @@ const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 
 
-// Obtener todos los turnos
+
 const getAllTurnos = async (req, res) => {
   try {
     const turnos = await prisma.turnos.findMany();
@@ -14,7 +14,7 @@ const getAllTurnos = async (req, res) => {
 };
 
 
-// Obtener un turno por ID
+
 const getOneTurno = async (req, res) => {
   const id = req.params.id;
   try {
@@ -34,9 +34,9 @@ const getOneTurno = async (req, res) => {
 };
 
 
-// Crear un nuevo turno
+
 const crearTurno = async (req, res) => {
-  console.log("🔥 BODY RECIBIDO:", req.body);
+  
   const { FechaRequeridaTurno, HorarioRequeridoTurno, idPaciente, idMedico } = req.body;
 
   if (!FechaRequeridaTurno || !HorarioRequeridoTurno || !idPaciente || !idMedico) {
@@ -65,7 +65,6 @@ const crearTurno = async (req, res) => {
 
 
 
-// Actualizar un turno
 const updateTurno = async (req, res) => {
   const id = req.params.id;
   const { FechaRequeridaTurno, HorarioRequeridoTurno, EstadoTurno, idPaciente, idMedico } = req.body;
@@ -93,7 +92,7 @@ const updateTurno = async (req, res) => {
 };
 
 
-// Eliminar un turno (borrado físico)
+
 const deleteTurno = async (req, res) => {
   const id = req.params.id;
 
@@ -110,7 +109,7 @@ const deleteTurno = async (req, res) => {
 };
 
 
-// Listar turnos por médico
+
 const getTurnosPorMedico = async (req, res) => {
   const idMedico = req.params.idMedico;
   try {
@@ -130,7 +129,7 @@ const getTurnosPorMedico = async (req, res) => {
 };
 
 
-// Listar turnos por paciente
+
 const getTurnosPorPaciente = async (req, res) => {
   const idPaciente = req.params.idPaciente;
   try {

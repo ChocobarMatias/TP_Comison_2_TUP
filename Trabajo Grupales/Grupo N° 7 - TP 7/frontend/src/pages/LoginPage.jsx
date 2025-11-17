@@ -2,7 +2,7 @@ import { useState } from "react";
 import { loginRequest } from "../services/authService";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
-import "../App.css"; // ✅ Importar CSS
+import "../App.css"; 
 
 function LoginPage() {
   const [mail, setMail] = useState("");
@@ -57,6 +57,16 @@ function LoginPage() {
       ¿No tenés cuenta?{" "}
       <span onClick={() => navigate("/signup")}>Registrate aquí</span>
     </p>
+
+
+     <p style={{ marginTop: "15px" }}>
+          <span
+            style={{ color: "blue", cursor: "pointer" }}
+            onClick={() => navigate("/forgot-password")}
+          >
+            ¿Olvidaste tu contraseña?
+          </span>
+        </p>
   </div>
 </div> 
   )

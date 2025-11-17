@@ -2,7 +2,7 @@ const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 
 
-// Obtener todas las observaciones
+
 const getAllObservaciones = async (req, res) => {
   try {
     const observaciones = await prisma.observaciones.findMany();
@@ -14,7 +14,7 @@ const getAllObservaciones = async (req, res) => {
 };
 
 
-// Obtener una observación por ID
+
 const getOneObservacion = async (req, res) => {
   const id = req.params.id;
   try {
@@ -34,7 +34,6 @@ const getOneObservacion = async (req, res) => {
 };
 
 
-// Crear una nueva observación
 const crearObservacion = async (req, res) => {
   const { idTurno, Comentario } = req.body;
 
@@ -57,7 +56,7 @@ const crearObservacion = async (req, res) => {
 };
 
 
-// Actualizar una observación
+
 const updateObservacion = async (req, res) => {
   const id = req.params.id;
   const { idTurno, Comentario } = req.body;
@@ -82,7 +81,7 @@ const updateObservacion = async (req, res) => {
 };
 
 
-// Eliminar una observación (borrado físico)
+
 const deleteObservacion = async (req, res) => {
   const id = req.params.id;
 

@@ -1,15 +1,17 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import "../styles/Navbar.css"; // Asegúrate de usar tu CSS general
+import "../styles/Navbar.css"; 
 
 const Navbar = () => {
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
   const location = useLocation();
 
-  const noNavbarRoutes = ["/login", "/signup", "/"];
-  const hideNavbar = noNavbarRoutes.includes(location.pathname);
+  const noNavbarRoutes = ["/login", "/signup", "/", "/forgot-password",
+  "/reset-password"];
+  const hideNavbar = noNavbarRoutes.some(route => location.pathname.startsWith(route));
+
 
   if (hideNavbar) return null;
 

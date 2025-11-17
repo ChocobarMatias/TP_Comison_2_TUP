@@ -26,7 +26,7 @@ export const getAllMedicos = async () => {
 };
 
 
-// Crear médico
+
 export const crearMedico = async (data) => {
   try {
     const res = await axios.post(API_BASE_URL, data);

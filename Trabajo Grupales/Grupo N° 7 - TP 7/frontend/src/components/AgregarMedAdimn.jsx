@@ -45,7 +45,7 @@ const AgregarMedAdmin = () => {
 
     if (nuevoMedico) {
       setMensaje(`Médico ${nuevoMedico.NombreMedico} creado correctamente`);
-      // Limpiar formulario
+      
       setNombre("");
       setApellido("");
       setTelefono("");
@@ -65,7 +65,7 @@ const AgregarMedAdmin = () => {
     const resultado = await eliminarMedico(id);
     if (resultado) {
       setMensaje(resultado.message);
-      // Actualizar lista de médicos
+      
       setMedicos(medicos.filter(m => m.idMedico !== id));
     } else {
       setMensaje("Error al eliminar médico");

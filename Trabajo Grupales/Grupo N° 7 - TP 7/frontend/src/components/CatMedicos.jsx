@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getCatMedicos } from '../services/catMedicos';
-import "../App.css"; // ✅ Importar estilos
+import "../App.css"; 
 
 const CatMedicos = ({ onSelectCategoria }) => {
   const [categoria, setCategoria] = useState([]);

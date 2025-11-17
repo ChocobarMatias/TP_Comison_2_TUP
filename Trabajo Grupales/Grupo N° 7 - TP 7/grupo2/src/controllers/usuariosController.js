@@ -92,7 +92,7 @@ const updateUser = async (req, res) => {
       IsActive
     };
 
-    // Solo hashear si el usuario envía una nueva contraseña
+    
     if (PasswordUsuario) {
       dataToUpdate.PasswordUsuario = await hashPassword(PasswordUsuario);
     }
