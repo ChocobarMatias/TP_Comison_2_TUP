@@ -1,0 +1,12 @@
+[
+    { "id": 1, "nombre": "Yoga", "cupo_maximo": 20 },
+    { "id": 2, "nombre": "Spinning", "cupo_maximo": 15 },
+    { "id": 3, "nombre": "CrossFit", "cupo_maximo": 25 },
+    { "id": 4, "nombre": "Pilates", "cupo_maximo": 18 },
+    { "id": 5, "nombre": "Zumba", "cupo_maximo": 30 },
+    { "id": 6, "nombre": "Boxeo", "cupo_maximo": 12 },
+    { "id": 7, "nombre": "Natación", "cupo_maximo": 10 },
+    { "id": 8, "nombre": "Funcional", "cupo_maximo": 22 },
+    { "id": 9, "nombre": "Musculación", "cupo_maximo": 35 },
+    { "id": 10, "nombre": "Kickboxing", "cupo_maximo": 16 }
+]

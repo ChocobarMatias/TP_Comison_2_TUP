@@ -1,20 +1,13 @@
 create database gimnasio;
 use gimnasio;
 
-CREATE TABLE reservas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    socio_id INT NOT NULL,
-    actividad_id INT NOT NULL,
-    fecha DATE NOT NULL,
-    hora TIME,
-    FOREIGN KEY (socio_id) REFERENCES socios(idSocio) ON DELETE CASCADE,
-    FOREIGN KEY (actividad_id) REFERENCES actividades(id) ON DELETE CASCADE
-);
+
 CREATE TABLE actividades (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    cupo_maximo INT NOT NULL CHECK (cupo_maximo > 0)
+    cupo_maximo INT NOT NULL
 );
+
 CREATE TABLE socios (
     idSocio INT AUTO_INCREMENT PRIMARY KEY,
     nombreSocio VARCHAR(100) NOT NULL,
@@ -23,9 +16,30 @@ CREATE TABLE socios (
     contraSocio VARCHAR(255) NOT NULL,
     activo BOOLEAN DEFAULT TRUE,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    
-    INSERT INTO actividades (nombre, cupo_maximo) VALUES
+);
+
+
+CREATE TABLE reservas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    socio_id INT NOT NULL,
+    actividad_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    FOREIGN KEY (socio_id) REFERENCES socios(idSocio) ON DELETE CASCADE,
+    FOREIGN KEY (actividad_id) REFERENCES actividades(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_reserva_unica UNIQUE (socio_id, actividad_id, fecha)
+);
+
+CREATE TABLE administradores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    contra VARCHAR(255) NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO actividades (nombre, cupo_maximo) VALUES
 ('Yoga', 20),
 ('Spinning', 15),
 ('CrossFit', 25),
@@ -37,4 +51,5 @@ CREATE TABLE socios (
 ('Musculación', 35),
 ('Kickboxing', 16);
 
-    
+INSERT INTO administradores (nombre, apellido, email, contra) VALUES
+('Juan', 'Pérez', 'admin@admin.com', '$2b$10$WI3MAvVrcXE/F9quYDOmvO3QKZaTrMXMZKT9qzj1.OOQSnQfiCNSq');
