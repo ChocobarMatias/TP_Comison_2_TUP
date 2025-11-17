@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3000/api/medicos";
 
+
 export const getMedicosPorCategoria = async (idCategoria) => {
   try {
     const res = await axios.get(`${API_BASE_URL}/categoria/${idCategoria}`);
@@ -12,6 +13,20 @@ export const getMedicosPorCategoria = async (idCategoria) => {
   }
 };
 
+
+
+export const getAllMedicos = async () => {
+  try {
+    const res = await axios.get(`${API_BASE_URL}/`); 
+    return res.data;
+  } catch (error) {
+    console.error("ERROR obteniendo todos los médicos:", error);
+    return [];
+  }
+};
+
+
+// Crear médico
 export const crearMedico = async (data) => {
   try {
     const res = await axios.post(API_BASE_URL, data);
@@ -21,6 +36,7 @@ export const crearMedico = async (data) => {
     return null;
   }
 };
+
 
 export const eliminarMedico = async (idMedico) => {
   try {

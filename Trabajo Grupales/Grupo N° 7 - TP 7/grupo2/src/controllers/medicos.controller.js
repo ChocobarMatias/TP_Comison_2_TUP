@@ -44,16 +44,21 @@ const getAllMedicos = async (req, res) => {
     const medicos = await prisma.medicos.findMany({
       where: { IsActive: 1 },
       include: {
-        catMedico: true,
-        usuarios: true
+        catMedico: { select: { idCatMedico: true, NombreCat: true } },
+        usuarios: { select: { idUsuario: true, MailUsuario: true, RolUsuario: true, IsActive: true } }
       }
     });
 
+    // Devolver directamente, Prisma ya pone null si no hay relación
     res.status(200).json(medicos);
+
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener los médicos' });
+    console.error("❌ ERROR obteniendo todos los médicos:", error);
+    res.status(500).json({ message: 'Error al obtener los médicos', error: error.message });
   }
 };
+
+
 
 // 📋 Mostrar médicos inactivos
 const mostrarMedicosInactivos = async (req, res) => {

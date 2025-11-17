@@ -1,17 +1,14 @@
-
 .categoria option{
- background-color: #357ab8;
+ background-color: #cdb516;
 }
 .categoria select{
- background-color: #357ab8;
- color: blanchedalmond;
+ background-color: #b88435b6;
+ color: rgb(31, 31, 30);
  border-radius: 20px;
  height: 50px;
 }
 
 .agregar-medico{
-  
-  
   text-align: center;
   max-width: 700px;
   padding: 20px;
@@ -21,13 +18,12 @@
 
 .agregar-medico h3{
   color: aqua;
- font-size: 40px;
+  font-size: 40px;
 }
 .agregar-medico form{
-border-radius: 80px;
-
-flex-direction: column; 
-display: flex;
+  border-radius: 80px;
+  flex-direction: column; 
+  display: flex;
 }
 .agregar-medico input, .agregar-medico select{
   background-color: rgba(30, 78, 210, 0.496);
@@ -35,7 +31,6 @@ display: flex;
   border-radius: 70px;
   padding: 2%;
 }
-
 
 .btn-delete{
   background-color: rgb(205, 53, 53);
@@ -58,60 +53,56 @@ display: flex;
 .titMedicos{
   text-align: center;
   padding-top: 50px;
-
 }
+
 .titMedicos h3{
   text-align: center;
   color: aqua;
   font-size: 2rem;
-  
-}
-.boton-container {
-  display: flex;           /* Usamos flexbox */
-  justify-content: center; /* Centrado horizontal */
-  margin: 20px 0;          /* Espacio arriba y abajo */
 }
 
- /* Estilo del botón de enlace */
+.boton-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
 .medicos {
-  display: inline-block; /* Para que podamos darle padding y tamaño como botón */
-  padding: 10px 20px; /* Espacio interno */
-  background-color: #4a90e2; /* Fondo azul */
-  color: #fff; /* Texto blanco */
-  text-decoration: none; /* Quitar subrayado del enlace */
-  border-radius: 25px; /* Bordes redondeados */
-  font-weight: bold; /* Texto en negrita */
-  font-size: 1rem; /* Tamaño de letra */
-  transition: all 0.3s ease; /* Transición suave */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra suave */
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4a90e2;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .medicos:hover {
-  background-color: #357ab8; /* Azul más oscuro al pasar el mouse */
-  transform: translateY(-2px); /* Efecto flotante al pasar el mouse */
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Sombra más visible al hover */
+  background-color: #357ab8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-/* Contenedor principal de médicos */
 .titMedicos {
   max-width: 700px;
   margin: 20px auto;
   padding: 20px;
-  background-color: #f5f7fa; /* Fondo suave */
+  background-color: #f5f7fa;
   border-radius: 15px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   font-family: 'Arial', sans-serif;
   text-align: center;
 }
 
-/* Título */
 .titMedicos h3 {
   color: #4a90e2;
   font-size: 1.8rem;
   margin-bottom: 15px;
 }
 
-/* Lista de médicos */
 .titMedicos ul {
   list-style: none;
   padding: 0;
@@ -120,7 +111,6 @@ display: flex;
   display: block;
 }
 
-/* Cada médico como tarjeta */
 .titMedicos li {
   background-color: #fff;
   text-align: center;
@@ -130,24 +120,18 @@ display: flex;
   box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   font-size: 1rem;
   display: flex;
-  
   align-items: center;
   transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
   justify-content: center;
-  align-items: center;
 }
 
-/* Efecto hover en cada médico */
 .titMedicos li:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
 }
 
-/* Mensajes de carga o vacíos */
 .titMedicos p {
   font-size: 1rem;
   color: #555;
   margin-top: 15px;
-  
 }

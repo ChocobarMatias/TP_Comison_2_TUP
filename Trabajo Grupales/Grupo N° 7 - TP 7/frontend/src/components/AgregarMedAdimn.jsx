@@ -12,9 +12,7 @@ const AgregarMedAdmin = () => {
   const [mensaje, setMensaje] = useState("");
   const [medicos, setMedicos] = useState([]);
 
-  // ===============================
-  // Traer médicos al cambiar categoría
-  // ===============================
+
   useEffect(() => {
     const fetchMedicos = async () => {
       if (idCategoria) {
@@ -25,9 +23,7 @@ const AgregarMedAdmin = () => {
     fetchMedicos();
   }, [idCategoria]);
 
-  // ===============================
-  // Crear nuevo médico
-  // ===============================
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -54,16 +50,14 @@ const AgregarMedAdmin = () => {
       setApellido("");
       setTelefono("");
       setDireccion("");
-      // Actualizar lista de médicos
+    
       setMedicos([...medicos, nuevoMedico]);
     } else {
       setMensaje("Error al crear médico");
     }
   };
 
-  // ===============================
-  // Eliminar médico
-  // ===============================
+  
   const handleEliminar = async (id) => {
     const confirm = window.confirm("¿Estás seguro que deseas eliminar este médico?");
     if (!confirm) return;
@@ -115,9 +109,7 @@ const AgregarMedAdmin = () => {
 
       {mensaje && <p>{mensaje}</p>}
 
-      {/* ===============================
-          Lista de médicos de la categoría
-          =============================== */}
+    
       {medicos.length > 0 && (
         <div>
           <h4>Médicos de esta categoría:</h4>

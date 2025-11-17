@@ -15,7 +15,6 @@ const MainUsuarios = () => {
   });
   const [editId, setEditId] = useState(null);
 
-  // cargar listado
   const cargarUsuarios = async () => {
     const data = await obtenerUsuarios();
     setUsuarios(data);
@@ -25,12 +24,11 @@ const MainUsuarios = () => {
     cargarUsuarios();
   }, []);
 
-  // cambiar inputs
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // crear o actualizar
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
 

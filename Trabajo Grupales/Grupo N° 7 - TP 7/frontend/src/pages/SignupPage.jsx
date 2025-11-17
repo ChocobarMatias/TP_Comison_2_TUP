@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { registerRequest } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import "../styles/Form.css"; // Archivo CSS para tu formulario
 
 function SignupPage() {
   const [MailUsuario, setMail] = useState("");
@@ -22,16 +23,17 @@ function SignupPage() {
   };
 
   return (
-    <div style={{ width: "300px", margin: "50px auto" }}>
-      <h2>Registrarse</h2>
+    <div className="form-container">
+      <h2 className="form-title">Registrarse</h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="form">
         <input
           type="email"
           placeholder="Correo"
           value={MailUsuario}
           onChange={(e) => setMail(e.target.value)}
           required
+          className="form-input"
         />
 
         <input
@@ -40,23 +42,27 @@ function SignupPage() {
           value={PasswordUsuario}
           onChange={(e) => setPass(e.target.value)}
           required
+          className="form-input"
         />
 
-        <select value={RolUsuario} onChange={(e) => setRol(e.target.value)}>
+        <select
+          value={RolUsuario}
+          onChange={(e) => setRol(e.target.value)}
+          className="form-input"
+        >
           <option value="Admin">Admin</option>
           <option value="Medico">Medico</option>
           <option value="Paciente">Paciente</option>
         </select>
 
-        <button type="submit">Crear cuenta</button>
+        <button type="submit" className="form-button">
+          Crear cuenta
+        </button>
       </form>
 
-      <p style={{ marginTop: "20px" }}>
+      <p className="form-footer">
         ¿Ya tenés cuenta?{" "}
-        <span
-          style={{ color: "blue", cursor: "pointer" }}
-          onClick={() => navigate("/login")}
-        >
+        <span className="form-link" onClick={() => navigate("/login")}>
           Iniciar sesión
         </span>
       </p>
