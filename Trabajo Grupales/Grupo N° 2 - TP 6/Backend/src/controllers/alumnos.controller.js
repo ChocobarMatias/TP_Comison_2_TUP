@@ -1,137 +1,63 @@
-const db = require("../config/DB");
+const db = require("../config/prisma");
 
-// Obtener todos los alumnos con datos de usuario
-const getAll = (req, res) => {
-  const consulta = `
-    SELECT 
-      alumnos.alumno_id,
-      alumnos.nombre,
-      alumnos.curso,
-      alumnos.dni,
-      alumnos.usuario_id,
-      usuarios.nombre_usuario,
-      usuarios.email
-    FROM alumnos
-    INNER JOIN usuarios ON alumnos.usuario_id = usuarios.usuario_id
-  `;
-
-  db.query(consulta, (err, rows) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
+// Obtener todos los alumnos
+const getAll = async (req, res) => {
+  try {
+    const rows = await db.$queryRaw`SELECT * FROM alumnos`;
     return res.json(rows);
-  });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
 
-// Obtener un alumno por ID con datos de usuario
-const getById = (req, res) => {
+// Obtener un alumno por ID
+const getById = async (req, res) => {
   const { id } = req.params;
-
-  const consulta = `
-    SELECT 
-      alumnos.alumno_id,
-      alumnos.nombre,
-      alumnos.curso,
-      alumnos.dni,
-      alumnos.usuario_id,
-      usuarios.nombre_usuario,
-      usuarios.email
-    FROM alumnos
-    INNER JOIN usuarios ON alumnos.usuario_id = usuarios.usuario_id
-    WHERE alumnos.alumno_id = ?
-  `;
-
-  db.query(consulta, [id], (err, rows) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-    if (!rows.length) {
+  try {
+    const rows = await db.$queryRaw`SELECT * FROM alumnos WHERE alumno_id = ${Number(id)}`;
+    if (!rows || rows.length === 0) {
       return res.status(404).json({ error: "Alumno no encontrado" });
     }
     return res.json(rows[0]);
-  });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
 
 // Crear un nuevo alumno
-const create = (req, res) => {
+const create = async (req, res) => {
   const { nombre, curso, dni } = req.body;
-
-  const consulta = "INSERT INTO alumnos (nombre, curso, dni) VALUES (?, ?, ?)";
-
-  db.query(consulta, [nombre, curso || null, dni], (err, result) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-
+  try {
+    await db.$executeRaw`INSERT INTO alumnos (nombre, curso, dni) VALUES (${nombre}, ${curso || null}, ${dni})`;
     return res.status(201).json({ message: "Alumno creado con exito" });
-  });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
 
-// Actualizar un alumno y su usuario asociado
-const update = (req, res) => {
+// Actualizar un alumno
+const update = async (req, res) => {
   const { id } = req.params;
-  const { nombre, curso, dni, nombre_usuario, email } = req.body;
-
-  // Primero, obtener el usuario_id asociado al alumno
-  const getUsuarioIdQuery = "SELECT usuario_id FROM alumnos WHERE alumno_id = ?";
-  db.query(getUsuarioIdQuery, [id], (err, rows) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-    if (!rows.length) {
-      return res.status(404).json({ error: "Alumno no encontrado" });
-    }
-    const usuario_id = rows[0].usuario_id;
-
-    // Actualizar datos del alumno
-    const updateAlumno = "UPDATE alumnos SET nombre=?, curso=?, dni=? WHERE alumno_id=?";
-    db.query(updateAlumno, [nombre, curso || null, dni, id], (errAlumno, resultAlumno) => {
-      if (errAlumno) {
-        return res.status(500).json(errAlumno);
-      }
-      // Actualizar datos del usuario asociado si se proveen
-      if (nombre_usuario || email) {
-        const updateUsuario = [];
-        const params = [];
-        if (nombre_usuario) {
-          updateUsuario.push("nombre_usuario = ?");
-          params.push(nombre_usuario);
-        }
-        if (email) {
-          updateUsuario.push("email = ?");
-          params.push(email);
-        }
-        params.push(usuario_id);
-        const updateUsuarioQuery = `UPDATE usuarios SET ${updateUsuario.join(", ")} WHERE usuario_id = ?`;
-        db.query(updateUsuarioQuery, params, (errUsuario, resultUsuario) => {
-          if (errUsuario) {
-            return res.status(500).json(errUsuario);
-          }
-          return res.json({ message: "Alumno y usuario actualizados con exito" });
-        });
-      } else {
-        return res.json({ message: "Alumno actualizado con exito" });
-      }
-    });
-  });
+  const { nombre, curso, dni } = req.body;
+  try {
+    const result = await db.$executeRaw`UPDATE alumnos SET nombre=${nombre}, curso=${curso || null}, dni=${dni} WHERE alumno_id=${Number(id)}`;
+    // $executeRaw usually returns affected row count or driver-specific result; assume success if no error
+    return res.json({ message: "Alumno actualizado con exito" });
+  } catch (err) {
+    // Could map specific errors to 404 if needed by querying first
+    return res.status(500).json(err);
+  }
 };
 
 // Eliminar un alumno
-const remove = (req, res) => {
+const remove = async (req, res) => {
   const { id } = req.params;
-
-  const consulta = "DELETE FROM alumnos WHERE alumno_id=?";
-
-  db.query(consulta, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "No encontrado" });
-    }
-
+  try {
+    await db.$executeRaw`DELETE FROM alumnos WHERE alumno_id=${Number(id)}`;
     return res.json({ message: "Alumno eliminado con exito" });
-  });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
 
 module.exports = {

@@ -10,11 +10,11 @@ const cors = require("cors");
 require("./config/DB");
 
 // Importar rutas
-const librosRoutes = require("./routes/libros");
-const alumnosRoutes = require("./routes/alumnos");
-const prestamosRoutes = require("./routes/prestamos");
+const librosRoutes = require("./routes/libros.route");
+const alumnosRoutes = require("./routes/alumnos.route");
+const prestamosRoutes = require("./routes/prestamos.route");
 const mailRoutes = require("./routes/mail.routes");
-const authRoutes = require("./routes/authRoutes");
+const authRoutes = require("./routes/auth.route");
 
 // Crear instancia de express
 const app = express();
